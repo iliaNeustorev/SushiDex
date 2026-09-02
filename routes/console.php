@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('test', function () {
+Artisan::command('my-handler', function () {
     $user = User::find(2);
     $roles = Role::whereIn('name', [Roles::AUTHOR, Roles::DEVELOPER, Roles::ADMIN, Roles::USER])
         ->pluck('id')
