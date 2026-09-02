@@ -1,6 +1,6 @@
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <VCard class="mt-3">
                 <VCardTitle tag="h1">Your posts</VCardTitle>
                 <VCardSubtitle>
@@ -129,7 +129,7 @@
                     </VCard>
                 </template>
             </VDialog>
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>
 
@@ -137,7 +137,7 @@
 import {Link, useForm, router} from '@inertiajs/vue3';
 import {reactive, ref, watch, computed} from 'vue';
 import DefaultLayout from "~vue/Layouts/DefaultLayout.vue";
-import OfficeWrapper from "~vue/Layouts/OfficeWrapper.vue";
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import PostsRoutes from "~routes/Admin/PostController"
 import type {PostCrudResource, PostsQuery, Status, TagCrudResource} from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';

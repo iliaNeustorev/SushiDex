@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {Link, router} from '@inertiajs/vue3';
 import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
-import OfficeWrapper from '~vue/Layouts/OfficeWrapper.vue';
+import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import ProductRoutes from '~routes/Admin/ProductController';
 import type {ProductCrudResource} from '~types/generated';
 
@@ -16,7 +16,7 @@ function remove(product: ProductCrudResource) {
 
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <VCard class="mt-3">
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Товары</span>
@@ -37,6 +37,6 @@ function remove(product: ProductCrudResource) {
                     </tbody>
                 </VTable>
             </VCard>
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>

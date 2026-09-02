@@ -26,7 +26,7 @@ class ProductController extends Controller
     {
         Gate::authorize('viewAny', Product::class);
 
-        return Inertia::render('Office/Products/Index', [
+        return Inertia::render('Admin/Products/Index', [
             'products' => fn () => ProductCrudResource::collect(Product::with('category')->latest()->get()),
         ]);
     }
@@ -38,7 +38,7 @@ class ProductController extends Controller
     {
         Gate::authorize('create', Product::class);
 
-        return Inertia::render('Office/Products/Create', [
+        return Inertia::render('Admin/Products/Create', [
             'categories' => fn () => CategoryCrudResource::collect(Category::orderBy('title')->get()),
         ]);
     }
@@ -62,7 +62,7 @@ class ProductController extends Controller
         Gate::authorize('update', $product);
         $product->load('category', 'images');
 
-        return Inertia::render('Office/Products/Edit', [
+        return Inertia::render('Admin/Products/Edit', [
             'product' => fn () => ProductCrudResource::from($product),
             'categories' => fn () => CategoryCrudResource::collect(Category::orderBy('title')->get()),
             'images' => fn () => ImageCrudResource::collect($product->images),

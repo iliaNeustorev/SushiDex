@@ -57,7 +57,7 @@ class PostController extends Controller
             if (isset($query['page']) && $query['page'] > $postsPaginator->lastPage()) {
                 $query['page'] = $postsPaginator->lastPage();
 
-                return redirect()->route('office.posts.index', $query);
+                return redirect()->route('admin.posts.index', $query);
             }
 
             return GeneralPagination::fromPaginator($postsPaginator, PostCrudResource::class);
@@ -82,7 +82,7 @@ class PostController extends Controller
         $statuses = collect(Status::TEXTS);
         $categories = CategoryCrudResource::collect(Category::get());
 
-        return Inertia::render('Office/Posts/Index', [
+        return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
             'categories' => $categories,
             'statuses' => $statuses,
@@ -99,7 +99,7 @@ class PostController extends Controller
         $categories = CategoryCrudResource::collect(Category::get());
         $tags = TagCrudResource::collect(Tag::get());
 
-        return Inertia::render('Office/Posts/Create', compact('categories', 'tags'));
+        return Inertia::render('Admin/Posts/Create', compact('categories', 'tags'));
     }
 
     /**
@@ -125,7 +125,7 @@ class PostController extends Controller
     {
         $post->load('category:id,title', 'user', 'tags');
 
-        return Inertia::render('Office/Posts/Edit', [
+        return Inertia::render('Admin/Posts/Edit', [
             'categories' => fn () => CategoryCrudResource::collect(Category::get()),
             'post' => fn () => $post,
             'tags' => fn () => TagCrudResource::collect(Tag::get()),

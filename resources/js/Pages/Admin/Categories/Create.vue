@@ -1,6 +1,6 @@
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Create category</VCardTitle>
                 <VDivider/>
@@ -31,7 +31,7 @@
                     </v-btn>
                 </form>
             </VCard>
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>
 
@@ -41,7 +41,7 @@ import DefaultLayout from "~vue/Layouts/DefaultLayout.vue";
 import {useForm} from "@inertiajs/vue3";
 import type {CategoriesSaveReqDTO} from "~types/generated";
 import CategoriesRoutes from "~routes/Admin/CategoryController.ts";
-import OfficeWrapper from "~vue/Layouts/OfficeWrapper.vue";
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 
 const form = useForm<CategoriesSaveReqDTO>({
     url: '',

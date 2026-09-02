@@ -2,7 +2,7 @@
 import {Link, usePage} from '@inertiajs/vue3';
 import {computed} from 'vue';
 import AuthSession from '~gen/wayfinder/actions/App/Http/Controllers/Auth/SessionController';
-import OfficeDashboard from '~gen/wayfinder/actions/App/Http/Controllers/Admin/DashboardController';
+import AdminDashboard from '~gen/wayfinder/actions/App/Http/Controllers/Admin/DashboardController';
 import Posts from '~gen/wayfinder/actions/App/Http/Controllers/PostController';
 import type {UserAuthResource} from "~types/generated";
 
@@ -12,7 +12,7 @@ const mainMenuBase = [
     // {to: General.home(), title: 'Home', icon: '', guard: null},
     {to: Posts.index(), title: 'Blog', icon: '$newspaper', guard: null},
     {to: AuthSession.create(), title: 'Login', icon: '', guard: 'guest'},
-    {to: OfficeDashboard.index(), title: 'Office', icon: '', guard: 'admin'}
+    {to: AdminDashboard.index(), title: 'Admin', icon: '', guard: 'admin'}
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>

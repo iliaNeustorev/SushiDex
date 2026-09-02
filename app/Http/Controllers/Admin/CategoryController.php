@@ -34,7 +34,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Office/Categories/Create', []);
+        return Inertia::render('Admin/Categories/Create', []);
     }
 
     /**
@@ -57,7 +57,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return Inertia::render('Office/Categories/Edit', [
+        return Inertia::render('Admin/Categories/Edit', [
             'category' => fn () => CategoryCrudResource::from($category),
             'images' => fn () => ImageCrudResource::collect($category->images),
         ]);

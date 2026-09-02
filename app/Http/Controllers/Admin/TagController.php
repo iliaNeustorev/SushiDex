@@ -15,7 +15,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Office/Tags/Create', []);
+        return Inertia::render('Admin/Tags/Create', []);
     }
 
     /**

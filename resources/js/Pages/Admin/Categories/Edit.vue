@@ -1,6 +1,6 @@
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Редактировать категорию</VCardTitle>
                 <VDivider/>
@@ -40,7 +40,7 @@
             </VCard>
             <ImagesUploader item="category" :id="category.id"/>
 
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>
 
@@ -53,7 +53,7 @@ import type {
     ImageCrudResource,
 } from "~types/generated";
 import CategoriesRoutes from "~routes/Admin/CategoryController.ts";
-import OfficeWrapper from "~vue/Layouts/OfficeWrapper.vue";
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import ImagesUploader from "~vue/components/widgets/ImagesUploader.vue";
 import AdminImages from "~routes/Admin/ImagesController.ts";
 

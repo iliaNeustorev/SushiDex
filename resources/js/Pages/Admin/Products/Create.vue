@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useForm} from '@inertiajs/vue3';
 import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
-import OfficeWrapper from '~vue/Layouts/OfficeWrapper.vue';
+import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import ProductRoutes from '~routes/Admin/ProductController';
 import type {CategoryCrudResource, ProductsSaveReqDTO} from '~types/generated';
 
@@ -13,7 +13,7 @@ const form = useForm<ProductsSaveReqDTO>({
 </script>
 
 <template>
-    <DefaultLayout><OfficeWrapper><VCard class="mt-3" :loading="form.processing">
+    <DefaultLayout><AdminWrapper><VCard class="mt-3" :loading="form.processing">
         <VCardTitle>Создать товар</VCardTitle>
         <VCardText><form @submit.prevent="form.submit(ProductRoutes.store())">
             <VTextField v-model="form.title" label="Название" :error-messages="form.errors.title" />
@@ -24,5 +24,5 @@ const form = useForm<ProductsSaveReqDTO>({
             <VTextField v-model="form.old_price" type="number" step="0.01" label="Старая цена" :error-messages="form.errors.old_price" />
             <VBtn type="submit" color="primary" :disabled="form.processing">Создать</VBtn>
         </form></VCardText>
-    </VCard></OfficeWrapper></DefaultLayout>
+    </VCard></AdminWrapper></DefaultLayout>
 </template>

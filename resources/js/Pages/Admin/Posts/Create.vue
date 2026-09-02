@@ -1,6 +1,6 @@
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Create post</VCardTitle>
                 <VDivider/>
@@ -56,7 +56,7 @@
                     </v-btn>
                 </form>
             </VCard>
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>
 
@@ -65,7 +65,7 @@ import {useForm} from '@inertiajs/vue3'
 import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
 import PostsRoutes from '~routes/Admin/PostController'
 import type {CategoryCrudResource, PostsSaveReqDTO, TagCrudResource} from "~types/generated";
-import OfficeWrapper from "~vue/Layouts/OfficeWrapper.vue";
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 
 const {categories} = defineProps<{
     categories: CategoryCrudResource[],

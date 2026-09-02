@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {router, useForm} from '@inertiajs/vue3';
 import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
-import OfficeWrapper from '~vue/Layouts/OfficeWrapper.vue';
+import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import ImagesUploader from '~vue/components/widgets/ImagesUploader.vue';
 import ProductRoutes from '~routes/Admin/ProductController';
 import ImageRoutes from '~routes/Admin/ImagesController';
@@ -23,7 +23,7 @@ function removeImage(image: number) {
 </script>
 
 <template>
-    <DefaultLayout><OfficeWrapper>
+    <DefaultLayout><AdminWrapper>
         <VCard class="mt-3" :loading="form.processing"><VCardTitle>Редактировать товар</VCardTitle>
             <VCardText><form @submit.prevent="form.submit(ProductRoutes.update(product))">
                 <VTextField v-model="form.title" label="Название" :error-messages="form.errors.title" />
@@ -39,5 +39,5 @@ function removeImage(image: number) {
             <img :src="`/storage/${image.path}`" class="w-100" alt=""><VBtn color="error" @click="removeImage(image.id)">Удалить</VBtn>
         </VCol></VRow></VCardText></VCard>
         <ImagesUploader item="product" :id="product.id" />
-    </OfficeWrapper></DefaultLayout>
+    </AdminWrapper></DefaultLayout>
 </template>

@@ -3,7 +3,7 @@ import {useForm} from '@inertiajs/vue3'
 import {ref} from 'vue';
 import SessionRoutes from "~routes/Auth/SessionController.ts";
 import DefaultLayout from "~vue/Layouts/DefaultLayout.vue";
-import OfficeWrapper from "~vue/Layouts/OfficeWrapper.vue";
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import Modal from "~vue/components/UI/Modal.vue";
 
 defineProps({
@@ -25,7 +25,7 @@ function logout() {
 
 <template>
     <DefaultLayout>
-        <OfficeWrapper>
+        <AdminWrapper>
             <h1>Админ панель</h1>
             {{ user.first_name + ' ' + user.email }}
             <span v-for="(name, description) in user.role" :key="name">({{ description }})</span>
@@ -48,6 +48,6 @@ function logout() {
                     </button>
                 </template>
             </Modal>
-        </OfficeWrapper>
+        </AdminWrapper>
     </DefaultLayout>
 </template>
