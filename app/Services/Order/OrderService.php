@@ -10,12 +10,15 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class OrderService
 {
     public function checkout(User $user): Order
     {
-        return DB::transaction(function () use ($user) {
+        DB::beginTransaction();
+
+        try {
             /** @var Collection<int, Cart> $items */
             $items = Cart::query()
                 ->with('product')
@@ -48,14 +51,30 @@ class OrderService
             }
 
             Cart::query()->whereKey($items->modelKeys())->delete();
+            $order->load('items.product');
 
-            return $order->load('items.product');
-        });
+            DB::commit();
+
+            return $order;
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            throw $e;
+        } catch (Throwable $e) {
+            DB::rollBack();
+            report($e);
+
+            throw ValidationException::withMessages([
+                'order' => 'Не удалось создать заказ. Попробуйте ещё раз.',
+            ]);
+        }
     }
 
     public function markPaid(Order $order): Order
     {
-        return DB::transaction(function () use ($order) {
+        DB::beginTransaction();
+
+        try {
             $lockedOrder = Order::query()->lockForUpdate()->findOrFail($order->id);
 
             if ($lockedOrder->status !== OrderStatus::NEW) {
@@ -65,8 +84,22 @@ class OrderService
             $lockedOrder->update([
                 'status' => OrderStatus::PAID,
             ]);
+            $lockedOrder->refresh();
 
-            return $lockedOrder->refresh();
-        });
+            DB::commit();
+
+            return $lockedOrder;
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            throw $e;
+        } catch (Throwable $e) {
+            DB::rollBack();
+            report($e);
+
+            throw ValidationException::withMessages([
+                'order' => 'Не удалось обновить заказ. Попробуйте ещё раз.',
+            ]);
+        }
     }
 }
