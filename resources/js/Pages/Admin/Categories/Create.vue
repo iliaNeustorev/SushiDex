@@ -40,13 +40,14 @@
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import {useForm} from "@inertiajs/vue3";
 import type {CategoriesSaveReqDTO} from "~types/generated";
+import {Type} from "~types/generated";
 import CategoriesRoutes from "~routes/Admin/CategoryController.ts";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 
 const form = useForm<CategoriesSaveReqDTO>({
     url: '',
     title: '',
-    type: null,
+    type: Type.PRODUCT,
     parent_id: null
 })
 

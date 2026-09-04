@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Enums\Categories\Type;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->tinyInteger('type');
+            $table->tinyInteger('type')->default(Type::PRODUCT->value);
             $table->foreignIdFor(Category::class, 'parent_id')->nullable()->constrained();
         });
     }

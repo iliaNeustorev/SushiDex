@@ -5,7 +5,7 @@ count: number;
 export type CategoriesSaveReqDTO = {
 url: string;
 title: string;
-type: Type | null;
+type: Type;
 parent_id: number | null;
 };
 export type CategoryCrudResource = {

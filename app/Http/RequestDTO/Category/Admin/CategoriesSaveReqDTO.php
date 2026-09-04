@@ -30,8 +30,7 @@ class CategoriesSaveReqDTO extends Data
         ]
         public string $title,
 
-        #[Nullable]
-        public ?Type $type,
+        public Type $type,
 
         #[
             Nullable,
