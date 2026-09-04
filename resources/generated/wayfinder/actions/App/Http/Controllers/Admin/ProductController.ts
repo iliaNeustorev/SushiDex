@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\ProductController::index
-* @see app/Http/Controllers/Admin/ProductController.php:27
+* @see app/Http/Controllers/Admin/ProductController.php:25
 * @route '/admin/products'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::index
-* @see app/Http/Controllers/Admin/ProductController.php:27
+* @see app/Http/Controllers/Admin/ProductController.php:25
 * @route '/admin/products'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::index
-* @see app/Http/Controllers/Admin/ProductController.php:27
+* @see app/Http/Controllers/Admin/ProductController.php:25
 * @route '/admin/products'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::index
-* @see app/Http/Controllers/Admin/ProductController.php:27
+* @see app/Http/Controllers/Admin/ProductController.php:25
 * @route '/admin/products'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::create
-* @see app/Http/Controllers/Admin/ProductController.php:39
+* @see app/Http/Controllers/Admin/ProductController.php:37
 * @route '/admin/products/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::create
-* @see app/Http/Controllers/Admin/ProductController.php:39
+* @see app/Http/Controllers/Admin/ProductController.php:37
 * @route '/admin/products/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::create
-* @see app/Http/Controllers/Admin/ProductController.php:39
+* @see app/Http/Controllers/Admin/ProductController.php:37
 * @route '/admin/products/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::create
-* @see app/Http/Controllers/Admin/ProductController.php:39
+* @see app/Http/Controllers/Admin/ProductController.php:37
 * @route '/admin/products/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::store
-* @see app/Http/Controllers/Admin/ProductController.php:51
+* @see app/Http/Controllers/Admin/ProductController.php:49
 * @route '/admin/products'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::store
-* @see app/Http/Controllers/Admin/ProductController.php:51
+* @see app/Http/Controllers/Admin/ProductController.php:49
 * @route '/admin/products'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::store
-* @see app/Http/Controllers/Admin/ProductController.php:51
+* @see app/Http/Controllers/Admin/ProductController.php:49
 * @route '/admin/products'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::edit
-* @see app/Http/Controllers/Admin/ProductController.php:62
+* @see app/Http/Controllers/Admin/ProductController.php:60
 * @route '/admin/products/{product}/edit'
 */
 export const edit = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::edit
-* @see app/Http/Controllers/Admin/ProductController.php:62
+* @see app/Http/Controllers/Admin/ProductController.php:60
 * @route '/admin/products/{product}/edit'
 */
 edit.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { product: number | { id: number } } | [product: number | { id
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::edit
-* @see app/Http/Controllers/Admin/ProductController.php:62
+* @see app/Http/Controllers/Admin/ProductController.php:60
 * @route '/admin/products/{product}/edit'
 */
 edit.get = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { product: number | { id: number } } | [product: number | { id
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::edit
-* @see app/Http/Controllers/Admin/ProductController.php:62
+* @see app/Http/Controllers/Admin/ProductController.php:60
 * @route '/admin/products/{product}/edit'
 */
 edit.head = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { product: number | { id: number } } | [product: number | { i
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::update
-* @see app/Http/Controllers/Admin/ProductController.php:77
+* @see app/Http/Controllers/Admin/ProductController.php:75
 * @route '/admin/products/{product}'
 */
 export const update = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::update
-* @see app/Http/Controllers/Admin/ProductController.php:77
+* @see app/Http/Controllers/Admin/ProductController.php:75
 * @route '/admin/products/{product}'
 */
 update.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { product: number | { id: number } } | [product: number | { 
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::update
-* @see app/Http/Controllers/Admin/ProductController.php:77
+* @see app/Http/Controllers/Admin/ProductController.php:75
 * @route '/admin/products/{product}'
 */
 update.put = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { product: number | { id: number } } | [product: number | { 
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::update
-* @see app/Http/Controllers/Admin/ProductController.php:77
+* @see app/Http/Controllers/Admin/ProductController.php:75
 * @route '/admin/products/{product}'
 */
 update.patch = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -259,7 +259,7 @@ update.patch = (args: { product: number | { id: number } } | [product: number | 
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::destroy
-* @see app/Http/Controllers/Admin/ProductController.php:88
+* @see app/Http/Controllers/Admin/ProductController.php:86
 * @route '/admin/products/{product}'
 */
 export const destroy = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::destroy
-* @see app/Http/Controllers/Admin/ProductController.php:88
+* @see app/Http/Controllers/Admin/ProductController.php:86
 * @route '/admin/products/{product}'
 */
 destroy.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ destroy.url = (args: { product: number | { id: number } } | [product: number | {
 
 /**
 * @see \App\Http\Controllers\Admin\ProductController::destroy
-* @see app/Http/Controllers/Admin/ProductController.php:88
+* @see app/Http/Controllers/Admin/ProductController.php:86
 * @route '/admin/products/{product}'
 */
 destroy.delete = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

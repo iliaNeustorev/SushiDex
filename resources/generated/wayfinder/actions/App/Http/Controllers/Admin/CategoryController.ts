@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:27
+* @see app/Http/Controllers/Admin/CategoryController.php:26
 * @route '/admin/categories'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:27
+* @see app/Http/Controllers/Admin/CategoryController.php:26
 * @route '/admin/categories'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:27
+* @see app/Http/Controllers/Admin/CategoryController.php:26
 * @route '/admin/categories'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:27
+* @see app/Http/Controllers/Admin/CategoryController.php:26
 * @route '/admin/categories'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:36
+* @see app/Http/Controllers/Admin/CategoryController.php:38
 * @route '/admin/categories/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:36
+* @see app/Http/Controllers/Admin/CategoryController.php:38
 * @route '/admin/categories/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:36
+* @see app/Http/Controllers/Admin/CategoryController.php:38
 * @route '/admin/categories/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:36
+* @see app/Http/Controllers/Admin/CategoryController.php:38
 * @route '/admin/categories/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:47
+* @see app/Http/Controllers/Admin/CategoryController.php:50
 * @route '/admin/categories'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:47
+* @see app/Http/Controllers/Admin/CategoryController.php:50
 * @route '/admin/categories'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:47
+* @see app/Http/Controllers/Admin/CategoryController.php:50
 * @route '/admin/categories'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::edit
-* @see app/Http/Controllers/Admin/CategoryController.php:57
+* @see app/Http/Controllers/Admin/CategoryController.php:61
 * @route '/admin/categories/{category}/edit'
 */
 export const edit = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::edit
-* @see app/Http/Controllers/Admin/CategoryController.php:57
+* @see app/Http/Controllers/Admin/CategoryController.php:61
 * @route '/admin/categories/{category}/edit'
 */
 edit.url = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { category: number | { id: number } } | [category: number | { 
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::edit
-* @see app/Http/Controllers/Admin/CategoryController.php:57
+* @see app/Http/Controllers/Admin/CategoryController.php:61
 * @route '/admin/categories/{category}/edit'
 */
 edit.get = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { category: number | { id: number } } | [category: number | { 
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::edit
-* @see app/Http/Controllers/Admin/CategoryController.php:57
+* @see app/Http/Controllers/Admin/CategoryController.php:61
 * @route '/admin/categories/{category}/edit'
 */
 edit.head = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { category: number | { id: number } } | [category: number | {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::update
-* @see app/Http/Controllers/Admin/CategoryController.php:68
+* @see app/Http/Controllers/Admin/CategoryController.php:72
 * @route '/admin/categories/{category}'
 */
 export const update = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::update
-* @see app/Http/Controllers/Admin/CategoryController.php:68
+* @see app/Http/Controllers/Admin/CategoryController.php:72
 * @route '/admin/categories/{category}'
 */
 update.url = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { category: number | { id: number } } | [category: number | 
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::update
-* @see app/Http/Controllers/Admin/CategoryController.php:68
+* @see app/Http/Controllers/Admin/CategoryController.php:72
 * @route '/admin/categories/{category}'
 */
 update.put = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { category: number | { id: number } } | [category: number | 
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::update
-* @see app/Http/Controllers/Admin/CategoryController.php:68
+* @see app/Http/Controllers/Admin/CategoryController.php:72
 * @route '/admin/categories/{category}'
 */
 update.patch = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -259,7 +259,7 @@ update.patch = (args: { category: number | { id: number } } | [category: number 
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::destroy
-* @see app/Http/Controllers/Admin/CategoryController.php:79
+* @see app/Http/Controllers/Admin/CategoryController.php:85
 * @route '/admin/categories/{category}'
 */
 export const destroy = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::destroy
-* @see app/Http/Controllers/Admin/CategoryController.php:79
+* @see app/Http/Controllers/Admin/CategoryController.php:85
 * @route '/admin/categories/{category}'
 */
 destroy.url = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ destroy.url = (args: { category: number | { id: number } } | [category: number |
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::destroy
-* @see app/Http/Controllers/Admin/CategoryController.php:79
+* @see app/Http/Controllers/Admin/CategoryController.php:85
 * @route '/admin/categories/{category}'
 */
 destroy.delete = (args: { category: number | { id: number } } | [category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

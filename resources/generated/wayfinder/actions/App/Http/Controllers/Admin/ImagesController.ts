@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::store
-* @see app/Http/Controllers/Admin/ImagesController.php:26
+* @see app/Http/Controllers/Admin/ImagesController.php:24
 * @route '/admin/images'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::store
-* @see app/Http/Controllers/Admin/ImagesController.php:26
+* @see app/Http/Controllers/Admin/ImagesController.php:24
 * @route '/admin/images'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::store
-* @see app/Http/Controllers/Admin/ImagesController.php:26
+* @see app/Http/Controllers/Admin/ImagesController.php:24
 * @route '/admin/images'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::destroy
-* @see app/Http/Controllers/Admin/ImagesController.php:47
+* @see app/Http/Controllers/Admin/ImagesController.php:45
 * @route '/admin/images/{image}'
 */
 export const destroy = (args: { image: number | { id: number } } | [image: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -50,7 +50,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::destroy
-* @see app/Http/Controllers/Admin/ImagesController.php:47
+* @see app/Http/Controllers/Admin/ImagesController.php:45
 * @route '/admin/images/{image}'
 */
 destroy.url = (args: { image: number | { id: number } } | [image: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -83,7 +83,7 @@ destroy.url = (args: { image: number | { id: number } } | [image: number | { id:
 
 /**
 * @see \App\Http\Controllers\Admin\ImagesController::destroy
-* @see app/Http/Controllers/Admin/ImagesController.php:47
+* @see app/Http/Controllers/Admin/ImagesController.php:45
 * @route '/admin/images/{image}'
 */
 destroy.delete = (args: { image: number | { id: number } } | [image: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

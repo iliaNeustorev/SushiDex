@@ -13,13 +13,13 @@ id: number;
 url: string;
 title: string;
 created_at: string;
-type: Type | null;
+type: Type;
 parent_id: number | null;
 };
 export type CategoryPublicResource = {
 url: string;
 title: string;
-type: Type | null;
+type: Type;
 parent_id: number | null;
 };
 export type GeneralPagination = {
@@ -40,9 +40,9 @@ id: number;
 images: File[];
 };
 export type OrderSaveReqDTO = {
-user_id: number;
+type: TypePaid;
+need_delivery: boolean;
 total_price: string;
-status: Status;
 };
 export type PostCrudResource = {
 id: number;
@@ -95,6 +95,7 @@ old_price: string | null;
 category: CategoryCrudResource;
 created_at: string;
 updated_at: string;
+count_paid: number | null;
 };
 export type ProductsSaveReqDTO = {
 title: string;
@@ -125,6 +126,7 @@ title: string;
 description: string | null;
 };
 export enum Type { PRODUCT = 1, BLOG = 2 };
+export enum TypePaid { CARD_ONLINE = 1, CARD_COURIER = 2, CASH_COURIER = 3, IN_PICKUP_LOCATION = 4 };
 export type UserAuthResource = {
 id: number;
 first_name: string;
@@ -132,6 +134,7 @@ last_name: string | null;
 email: string | null;
 created_at: string;
 roles: Array<RolePublicResource>;
+address: string;
 };
 export type UserPublicResource = {
 id: number;

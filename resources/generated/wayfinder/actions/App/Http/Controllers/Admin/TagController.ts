@@ -79,7 +79,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::edit
-* @see app/Http/Controllers/Admin/TagController.php:34
+* @see app/Http/Controllers/Admin/TagController.php:35
 * @route '/admin/tags/{tag}/edit'
 */
 export const edit = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::edit
-* @see app/Http/Controllers/Admin/TagController.php:34
+* @see app/Http/Controllers/Admin/TagController.php:35
 * @route '/admin/tags/{tag}/edit'
 */
 edit.url = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ edit.url = (args: { tag: number | { id: number } } | [tag: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::edit
-* @see app/Http/Controllers/Admin/TagController.php:34
+* @see app/Http/Controllers/Admin/TagController.php:35
 * @route '/admin/tags/{tag}/edit'
 */
 edit.get = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -137,7 +137,7 @@ edit.get = (args: { tag: number | { id: number } } | [tag: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::edit
-* @see app/Http/Controllers/Admin/TagController.php:34
+* @see app/Http/Controllers/Admin/TagController.php:35
 * @route '/admin/tags/{tag}/edit'
 */
 edit.head = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -147,7 +147,7 @@ edit.head = (args: { tag: number | { id: number } } | [tag: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::update
-* @see app/Http/Controllers/Admin/TagController.php:42
+* @see app/Http/Controllers/Admin/TagController.php:43
 * @route '/admin/tags/{tag}'
 */
 export const update = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -162,7 +162,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::update
-* @see app/Http/Controllers/Admin/TagController.php:42
+* @see app/Http/Controllers/Admin/TagController.php:43
 * @route '/admin/tags/{tag}'
 */
 update.url = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -195,7 +195,7 @@ update.url = (args: { tag: number | { id: number } } | [tag: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::update
-* @see app/Http/Controllers/Admin/TagController.php:42
+* @see app/Http/Controllers/Admin/TagController.php:43
 * @route '/admin/tags/{tag}'
 */
 update.put = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -205,7 +205,7 @@ update.put = (args: { tag: number | { id: number } } | [tag: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::update
-* @see app/Http/Controllers/Admin/TagController.php:42
+* @see app/Http/Controllers/Admin/TagController.php:43
 * @route '/admin/tags/{tag}'
 */
 update.patch = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -215,7 +215,7 @@ update.patch = (args: { tag: number | { id: number } } | [tag: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:50
+* @see app/Http/Controllers/Admin/TagController.php:51
 * @route '/admin/tags/{tag}'
 */
 export const destroy = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -230,7 +230,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:50
+* @see app/Http/Controllers/Admin/TagController.php:51
 * @route '/admin/tags/{tag}'
 */
 destroy.url = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -263,7 +263,7 @@ destroy.url = (args: { tag: number | { id: number } } | [tag: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:50
+* @see app/Http/Controllers/Admin/TagController.php:51
 * @route '/admin/tags/{tag}'
 */
 destroy.delete = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

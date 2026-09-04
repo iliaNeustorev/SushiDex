@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\SessionController::create
-* @see app/Http/Controllers/Auth/SessionController.php:19
+* @see app/Http/Controllers/Auth/SessionController.php:17
 * @route '/auth/login'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::create
-* @see app/Http/Controllers/Auth/SessionController.php:19
+* @see app/Http/Controllers/Auth/SessionController.php:17
 * @route '/auth/login'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::create
-* @see app/Http/Controllers/Auth/SessionController.php:19
+* @see app/Http/Controllers/Auth/SessionController.php:17
 * @route '/auth/login'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::create
-* @see app/Http/Controllers/Auth/SessionController.php:19
+* @see app/Http/Controllers/Auth/SessionController.php:17
 * @route '/auth/login'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::store
-* @see app/Http/Controllers/Auth/SessionController.php:29
+* @see app/Http/Controllers/Auth/SessionController.php:22
 * @route '/auth/login'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::store
-* @see app/Http/Controllers/Auth/SessionController.php:29
+* @see app/Http/Controllers/Auth/SessionController.php:22
 * @route '/auth/login'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::store
-* @see app/Http/Controllers/Auth/SessionController.php:29
+* @see app/Http/Controllers/Auth/SessionController.php:22
 * @route '/auth/login'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -79,7 +79,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::logout
-* @see app/Http/Controllers/Auth/SessionController.php:41
+* @see app/Http/Controllers/Auth/SessionController.php:30
 * @route '/auth/logout'
 */
 export const logout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ logout.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::logout
-* @see app/Http/Controllers/Auth/SessionController.php:41
+* @see app/Http/Controllers/Auth/SessionController.php:30
 * @route '/auth/logout'
 */
 logout.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ logout.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\SessionController::logout
-* @see app/Http/Controllers/Auth/SessionController.php:41
+* @see app/Http/Controllers/Auth/SessionController.php:30
 * @route '/auth/logout'
 */
 logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

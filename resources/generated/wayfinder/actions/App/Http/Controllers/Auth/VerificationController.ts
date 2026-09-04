@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::verify
-* @see app/Http/Controllers/Auth/VerificationController.php:28
+* @see app/Http/Controllers/Auth/VerificationController.php:19
 * @route '/email/verify/{id}/{hash}'
 */
 export const verify = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ verify.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::verify
-* @see app/Http/Controllers/Auth/VerificationController.php:28
+* @see app/Http/Controllers/Auth/VerificationController.php:19
 * @route '/email/verify/{id}/{hash}'
 */
 verify.url = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions) => {
@@ -42,7 +42,7 @@ verify.url = (args: { id: string | number, hash: string | number } | [id: string
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::verify
-* @see app/Http/Controllers/Auth/VerificationController.php:28
+* @see app/Http/Controllers/Auth/VerificationController.php:19
 * @route '/email/verify/{id}/{hash}'
 */
 verify.get = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -52,7 +52,7 @@ verify.get = (args: { id: string | number, hash: string | number } | [id: string
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::verify
-* @see app/Http/Controllers/Auth/VerificationController.php:28
+* @see app/Http/Controllers/Auth/VerificationController.php:19
 * @route '/email/verify/{id}/{hash}'
 */
 verify.head = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -62,7 +62,7 @@ verify.head = (args: { id: string | number, hash: string | number } | [id: strin
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::repeatSendMail
-* @see app/Http/Controllers/Auth/VerificationController.php:17
+* @see app/Http/Controllers/Auth/VerificationController.php:12
 * @route '/email/verification-notification'
 */
 export const repeatSendMail = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -77,7 +77,7 @@ repeatSendMail.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::repeatSendMail
-* @see app/Http/Controllers/Auth/VerificationController.php:17
+* @see app/Http/Controllers/Auth/VerificationController.php:12
 * @route '/email/verification-notification'
 */
 repeatSendMail.url = (options?: RouteQueryOptions) => {
@@ -86,7 +86,7 @@ repeatSendMail.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\VerificationController::repeatSendMail
-* @see app/Http/Controllers/Auth/VerificationController.php:17
+* @see app/Http/Controllers/Auth/VerificationController.php:12
 * @route '/email/verification-notification'
 */
 repeatSendMail.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

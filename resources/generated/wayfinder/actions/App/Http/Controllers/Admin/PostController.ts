@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:95
+* @see app/Http/Controllers/Admin/PostController.php:97
 * @route '/admin/posts/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:95
+* @see app/Http/Controllers/Admin/PostController.php:97
 * @route '/admin/posts/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:95
+* @see app/Http/Controllers/Admin/PostController.php:97
 * @route '/admin/posts/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:95
+* @see app/Http/Controllers/Admin/PostController.php:97
 * @route '/admin/posts/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:105
+* @see app/Http/Controllers/Admin/PostController.php:108
 * @route '/admin/posts'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:105
+* @see app/Http/Controllers/Admin/PostController.php:108
 * @route '/admin/posts'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:105
+* @see app/Http/Controllers/Admin/PostController.php:108
 * @route '/admin/posts'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:120
+* @see app/Http/Controllers/Admin/PostController.php:124
 * @route '/admin/posts/{post}/edit'
 */
 export const edit = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:120
+* @see app/Http/Controllers/Admin/PostController.php:124
 * @route '/admin/posts/{post}/edit'
 */
 edit.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:120
+* @see app/Http/Controllers/Admin/PostController.php:124
 * @route '/admin/posts/{post}/edit'
 */
 edit.get = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:120
+* @see app/Http/Controllers/Admin/PostController.php:124
 * @route '/admin/posts/{post}/edit'
 */
 edit.head = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { post: number | { id: number } } | [post: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::update
-* @see app/Http/Controllers/Admin/PostController.php:134
+* @see app/Http/Controllers/Admin/PostController.php:139
 * @route '/admin/posts/{post}'
 */
 export const update = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::update
-* @see app/Http/Controllers/Admin/PostController.php:134
+* @see app/Http/Controllers/Admin/PostController.php:139
 * @route '/admin/posts/{post}'
 */
 update.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { post: number | { id: number } } | [post: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::update
-* @see app/Http/Controllers/Admin/PostController.php:134
+* @see app/Http/Controllers/Admin/PostController.php:139
 * @route '/admin/posts/{post}'
 */
 update.put = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { post: number | { id: number } } | [post: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::update
-* @see app/Http/Controllers/Admin/PostController.php:134
+* @see app/Http/Controllers/Admin/PostController.php:139
 * @route '/admin/posts/{post}'
 */
 update.patch = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -259,7 +259,7 @@ update.patch = (args: { post: number | { id: number } } | [post: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::destroy
-* @see app/Http/Controllers/Admin/PostController.php:148
+* @see app/Http/Controllers/Admin/PostController.php:154
 * @route '/admin/posts/{post}'
 */
 export const destroy = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::destroy
-* @see app/Http/Controllers/Admin/PostController.php:148
+* @see app/Http/Controllers/Admin/PostController.php:154
 * @route '/admin/posts/{post}'
 */
 destroy.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ destroy.url = (args: { post: number | { id: number } } | [post: number | { id: n
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::destroy
-* @see app/Http/Controllers/Admin/PostController.php:148
+* @see app/Http/Controllers/Admin/PostController.php:154
 * @route '/admin/posts/{post}'
 */
 destroy.delete = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -317,7 +317,7 @@ destroy.delete = (args: { post: number | { id: number } } | [post: number | { id
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::publish
-* @see app/Http/Controllers/Admin/PostController.php:161
+* @see app/Http/Controllers/Admin/PostController.php:166
 * @route '/admin/posts/{post}/publish'
 */
 export const publish = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -332,7 +332,7 @@ publish.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::publish
-* @see app/Http/Controllers/Admin/PostController.php:161
+* @see app/Http/Controllers/Admin/PostController.php:166
 * @route '/admin/posts/{post}/publish'
 */
 publish.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -365,7 +365,7 @@ publish.url = (args: { post: number | { id: number } } | [post: number | { id: n
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::publish
-* @see app/Http/Controllers/Admin/PostController.php:161
+* @see app/Http/Controllers/Admin/PostController.php:166
 * @route '/admin/posts/{post}/publish'
 */
 publish.patch = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
