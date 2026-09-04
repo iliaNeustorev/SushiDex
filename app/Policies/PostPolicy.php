@@ -29,7 +29,7 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return Gate::check('author', $user);
+        return Gate::forUser($user)->allows('author');
     }
 
     /**
@@ -53,7 +53,7 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return Gate::check('dev', $user);
+        return Gate::forUser($user)->allows('dev');
     }
 
     /**
@@ -61,6 +61,6 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return Gate::check('dev', $user);
+        return Gate::forUser($user)->allows('dev');
     }
 }

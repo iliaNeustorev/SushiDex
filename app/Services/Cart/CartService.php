@@ -6,12 +6,16 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CartService
 {
     public function put(User $user, Product $product, int $count): Cart
     {
-        return DB::transaction(function () use ($user, $product, $count) {
+        DB::beginTransaction();
+
+        try {
             $item = Cart::query()
                 ->whereBelongsTo($user)
                 ->whereBelongsTo($product)
@@ -20,16 +24,25 @@ class CartService
 
             if ($item) {
                 $item->update(['count' => $count]);
-
-                return $item->refresh();
+            } else {
+                $item = Cart::create([
+                    'user_id' => $user->id,
+                    'product_id' => $product->id,
+                    'count' => $count,
+                ]);
             }
 
-            return Cart::create([
-                'user_id' => $user->id,
-                'product_id' => $product->id,
-                'count' => $count,
+            DB::commit();
+
+            return $item;
+        } catch (Throwable $e) {
+            DB::rollBack();
+            report($e);
+
+            throw ValidationException::withMessages([
+                'cart' => 'Не удалось обновить корзину. Попробуйте ещё раз.',
             ]);
-        });
+        }
     }
 
     public function remove(User $user, Cart $item): void

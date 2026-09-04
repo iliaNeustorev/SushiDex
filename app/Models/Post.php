@@ -71,6 +71,6 @@ class Post extends Model
 
     public function scopeByUserId($query, ?int $userId)
     {
-        return $query->where('user_id', $userId);
+        return $query->when(isset($userId), fn($query) => $query->where('user_id', $userId));
     }
 }
