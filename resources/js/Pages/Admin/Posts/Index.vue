@@ -1,11 +1,13 @@
 <template>
-    <DefaultLayout>
+    <AdminLayout>
         <AdminWrapper>
             <VCard class="mt-3">
-                <VCardTitle tag="h1">Your posts</VCardTitle>
-                <VCardSubtitle>
-                    <Link :href="PostsRoutes.create().url">Create Post</Link>
-                </VCardSubtitle>
+                <VCardTitle class="d-flex justify-space-between">
+                    <span>Посты</span>
+                    <Link :href="PostsRoutes.create().url" class="text-decoration-none text-green-darken-3">
+                        Новый пост
+                    </Link>
+                </VCardTitle>
                 <VDivider/>
                 <VCardText>
                     <VRow>
@@ -13,7 +15,7 @@
                             <VTextField
                                 :model-value="queryLocal.filter.title"
                                 @update:model-value="onTitleUpd"
-                                label="Title"
+                                label="Имя"
                                 variant="outlined"
                                 class="mb-2"
                                 clearable
@@ -23,7 +25,7 @@
                             <VSelect
                                 v-model="queryLocal.filter.status"
                                 :items="statuses"
-                                label="Status"
+                                label="Статус"
                                 variant="outlined"
                                 class="mb-2"
                                 clearable
@@ -35,7 +37,7 @@
                                 v-model="dateRangeAdapter.inputModel.value"
                                 @update:menu="dateRangeAdapter.onUpdateMenu"
                                 @click:clear="dateRangeAdapter.onClear"
-                                label="Date"
+                                label="Дата"
                                 variant="outlined"
                                 class="mb-2"
                                 multiple="range"
@@ -51,7 +53,7 @@
                                 color="blue-grey-lighten-2"
                                 item-title="url"
                                 item-value="id"
-                                label="Choose tags"
+                                label="Выбрать тег"
                                 chips
                                 closable-chips
                                 multiple
@@ -74,10 +76,10 @@
 						]"
                         :headers="[
 							{ key: 'id', title: 'Id' },
-							{ key: 'title', title: 'Title' },
-							{ key: 'created_at', title: 'Creation date' },
-							{ key: 'status', title: 'Status', sortable: false },
-							{ key: 'actions', title: 'Actions', sortable: false }
+							{ key: 'title', title: 'Название' },
+							{ key: 'created_at', title: 'Дата создания' },
+							{ key: 'status', title: 'Статус', sortable: false },
+							{ key: 'actions', title: 'Действия', sortable: false }
 						]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
@@ -92,9 +94,10 @@
                         </template>
                         <template #item.actions="{ item }">
                             <Link :href="PostsRoutes.edit(item.id).url" type="button" class="btn btn-success ms-2">
-                                Edit
+                                Редактировать
                             </Link>
-                            <button @click="confirmRemove(item)" type="button" class="btn btn-danger ms-2">Delete
+                            <button @click="confirmRemove(item)" type="button" class="btn btn-danger ms-2">
+                                Удалить
                             </button>
                         </template>
                     </VDataTableServer>
@@ -115,7 +118,7 @@
                                 <td>{{ postForRemove.id }}</td>
                             </tr>
                             <tr>
-                                <td>Title</td>
+                                <td>Название</td>
                                 <td>{{ postForRemove.title }}</td>
                             </tr>
                             </tbody>
@@ -124,20 +127,19 @@
                                 class="btn btn-success">Ok
                         </button>
                         <button :disabled="deleteForm.processing" @click="postForRemove = null" type="button"
-                                class="btn btn-danger">Cancel
+                                class="btn btn-danger">Отмена
                         </button>
                     </VCard>
                 </template>
             </VDialog>
         </AdminWrapper>
-    </DefaultLayout>
+    </AdminLayout>
 </template>
 
 <script setup lang="ts">
 import {Link, useForm, router} from '@inertiajs/vue3';
 import {reactive, ref, watch, computed} from 'vue';
-import DefaultLayout from "~vue/Layouts/DefaultLayout.vue";
-import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
+import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import PostsRoutes from "~routes/Admin/PostController"
 import type {PostCrudResource, PostsQuery, Status, TagCrudResource} from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';
@@ -145,6 +147,7 @@ import {debounce, merge} from 'lodash';
 import type {RequiredKeys} from "~vue/shared/objects.ts";
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
+import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 
 const {query = {}} = defineProps<{
     posts: TypedPagination<PostCrudResource>,

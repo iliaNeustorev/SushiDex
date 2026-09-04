@@ -39,5 +39,6 @@ class CategoriesSaveReqDTO extends Data
             NotIn(new RouteParameterReference('category', 'id', true))
         ]
         public ?int $parent_id,
-    ) {}
+    ) {
+    }
 }

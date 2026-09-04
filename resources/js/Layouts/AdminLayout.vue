@@ -4,25 +4,55 @@
             <VContainer fluid>
                 <VToolbarTitle>
                     <VIcon icon="$castEducation" class="me-2"></VIcon>
-                    СушиДекс
+                    SushiDex
                 </VToolbarTitle>
             </VContainer>
         </VAppBar>
         <VNavigationDrawer permanent>
-            <VList>
-                <VListSubheader>Главное меню</VListSubheader>
-                <VListItem v-for="item in mainMenu" :key="item.to.url" color="primary" rounded="xl">
-                    <template #prepend>
-                        <VIcon :icon="item.icon"/>
+            <div class="d-flex flex-column fill-height">
+                <VList>
+                    <VListSubheader>Админ панель</VListSubheader>
+                    <VListItem v-for="item in mainMenu" :key="item.to.url" color="primary" rounded="xl">
+                        <template #prepend>
+                            <VIcon :icon="item.icon"/>
+                        </template>
+                        <VListItemTitle>
+                            <Link :href="item.to.url" class="text-decoration-none text-grey-darken-4 text-h6">{{
+                                    item.title
+                                }}
+                            </Link>
+                        </VListItemTitle>
+                    </VListItem>
+                </VList>
+                <VDialog
+                    v-model="closeModalLogout"
+                    max-width="600"
+                    persistent
+                >
+                    <template v-slot:activator="{ props: closeModalLogout }">
+                        <VBtn class="mt-auto text-h6 mb-6" v-bind="closeModalLogout">
+                            Выйти из аккаунта
+                        </VBtn>
                     </template>
-                    <VListItemTitle>
-                        <Link :href="item.to.url" class="text-decoration-none text-grey-darken-4">{{
-                                item.title
-                            }}
-                        </Link>
-                    </VListItemTitle>
-                </VListItem>
-            </VList>
+
+                    <VCard
+                        prepend-icon="mdi-map-marker"
+                        title="Вы действительно хотите выйти?"
+                        class="text-center"
+                    >
+                        <template v-slot:actions>
+                            <VSpacer></VSpacer>
+                            <VBtn @click="closeModalLogout = false">
+                                Отмена
+                            </VBtn>
+
+                            <VBtn @click="logout">
+                                ОК
+                            </VBtn>
+                        </template>
+                    </VCard>
+                </VDialog>
+            </div>
         </VNavigationDrawer>
         <VMain class="appMain">
             <div class="ps-4 pe-4">
@@ -31,32 +61,42 @@
         </VMain>
         <VFooter app class="flex-grow-0">
             <VContainer fluid class="py-1">
-                Some site &copy;
+                Админ панель &copy;
             </VContainer>
         </VFooter>
     </VApp>
 </template>
 
 <script setup lang="ts">
-import {Link, usePage} from '@inertiajs/vue3';
-import {computed} from 'vue';
-import AuthSession from '~gen/wayfinder/actions/App/Http/Controllers/Auth/SessionController';
-import AdminDashboard from '~gen/wayfinder/actions/App/Http/Controllers/Admin/DashboardController';
-import Posts from '~gen/wayfinder/actions/App/Http/Controllers/PostController';
+import {Link, usePage, useForm} from '@inertiajs/vue3';
+import {computed, ref} from 'vue';
 import type {UserAuthResource} from "~types/generated";
+import PostsRoutes from "~routes/Admin/PostController.ts";
+import GeneralController from "~routes/GeneralController.ts";
+import ProductRoutes from "~routes/Admin/ProductController.ts";
+import SessionRoutes from "~routes/Auth/SessionController.ts";
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
 
 const mainMenuBase = [
-    // {to: General.home(), title: 'Home', icon: '', guard: null},
-    {to: Posts.index(), title: 'Blog', icon: '$newspaper', guard: null},
-    {to: AuthSession.create(), title: 'Login', icon: '', guard: 'guest'},
-    {to: AdminDashboard.index(), title: 'Admin', icon: '', guard: 'admin'}
+    {to: GeneralController.index(), title: 'Главная', icon: '', guard: 'admin'},
+    {to: PostsRoutes.index(), title: 'Посты', icon: '', guard: 'admin'},
+    {to: ProductRoutes.index(), title: 'Продукты', icon: '', guard: 'admin'}
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
-    item.guard === null ||
-    (item.guard === 'guest' && !props.user) ||
     (item.guard === 'admin' && props.user)
 ))
+
+let closeModalLogout = ref<boolean>(false);
+
+const logoutForm = useForm({});
+
+function logout() {
+    logoutForm.submit(SessionRoutes.logout(), {
+        onFinish() {
+            closeModalLogout.value = false
+        }
+    })
+}
 </script>

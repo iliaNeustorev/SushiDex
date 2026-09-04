@@ -13,7 +13,8 @@ class CategoryCrudResource extends Data
         public string $url,
         public string $title,
         public Carbon $created_at,
-        public ?Type $type,
+        public Type $type,
         public ?int $parent_id
-    ) {}
+    ) {
+    }
 }

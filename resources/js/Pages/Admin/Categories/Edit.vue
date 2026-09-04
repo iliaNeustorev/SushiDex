@@ -1,31 +1,31 @@
 <template>
-    <DefaultLayout>
+    <AdminLayout>
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Редактировать категорию</VCardTitle>
                 <VDivider/>
-                <v-text-field
+                <VTextField
                     v-model="form.url"
                     :counter="10"
                     :error-messages="form.errors.url"
                     label="Url"
-                ></v-text-field>
+                ></VTextField>
 
-                <v-text-field
+                <VTextField
                     v-model="form.title"
                     :counter="7"
                     :error-messages="form.errors.title"
                     label="Title"
-                ></v-text-field>
+                ></VTextField>
 
                 <VCardActions>
-                    <v-btn
+                    <VBtn
                         @click="sendEdit"
                         :disabled="form.processing"
                         color="primary"
                     >
                         Сохранить
-                    </v-btn>
+                    </VBtn>
                 </VCardActions>
 
             </VCard>
@@ -41,11 +41,11 @@
             <ImagesUploader item="category" :id="category.id"/>
 
         </AdminWrapper>
-    </DefaultLayout>
+    </AdminLayout>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from "~vue/Layouts/DefaultLayout.vue";
+import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import {router, useForm} from "@inertiajs/vue3";
 import type {
     CategoriesSaveReqDTO,
@@ -80,4 +80,3 @@ function removeImage(image: number) {
     })
 }
 </script>
-

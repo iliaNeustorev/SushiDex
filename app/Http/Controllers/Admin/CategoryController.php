@@ -17,7 +17,8 @@ class CategoryController extends Controller
 {
     public function __construct(
         protected CategoryAdminService $categoryAdminService
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -26,7 +27,9 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('title')->get();
 
-        return view('categories/index', compact('categories'));
+        return Inertia::render('Admin/Categories/Index', fn() => [
+
+        ]);
     }
 
     /**
@@ -58,8 +61,8 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         return Inertia::render('Admin/Categories/Edit', [
-            'category' => fn () => CategoryCrudResource::from($category),
-            'images' => fn () => ImageCrudResource::collect($category->images),
+            'category' => fn() => CategoryCrudResource::from($category),
+            'images' => fn() => ImageCrudResource::collect($category->images),
         ]);
     }
 
@@ -82,7 +85,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $deleted = $this->categoryAdminService->delete($category);
-        if (! $deleted) {
+        if (!$deleted) {
             abort(422, 'К категории привязаны посты или продукты');
         }
 
