@@ -18,5 +18,7 @@ class ProductCrudResource extends Data
         public CategoryCrudResource $category,
         public Carbon $created_at,
         public Carbon $updated_at,
-    ) {}
+        public ?int $count_paid,
+    ) {
+    }
 }

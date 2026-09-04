@@ -2,22 +2,20 @@
 
 namespace App\Http\RequestDTO\Orders;
 
-use App\Enums\Orders\Status;
+use App\Enums\Orders\TypePaid;
 use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Attributes\MergeValidationRules;
-use Spatie\LaravelData\Attributes\Validation\Exists;
 use Spatie\LaravelData\Data;
 
 #[MergeValidationRules]
 class OrderSaveReqDTO extends Data
 {
     public function __construct(
-        #[Exists('users', 'id')]
-        public int $user_id,
-
+        public TypePaid $type,
+        public bool $need_delivery,
         public string $total_price,
-        public Status $status
-    ) {}
+    ) {
+    }
 
     public function rules(): array
     {
