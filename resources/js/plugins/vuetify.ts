@@ -1,6 +1,6 @@
 import {createVuetify} from 'vuetify'
 import 'vuetify/lib/styles/main.css'
-
+import {ru} from 'vuetify/locale'
 import {VDateInput} from 'vuetify/labs/VDateInput'
 
 import {aliases, mdi} from 'vuetify/iconsets/mdi-svg'
@@ -26,6 +26,10 @@ export default function initVuetifyPlugin() {
         },
         components: {
             VDateInput,
+        },
+        locale: {
+            locale: 'ru',
+            messages: {ru},
         }
     });
 
