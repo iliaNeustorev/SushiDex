@@ -10,4 +10,14 @@ class GeneralController extends Controller
     {
         return Inertia::render('Home');
     }
+
+    public function menu()
+    {
+        return Inertia::render('Menu/Index');
+    }
+
+    public function profile()
+    {
+        return Inertia::render('Profile/Index');
+    }
 }

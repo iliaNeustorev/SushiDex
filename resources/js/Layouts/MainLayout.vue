@@ -1,5 +1,4 @@
 <template>
-    <Head title="SushiDex — суши и роллы"/>
     <VApp class="sushi-page">
         <VAppBar class="site-app-bar px-md-4" color="#151514" flat>
             <template #prepend>
@@ -10,44 +9,60 @@
                 />
             </template>
 
-            <Link href="/Project12/public" class="brand light" aria-label="SushiDex — на главную">
+            <Link :href="GeneralRoutes.index().url" class="brand light" aria-label="SushiDex — на главную">
                 <span class="brand-mark">よ</span><span>SushiDex</span>
             </Link>
 
-            <!--            <template v-if="$vuetify.display.mdAndUp">-->
-            <!--                <VBtn-->
-            <!--                    v-for="item in items"-->
-            <!--                    :key="item.href"-->
-            <!--                    :href="item.href"-->
-            <!--                    class="ms-6 text-none"-->
-            <!--                    variant="text"-->
-            <!--                >{{ item.title }}-->
-            <!--                </VBtn>-->
-
-            <!--            </template>-->
-            <VListItem v-for="item in mainMenu" :key="item.to.url" color="primary" rounded="xl">
-                <VListItemTitle>
-                    <Link :href="item.to.url" class="text-decoration-none text-white ms-6">{{
-                            item.title
-                        }}
-                    </Link>
-                </VListItemTitle>
-            </VListItem>
+            <template v-if="$vuetify.display.mdAndUp">
+                <VBtn
+                    v-for="item in mainMenu"
+                    :key="item.to.url"
+                    :href="item.to.url"
+                    class="ms-4 text-none"
+                    variant="text"
+                >
+                    {{ item.title }}
+                </VBtn>
+            </template>
             <VSpacer/>
 
             <template #append>
                 <a class="phone" href="tel:+74951234567">
                     <span>Ежедневно 11:00–23:00</span>+7 495 123-45-67
                 </a>
-                <VBtn v-if="user" class="ms-3" icon aria-label="Меню пользователя">
-                    <VAvatar color="primary" size="36">
-                        {{ user.first_name.charAt(0).toUpperCase() }}
-                    </VAvatar>
+                <VMenu
+                    v-if="user"
+                    content-class="user-menu"
+                    location="bottom end"
+                    :offset="10"
+                >
+                    <template #activator="{ props: menuProps }">
+                        <VBtn
+                            v-bind="menuProps"
+                            class="avatar-button ms-3"
+                            icon
+                            aria-label="Открыть меню пользователя"
+                        >
+                            <VAvatar color="#df5f45" size="36">
+                                {{ user.first_name.charAt(0).toUpperCase() }}
+                            </VAvatar>
+                        </VBtn>
+                    </template>
 
-                    <VMenu activator="parent" origin="top end">
-                        <VList>
+                    <VList class="user-menu-list" density="comfortable">
+                        <div class="user-menu-header">
+                            <VAvatar color="#df5f45" size="42">
+                                {{ user.first_name.charAt(0).toUpperCase() }}
+                            </VAvatar>
+                            <div>
+                                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                                <span>{{ user.email }}</span>
+                            </div>
+                        </div>
+                        <VDivider />
+                        <div class="user-menu-actions">
                             <VListItem
-                                :href="DashboardRoutes.index.url()"
+                                :href="GeneralRoutes.profile().url"
                                 prepend-icon="mdi-account-outline"
                                 title="Личный кабинет"
                             />
@@ -57,9 +72,9 @@
                                 :disabled="logoutForm.processing"
                                 @click="logout"
                             />
-                        </VList>
-                    </VMenu>
-                </VBtn>
+                        </div>
+                    </VList>
+                </VMenu>
 
                 <VBtn
                     v-else
@@ -81,44 +96,42 @@
         >
             <VList nav>
                 <VListItem
-                    v-for="item in items"
-                    :key="item.href"
-                    :href="item.href"
+                    v-for="item in mainMenu"
+                    :key="item.to.url"
+                    :href="item.to.url"
                     :title="item.title"
                     @click="drawer = false"
                 />
             </VList>
         </VNavigationDrawer>
-        <VMain class="appMain">
-            <div class="ps-4 pe-4">
-                <slot/>
-            </div>
+        <VMain>
+            <slot/>
         </VMain>
         <footer class="site-footer">
             <div class="shell footer-inner">
-                <div class="brand light"><span class="brand-mark">よ</span><span>YOKO</span></div>
+                <div class="brand light"><span class="brand-mark">よ</span><span>SushiDex</span></div>
                 <p>Суши и роллы, приготовленные с уважением к продукту.</p>
-                <span>© {{ new Date().getFullYear() }} Yoko</span>
+                <span>© {{ new Date().getFullYear() }} SushiDex</span>
             </div>
         </footer>
     </VApp>
 </template>
 
 <script setup lang="ts">
-import {Head, Link, useForm, usePage} from '@inertiajs/vue3';
+import {Link, useForm, usePage} from '@inertiajs/vue3';
 import {computed, shallowRef} from 'vue';
-import DashboardRoutes from '~routes/Admin/DashboardController.ts';
 import SessionRoutes from '~routes/Auth/SessionController.ts';
 import type {UserAuthResource} from "~types/generated";
 import Posts from "~routes/PostController.ts";
 import AdminDashboard from "~routes/Admin/DashboardController.ts";
+import GeneralRoutes from '~routes/GeneralController';
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
 const user = props.user
 const drawer = shallowRef(false);
 const logoutForm = useForm({});
 const mainMenuBase = [
-    // {to: General.home(), title: 'Home', icon: '', guard: null},
+    {to: GeneralRoutes.menu(), title: 'Меню', icon: '$food', guard: null},
     {to: Posts.index(), title: 'Посты', icon: '$newspaper', guard: null},
     {to: AdminDashboard.index(), title: 'Администрирование', icon: '', guard: 'admin'}
 ] as const;
@@ -132,14 +145,9 @@ function logout() {
     logoutForm.submit(SessionRoutes.logout());
 }
 
-const items = [
-    {title: 'Меню', href: '#menu'},
-    {title: 'О нас', href: '#about'},
-    {title: 'Доставка', href: '#delivery'},
-];
 </script>
 
-<style scoped>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Prata&display=swap');
 
 .sushi-page {
@@ -197,6 +205,69 @@ const items = [
     font-size: 10px;
     font-weight: 500;
     letter-spacing: .08em
+}
+
+.avatar-button {
+    border: 1px solid rgba(255, 255, 255, .2)
+}
+
+.user-menu {
+    min-width: 280px !important;
+}
+
+.user-menu-list {
+    overflow: hidden;
+    padding: 0 !important;
+    border: 1px solid #e3d9ce;
+    border-radius: 0 !important;
+    background: #fffaf4 !important;
+    color: #171716 !important;
+    font-family: 'Manrope', sans-serif !important;
+    box-shadow: 0 18px 45px rgba(32, 25, 20, .16) !important;
+}
+
+.user-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 19px 20px;
+}
+
+.user-menu-header > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-menu-header strong {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-header span {
+    overflow: hidden;
+    margin-top: 3px;
+    color: #91857b;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-actions {
+    padding: 8px;
+}
+
+.user-menu-actions .v-list-item {
+    min-height: 44px;
+    border-radius: 0;
+    font-size: 12px;
+}
+
+.user-menu-actions .v-list-item:hover {
+    background: #f0e8de;
+    color: #df5f45;
 }
 
 .hero {
@@ -514,6 +585,11 @@ const items = [
     font-size: 12px
 }
 
+.inner-page { min-height: calc(100vh - 180px); padding: 76px 0 112px }
+.page-intro { max-width: 720px; margin-bottom: 52px }
+.page-intro h1 { margin: 0; font-family: 'Prata', serif; font-size: clamp(44px, 6vw, 72px); font-weight: 400; line-height: 1.1; letter-spacing: -.035em }
+.page-intro > p:last-child { max-width: 590px; margin: 20px 0 0; color: #786f66; font-size: 16px; line-height: 1.75 }
+
 @media (max-width: 850px) {
     .hero {
         min-height: 760px
@@ -600,6 +676,8 @@ const items = [
     .menu-section, .story-section {
         padding: 78px 0
     }
+
+    .inner-page { padding: 54px 0 78px }
 
     .footer-inner {
         padding: 28px 0;

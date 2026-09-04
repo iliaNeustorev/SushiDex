@@ -1,29 +1,42 @@
 <script setup lang="ts">
-import {useForm} from '@inertiajs/vue3'
-import ForgotPasswordRoutes from '~gen/wayfinder/actions/App/Http/Controllers/Auth/PasswordResetController'
-import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
+import SessionRoutes from '~routes/Auth/SessionController';
 
 const form = useForm({
     email: '',
-})
+});
 
-function send() {
+function send(): void {
     form.submit(ForgotPasswordRoutes.store());
 }
-
 </script>
 
 <template>
-    <DefaultLayout>
-        <h1>Send Email</h1>
-        <hr>
-        <form>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input v-model="form.email" type="email" class="form-control">
-                <div class="text-danger">{{ form.errors.email }}&nbsp;</div>
-            </div>
-            <button @click="send" :disabled="form.processing" type="button" class="btn btn-primary">Send</button>
+    <Head title="Восстановление пароля — SushiDex" />
+    <AuthLayout>
+        <template #title>Вернём доступ к аккаунту</template>
+        <template #description>Укажите почту, с которой регистрировались. Мы отправим безопасную ссылку для создания нового пароля.</template>
+
+        <p class="auth-kicker">Восстановление доступа</p>
+        <h2 class="auth-heading">Забыли пароль?</h2>
+        <p class="auth-lead">Введите электронную почту — письмо со ссылкой придёт в течение нескольких минут.</p>
+
+        <form class="auth-form" @submit.prevent="send">
+            <VTextField
+                v-model="form.email"
+                :error-messages="form.errors.email"
+                autocomplete="email"
+                label="Электронная почта"
+                type="email"
+                variant="outlined"
+            />
+            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+                Отправить ссылку
+            </VBtn>
         </form>
-    </DefaultLayout>
+
+        <p class="auth-switch">Вспомнили пароль?<Link :href="SessionRoutes.create().url">Вернуться ко входу</Link></p>
+    </AuthLayout>
 </template>

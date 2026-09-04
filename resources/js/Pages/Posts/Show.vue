@@ -2,7 +2,7 @@
 import {Link} from '@inertiajs/vue3';
 import type {PostPublicResource} from '~types/generated';
 import Posts from '~routes/PostController';
-import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
+import MainLayout from "~vue/Layouts/MainLayout.vue";
 
 defineProps<{
     post: PostPublicResource
@@ -10,8 +10,8 @@ defineProps<{
 </script>
 
 <template>
-    <DefaultLayout>
+    <MainLayout>
         <h1>{{ post.title }}</h1>
         <Link :href="Posts.index().url">Back</Link>
-    </DefaultLayout>
+    </MainLayout>
 </template>

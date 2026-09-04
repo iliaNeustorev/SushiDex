@@ -1,47 +1,67 @@
 <script setup lang="ts">
-import {useForm} from '@inertiajs/vue3'
-import DefaultLayout from '~vue/Layouts/DefaultLayout.vue';
-import RegisterRoutes from '~routes/Auth/RegisterController'
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import RegisterRoutes from '~routes/Auth/RegisterController';
+import SessionRoutes from '~routes/Auth/SessionController';
 
 const form = useForm({
     first_name: '',
     email: '',
     password: '',
     password_confirmation: '',
-})
+});
 
-function send() {
+function send(): void {
     form.post(RegisterRoutes.store().url);
 }
-
 </script>
 
 <template>
-    <DefaultLayout>
-        <h1>Register</h1>
-        <hr>
-        <form>
-            <div class="mb-3">
-                <label class="form-label">Name</label>
-                <input v-model="form.first_name" type="text" class="form-control">
-                <div class="text-danger">{{ form.errors.email }}&nbsp;</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input v-model="form.email" type="text" class="form-control">
-                <div class="text-danger">{{ form.errors.email }}&nbsp;</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input v-model="form.password" type="password" class="form-control">
-                <div class="text-danger">{{ form.errors.password }}&nbsp;</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Repeat password</label>
-                <input v-model="form.password_confirmation" type="password" class="form-control">
-                <div class="text-danger">{{ form.errors.password }}&nbsp;</div>
-            </div>
-            <button @click="send" :disabled="form.processing" type="button" class="btn btn-primary">Register</button>
+    <Head title="Регистрация — SushiDex" />
+    <AuthLayout>
+        <template #title>Станьте частью SushiDex</template>
+        <template #description>Создайте аккаунт — и любимые блюда, адреса доставки и история заказов всегда будут под рукой.</template>
+
+        <p class="auth-kicker">Новый аккаунт</p>
+        <h2 class="auth-heading">Регистрация</h2>
+        <p class="auth-lead">Заполните четыре поля — это займёт меньше минуты.</p>
+
+        <form class="auth-form" @submit.prevent="send">
+            <VTextField
+                v-model="form.first_name"
+                :error-messages="form.errors.first_name"
+                autocomplete="given-name"
+                label="Ваше имя"
+                variant="outlined"
+            />
+            <VTextField
+                v-model="form.email"
+                :error-messages="form.errors.email"
+                autocomplete="email"
+                label="Электронная почта"
+                type="email"
+                variant="outlined"
+            />
+            <VTextField
+                v-model="form.password"
+                :error-messages="form.errors.password"
+                autocomplete="new-password"
+                label="Пароль"
+                type="password"
+                variant="outlined"
+            />
+            <VTextField
+                v-model="form.password_confirmation"
+                autocomplete="new-password"
+                label="Повторите пароль"
+                type="password"
+                variant="outlined"
+            />
+            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+                Создать аккаунт
+            </VBtn>
         </form>
-    </DefaultLayout>
+
+        <p class="auth-switch">Уже зарегистрированы?<Link :href="SessionRoutes.create().url">Войти</Link></p>
+    </AuthLayout>
 </template>
