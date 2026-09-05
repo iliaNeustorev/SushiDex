@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Редактировать категорию</VCardTitle>
-                <VDivider/>
+                <VDivider class="mb-2"/>
                 <VTextField
                     v-model="form.url"
                     :counter="10"
@@ -17,6 +17,16 @@
                     :error-messages="form.errors.title"
                     label="Title"
                 ></VTextField>
+
+                <VSelect
+                    v-model="form.parent_id"
+                    :error-messages="form.errors.parent_id"
+                    :items="categories"
+                    item-title="title"
+                    item-value="id"
+                    label="Категория" ,
+                    clearable
+                ></VSelect>
 
                 <VCardActions>
                     <VBtn
@@ -59,7 +69,8 @@ import AdminImages from "~routes/Admin/ImagesController.ts";
 
 const props = defineProps<{
     category: CategoryCrudResource,
-    images: ImageCrudResource[]
+    images: ImageCrudResource[],
+    categories: CategoryCrudResource[],
 }>();
 
 const form = useForm<CategoriesSaveReqDTO>({

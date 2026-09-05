@@ -2,7 +2,8 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard class="mt-3" :loading="form.processing">
-                <VCardTitle>Редактировать товар</VCardTitle>
+                <VCardTitle tag="h1">Редактировать товар</VCardTitle>
+                <VDivider class="mb-2"/>
                 <VCardText>
                     <form @submit.prevent="form.submit(ProductRoutes.update(product))">
                         <VTextField v-model="form.title" label="Название" :error-messages="form.errors.title"/>

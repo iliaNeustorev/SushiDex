@@ -2,8 +2,8 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
-                <VCardTitle tag="h1">Create post</VCardTitle>
-                <VDivider/>
+                <VCardTitle tag="h1">Создать пост</VCardTitle>
+                <VDivider class="mb-2"/>
                 <form @submit.prevent="send" class="mb-3 ml-2">
                     <VTextField
                         v-model="form.url"
@@ -16,14 +16,14 @@
                         v-model="form.title"
                         :counter="7"
                         :error-messages="form.errors.title"
-                        label="Title"
+                        label="Имя"
                     ></VTextField>
 
                     <VTextarea
                         v-model="form.content"
                         clearable
                         :error-messages="form.errors.content"
-                        label="Content">
+                        label="Контент">
                     </VTextarea>
 
                     <VSelect
@@ -32,7 +32,7 @@
                         :items="categories"
                         item-title="title"
                         item-value="id"
-                        label="Category"
+                        label="Категория"
                     ></VSelect>
 
                     <VSelect
@@ -42,17 +42,17 @@
                         item-title="title"
                         item-value="id"
                         multiple
-                        label="Tags"
+                        label="Теги"
                     ></VSelect>
                     <VBtn
                         class="me-4"
                         type="submit"
                     >
-                        Create
+                        Создать
                     </VBtn>
 
                     <VBtn @click="resetForm">
-                        clear
+                        Очистить
                     </VBtn>
                 </form>
             </VCard>
@@ -64,7 +64,8 @@
 import {useForm} from '@inertiajs/vue3'
 import AdminLayout from '~vue/Layouts/AdminLayout.vue';
 import PostsRoutes from '~routes/Admin/PostController'
-import type {CategoryCrudResource, PostsSaveReqDTO, TagCrudResource} from "~types/generated";
+import type {CategoryCrudResource, TagCrudResource} from "~types/generated";
+import type {PostForm} from "~vue/shared/forms.ts";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 
 const {categories} = defineProps<{
@@ -72,7 +73,7 @@ const {categories} = defineProps<{
     tags: TagCrudResource[]
 }>();
 
-const form = useForm<PostsSaveReqDTO>({
+const form = useForm<PostForm>({
     url: '',
     title: '',
     content: '',

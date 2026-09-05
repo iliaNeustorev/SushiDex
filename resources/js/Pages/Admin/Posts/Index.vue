@@ -78,8 +78,8 @@
 							{ key: 'id', title: 'Id' },
 							{ key: 'title', title: 'Название' },
 							{ key: 'created_at', title: 'Дата создания' },
-							{ key: 'status', title: 'Статус', sortable: false },
-							{ key: 'actions', title: 'Действия', sortable: false }
+							{ key: 'status', title: 'Статус', sortable: false, align: 'center' },
+							{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
 						]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
@@ -93,44 +93,36 @@
                             {{ statuses.find(s => s.value === item.status)?.title }}
                         </template>
                         <template #item.actions="{ item }">
-                            <Link :href="PostsRoutes.edit(item.id).url" type="button" class="btn btn-success ms-2">
-                                Редактировать
-                            </Link>
-                            <button @click="confirmRemove(item)" type="button" class="btn btn-danger ms-2">
-                                Удалить
-                            </button>
+                            <VContainer>
+                                <VRow class="align-center justify-center">
+                                    <VCol cols="auto">
+                                        <VBtn density="compact" color="green-darken-1">
+                                            <Link :href="PostsRoutes.edit(item.id).url" class="text-decoration-none">
+                                                <span class="text-white">Редактировать</span>
+                                            </Link>
+                                        </VBtn>
+                                    </VCol>
+                                    <VCol cols="auto">
+                                        <VBtn @click="confirmRemove(item)" density="compact"
+                                              color="deep-orange-lighten-1">
+                                            <span class="text-white">Удалить</span>
+                                        </VBtn>
+                                    </VCol>
+                                </VRow>
+                            </VContainer>
                         </template>
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog
-                :model-value="!!postForRemove"
-                max-width="400"
-                title="Are you sure you want to delete this post?"
-                @close="postForRemove = null"
-            >
-                <template #default v-if="postForRemove">
-                    <VCard>
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <td>Id</td>
-                                <td>{{ postForRemove.id }}</td>
-                            </tr>
-                            <tr>
-                                <td>Название</td>
-                                <td>{{ postForRemove.title }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <button :disabled="deleteForm.processing" @click="removeConfirmed" type="button"
-                                class="btn btn-success">Ok
-                        </button>
-                        <button :disabled="deleteForm.processing" @click="postForRemove = null" type="button"
-                                class="btn btn-danger">Отмена
-                        </button>
-                    </VCard>
-                </template>
+            <VDialog :model-value="!!postForRemove" max-width="420">
+                <VCard v-if="postForRemove">
+                    <VCardTitle>Удалить пост?</VCardTitle>
+                    <VCardText>«{{ postForRemove.title }}»</VCardText>
+                    <VCardActions>
+                        <VBtn :disabled="deleteForm.processing" @click="postForRemove = null">Отмена</VBtn>
+                        <VBtn :loading="deleteForm.processing" color="error" @click="removeConfirmed">Удалить</VBtn>
+                    </VCardActions>
+                </VCard>
             </VDialog>
         </AdminWrapper>
     </AdminLayout>

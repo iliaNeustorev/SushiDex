@@ -2,7 +2,7 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard class="mb-4">
-                <VCardTitle>Редактирование поста {{ post.id }}</VCardTitle>
+                <VCardTitle tag="h1">Редактирование поста {{ post.url }}</VCardTitle>
                 <VDivider class="mb-2"/>
                 <VCardText>
                     <VTextField
