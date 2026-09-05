@@ -23,11 +23,13 @@ import {Link, usePage} from '@inertiajs/vue3';
 import PostsRoutes from '~gen/wayfinder/actions/App/Http/Controllers/Admin/PostController';
 import Dashboard from '~gen/wayfinder/actions/App/Http/Controllers/Admin/DashboardController';
 import ProductRoutes from '~routes/Admin/ProductController';
+import CategoriesRoutes from '~routes/Admin/CategoryController';
 
 const mainMenuItems = [
-    {url: Dashboard.index().url, title: 'Админ панель', exact: true},
+    {url: Dashboard.index().url, title: 'Админ панель'},
     {url: PostsRoutes.index().url, title: 'Посты'},
-    {url: ProductRoutes.index().url, title: 'Продукты'}
+    {url: ProductRoutes.index().url, title: 'Продукты'},
+    {url: CategoriesRoutes.index().url, title: 'Категории'}
 ] as const
 
 const page = usePage();

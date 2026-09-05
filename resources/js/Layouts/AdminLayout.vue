@@ -12,12 +12,14 @@
             <div class="d-flex flex-column fill-height">
                 <VList>
                     <VListSubheader>Админ панель</VListSubheader>
-                    <VListItem v-for="item in mainMenu" :key="item.to.url" color="primary" rounded="xl">
+                    <VListItem v-for="(item,index) in mainMenu" :key="item.to.url" color="primary" rounded="xl">
                         <template #prepend>
                             <VIcon :icon="item.icon"/>
                         </template>
                         <VListItemTitle>
-                            <Link :href="item.to.url" class="text-decoration-none text-grey-darken-4 text-h6">{{
+                            <Link :href="item.to.url" class="text-decoration-none text-h6"
+                                  :class="[page.url.startsWith(item.to.url) && index != 0 ? 'text-yellow-darken-3 font-weight-bold' : 'text-grey-darken-4']">
+                                {{
                                     item.title
                                 }}
                             </Link>
@@ -75,13 +77,15 @@ import PostsRoutes from "~routes/Admin/PostController.ts";
 import GeneralController from "~routes/GeneralController.ts";
 import ProductRoutes from "~routes/Admin/ProductController.ts";
 import SessionRoutes from "~routes/Auth/SessionController.ts";
+import CategoryRoutes from "~routes/Admin/CategoryController.ts";
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
-
+const page = usePage();
 const mainMenuBase = [
     {to: GeneralController.index(), title: 'Главная', icon: '', guard: 'admin'},
     {to: PostsRoutes.index(), title: 'Посты', icon: '', guard: 'admin'},
-    {to: ProductRoutes.index(), title: 'Продукты', icon: '', guard: 'admin'}
+    {to: ProductRoutes.index(), title: 'Продукты', icon: '', guard: 'admin'},
+    {to: CategoryRoutes.index(), title: 'Категории', icon: '', guard: 'admin'}
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>

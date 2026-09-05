@@ -22,6 +22,9 @@ export default function initVuetifyPlugin() {
         defaults: {
             VCard: {
                 elevation: 5
+            },
+            VDateInput: {
+                placeholder: 'день.месяц.год'
             }
         },
         components: {
