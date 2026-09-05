@@ -18,7 +18,7 @@ class PostsSaveReqDTO extends Data
 {
     public function __construct(
         #[
-            Min(5),
+            Min(3),
             Max((16)),
             AlphaDash,
             Unique('posts', ignore: new RouteParameterReference('post', 'id', true))
@@ -26,7 +26,7 @@ class PostsSaveReqDTO extends Data
         public string $url,
 
         #[
-            Min(5),
+            Min(3),
             Max((32))
         ]
         public string $title,
@@ -38,9 +38,10 @@ class PostsSaveReqDTO extends Data
         public string $content,
 
         #[Rule(new SoftExists(Category::class))]
-        public ?int $category_id,
+        public int $category_id,
 
         #[Rule(new CheckModelIds(Tag::class))]
         public ?array $tags,
-    ) {}
+    ) {
+    }
 }

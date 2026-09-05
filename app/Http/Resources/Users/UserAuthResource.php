@@ -18,7 +18,7 @@ class UserAuthResource extends Data
         public Carbon $created_at,
         #[DataCollectionOf(RolePublicResource::class)]
         public DataCollection $roles,
-        public string $address
+        public ?string $address
     ) {
     }
 }

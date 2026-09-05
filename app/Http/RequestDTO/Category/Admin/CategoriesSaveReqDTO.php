@@ -15,9 +15,10 @@ use Spatie\LaravelData\Support\Validation\References\RouteParameterReference;
 
 class CategoriesSaveReqDTO extends Data
 {
+
     public function __construct(
         #[
-            Min(5),
+            Min(3),
             Max(255),
             AlphaDash,
             Unique('categories', ignore: new RouteParameterReference('category', 'id', true))
@@ -25,7 +26,7 @@ class CategoriesSaveReqDTO extends Data
         public string $url,
 
         #[
-            Min(5),
+            Min(3),
             Max(255)
         ]
         public string $title,

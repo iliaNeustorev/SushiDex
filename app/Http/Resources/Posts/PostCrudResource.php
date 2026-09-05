@@ -19,8 +19,9 @@ class PostCrudResource extends Data
         public string $content,
         public Carbon $created_at,
         public Status $status,
-        public ?CategoryCrudResource $category,
+        public CategoryCrudResource $category,
         #[DataCollectionOf(TagCrudResource::class)]
         public DataCollection $tags,
-    ) {}
+    ) {
+    }
 }

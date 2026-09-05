@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Categories\Type;
 use App\Http\Controllers\Controller;
+use App\Http\RequestDTO\Category\Admin\CategoriesQuery;
 use App\Http\Requests\Category\SaveRequest;
 use App\Http\Resources\Categories\CategoryCrudResource;
+use App\Http\Resources\General\GeneralPagination;
 use App\Http\Resources\Images\ImageCrudResource;
 use App\Models\Category;
 use App\Services\Category\CategoryAdminService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CategoryController extends Controller
 {
@@ -23,12 +29,26 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('title')->get();
+        $filters = CategoriesQuery::validateAndCreate($request->query())->toArray();
+        $categories = function () use ($filters) {
+            $categoriesPaginator = QueryBuilder::for(Category::class)
+                ->allowedFilters([
+                    'title',
+                    'url',
+                    AllowedFilter::exact('type'),
+                    AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
+                    AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
+                ])
+                ->allowedSorts(['id', 'title', 'created_at', 'type'])
+                ->paginate($filters['batch'] ?? 10);
 
-        return Inertia::render('Admin/Categories/Index', fn() => [
-
+            return GeneralPagination::fromPaginator($categoriesPaginator, CategoryCrudResource::class);
+        };
+        return Inertia::render('Admin/Categories/Index', [
+            'categories' => $categories,
+            'query' => $filters,
         ]);
     }
 
@@ -37,7 +57,9 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Categories/Create', []);
+        $types = collect(Type::TEXTS);
+        $categories = CategoryCrudResource::collect(Category::get());
+        return Inertia::render('Admin/Categories/Create', compact('types', 'categories'));
     }
 
     /**
@@ -63,6 +85,7 @@ class CategoryController extends Controller
         return Inertia::render('Admin/Categories/Edit', [
             'category' => fn() => CategoryCrudResource::from($category),
             'images' => fn() => ImageCrudResource::collect($category->images),
+            'categories' => fn() => CategoryCrudResource::collect(Category::whereNot('id', $category->id)->type($category->type)->get()),
         ]);
     }
 

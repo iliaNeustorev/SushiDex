@@ -3,31 +3,55 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\RequestDTO\Product\Admin\ProductsQuery;
 use App\Http\Requests\Product\SaveRequest;
 use App\Http\Resources\Categories\CategoryCrudResource;
+use App\Http\Resources\General\GeneralPagination;
 use App\Http\Resources\Images\ImageCrudResource;
 use App\Http\Resources\Products\ProductCrudResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\Product\ProductAdminService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
-    public function __construct(private readonly ProductAdminService $products) {}
+    public function __construct(private readonly ProductAdminService $products)
+    {
+    }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         Gate::authorize('viewAny', Product::class);
+        $query = ProductsQuery::validateAndCreate($request->query())->toArray();
 
         return Inertia::render('Admin/Products/Index', [
-            'products' => fn () => ProductCrudResource::collect(Product::with('category')->latest()->get()),
+            'products' => function () use ($query) {
+                $paginator = QueryBuilder::for(Product::class)
+                    ->with('category')
+                    ->allowedFilters([
+                        'title',
+                        AllowedFilter::exact('category_id'),
+                        AllowedFilter::callback('date_from', fn($builder, $value) => $builder->where('created_at', '>=', $value)),
+                        AllowedFilter::callback('date_to', fn($builder, $value) => $builder->where('created_at', '<=', $value . ' 23:59:59')),
+                    ])
+                    ->defaultSort('-id')
+                    ->allowedSorts(['id', 'title', 'price', 'created_at'])
+                    ->paginate($query['batch'] ?? 10);
+
+                return GeneralPagination::fromPaginator($paginator, ProductCrudResource::class);
+            },
+            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'query' => $query,
         ]);
     }
 
@@ -39,7 +63,7 @@ class ProductController extends Controller
         Gate::authorize('create', Product::class);
 
         return Inertia::render('Admin/Products/Create', [
-            'categories' => fn () => CategoryCrudResource::collect(Category::orderBy('title')->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
         ]);
     }
 
@@ -63,9 +87,9 @@ class ProductController extends Controller
         $product->load('category', 'images');
 
         return Inertia::render('Admin/Products/Edit', [
-            'product' => fn () => ProductCrudResource::from($product),
-            'categories' => fn () => CategoryCrudResource::collect(Category::orderBy('title')->get()),
-            'images' => fn () => ImageCrudResource::collect($product->images),
+            'product' => fn() => ProductCrudResource::from($product),
+            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'images' => fn() => ImageCrudResource::collect($product->images),
         ]);
     }
 

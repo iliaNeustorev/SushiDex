@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Categories\Type;
 use App\Enums\Posts\Status;
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\Posts\Admin\PostsQuery;
@@ -45,12 +46,11 @@ class PostController extends Controller
                     AllowedFilter::exact('status'),
                     AllowedFilter::callback(
                         'tags',
-                        fn ($query, $values) => $query->whereHas('tags', fn ($q) => $q->whereIn('tag_id', (array) $values))
+                        fn($query, $values) => $query->whereHas('tags', fn($q) => $q->whereIn('tag_id', (array)$values))
                     ),
-                    AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
-                    AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+                    AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
+                    AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
                 ])
-                ->orderByDesc('id')
                 ->allowedSorts(['id', 'title', 'created_at'])
                 ->paginate($query['batch'] ?? 10);
 
@@ -66,7 +66,7 @@ class PostController extends Controller
             $tagsBuilder = Tag::orderBy('url', 'ASC')->limit(5);
 
             if (isset($filters['tagSearch'])) {
-                $tagsBuilder->where('url', 'LIKE', '%'.$filters['tagSearch'].'%');
+                $tagsBuilder->where('url', 'LIKE', '%' . $filters['tagSearch'] . '%');
             }
 
             $tagsBySearch = $tagsBuilder->get();
@@ -80,7 +80,7 @@ class PostController extends Controller
             return TagCrudResource::collect($tagsBySearch);
         };
         $statuses = collect(Status::TEXTS);
-        $categories = CategoryCrudResource::collect(Category::get());
+        $categories = CategoryCrudResource::collect(Category::type(Type::BLOG)->get());
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
@@ -96,7 +96,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = CategoryCrudResource::collect(Category::get());
+        $categories = CategoryCrudResource::collect(Category::type(Type::BLOG)->get());
         $tags = TagCrudResource::collect(Tag::get());
 
         return Inertia::render('Admin/Posts/Create', compact('categories', 'tags'));
@@ -111,7 +111,7 @@ class PostController extends Controller
         $user = $request->user();
         $data = $request->getData()->toArray() + ['user_id' => $user->id, 'status' => Status::DRAFT];
         $newPost = Post::create($data);
-        if (! empty($data['tags'])) {
+        if (!empty($data['tags'])) {
             $newPost->tags()->attach($data['tags']);
         }
 
@@ -126,10 +126,10 @@ class PostController extends Controller
         $post->load('category:id,title', 'user', 'tags');
 
         return Inertia::render('Admin/Posts/Edit', [
-            'categories' => fn () => CategoryCrudResource::collect(Category::get()),
-            'post' => fn () => $post,
-            'tags' => fn () => TagCrudResource::collect(Tag::get()),
-            'images' => fn () => ImageCrudResource::collect($post->images),
+            'categories' => fn() => CategoryCrudResource::collect(Category::type(Type::BLOG)->get()),
+            'post' => fn() => $post,
+            'tags' => fn() => TagCrudResource::collect(Tag::get()),
+            'images' => fn() => ImageCrudResource::collect($post->images),
         ]);
     }
 
@@ -141,7 +141,7 @@ class PostController extends Controller
         Gate::authorize('update', $post);
         $data = $request->getData()->toArray();
         $post->update($data);
-        if (! empty($data['tags'])) {
+        if (!empty($data['tags'])) {
             $post->tags()->sync($data['tags']);
         }
 
