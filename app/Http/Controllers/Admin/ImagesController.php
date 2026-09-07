@@ -11,11 +11,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ImagesController extends Controller
 {
-    protected ImageService $imageService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(private readonly ImageService $imageService)
     {
-        $this->imageService = $imageService;
     }
 
     /**

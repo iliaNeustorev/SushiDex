@@ -4,30 +4,54 @@
             <VCard class="mt-3">
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Категории</span>
-                    <Link :href="CategoriesRoutes.create().url" class="text-decoration-none text-green-darken-3">Новая
-                        категория
+                    <Link
+                        :href="CategoriesRoutes.create().url"
+                        class="text-decoration-none text-green-darken-3">
+                        Новая категория
                     </Link>
                 </VCardTitle>
                 <VDivider/>
                 <VCardText>
                     <VRow>
                         <VCol cols="12" md="4">
-                            <VTextField :model-value="queryLocal.filter.title" @update:model-value="onTitleUpdate"
-                                        label="Название" variant="outlined" clearable/>
+                            <VTextField
+                                :model-value="queryLocal.filter.title"
+                                @update:model-value="onTitleUpdate"
+                                label="Имя"
+                                variant="outlined"
+                                :maxlength="255"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12" md="4">
-                            <VTextField :model-value="queryLocal.filter.url" @update:model-value="onUrlUpdate"
-                                        label="URL" variant="outlined" clearable/>
+                            <VTextField
+                                :model-value="queryLocal.filter.url"
+                                @update:model-value="onUrlUpdate"
+                                label="URL"
+                                variant="outlined"
+                                :maxlength="255"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12" md="4">
-                            <VSelect v-model="queryLocal.filter.type" :items="types" label="Тип" variant="outlined"
-                                     clearable/>
+                            <VSelect
+                                v-model="queryLocal.filter.type"
+                                :items="types"
+                                label="Тип"
+                                variant="outlined"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12">
-                            <VDateInput v-model="dateRangeAdapter.inputModel.value" :hide-actions="false"
-                                        @update:menu="dateRangeAdapter.onUpdateMenu"
-                                        @click:clear="dateRangeAdapter.onClear" label="Дата создания" variant="outlined"
-                                        multiple="range" clearable/>
+                            <VDateInput
+                                v-model="dateRangeAdapter.inputModel.value"
+                                :hide-actions="false"
+                                @update:menu="dateRangeAdapter.onUpdateMenu"
+                                @click:clear="dateRangeAdapter.onClear"
+                                label="Дата создания"
+                                variant="outlined"
+                                multiple="range"
+                                clearable/>
                         </VCol>
                     </VRow>
                 </VCardText>
@@ -94,8 +118,17 @@
                     <VCardTitle>Удалить категорию?</VCardTitle>
                     <VCardText>«{{ categoryForRemove.title }}»</VCardText>
                     <VCardActions>
-                        <VBtn :disabled="deleteForm.processing" @click="categoryForRemove = null">Отмена</VBtn>
-                        <VBtn :loading="deleteForm.processing" color="error" @click="removeConfirmed">Удалить</VBtn>
+                        <VBtn
+                            :disabled="deleteForm.processing"
+                            @click="categoryForRemove = null">
+                            Отмена
+                        </VBtn>
+                        <VBtn
+                            :loading="deleteForm.processing"
+                            color="error"
+                            @click="removeConfirmed">
+                            Удалить
+                        </VBtn>
                     </VCardActions>
                 </VCard>
             </VDialog>

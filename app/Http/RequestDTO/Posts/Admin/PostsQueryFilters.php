@@ -4,6 +4,7 @@ namespace App\Http\RequestDTO\Posts\Admin;
 
 use App\Enums\Posts\Status;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
+use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Regex;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
@@ -23,5 +24,6 @@ class PostsQueryFilters extends Data
 
         #[Regex('/^(\d+,)*\d+$/')]
         public Optional|string $tags
-    ) {}
+    ) {
+    }
 }

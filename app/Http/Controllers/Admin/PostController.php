@@ -16,6 +16,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Services\Image\Service as ImageService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -24,11 +25,9 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
-    protected ImageService $imageService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(private readonly ImageService $imageService)
     {
-        $this->imageService = $imageService;
     }
 
     /**

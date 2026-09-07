@@ -22,7 +22,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class CategoryController extends Controller
 {
     public function __construct(
-        protected CategoryAdminService $categoryAdminService
+        private readonly CategoryAdminService $categoryAdminService
     ) {
     }
 
