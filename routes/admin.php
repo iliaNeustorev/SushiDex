@@ -19,7 +19,7 @@ Route::middleware(['can:moderator'])->group(function () {
 });
 
 Route::middleware(['can:dev'])->group(function () {
-    Route::resource('tags', TagController::class)->only('create', 'store', 'edit', 'update', 'destroy');
+    Route::resource('tags', TagController::class)->only('index', 'create', 'store', 'edit', 'update', 'destroy');
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('post-trash', PostTrashController::class)->except('show', 'create', 'store', 'edit');
     Route::resource('products', ProductController::class)->except(['show']);

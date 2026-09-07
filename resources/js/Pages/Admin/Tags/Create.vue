@@ -1,26 +1,44 @@
 <template>
     <AdminLayout>
         <AdminWrapper>
-            <h1>Create tag</h1>
-            <hr>
-            <form>
-                <div class="mb-3">
-                    <label class="form-label">Url</label>
-                    <input v-model="form.url" type="text" class="form-control">
-                    <div class="text-danger">{{ form.errors.url }}&nbsp;</div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input v-model="form.title" type="text" class="form-control">
-                    <div class="text-danger">{{ form.errors.title }}&nbsp;</div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea v-model="form.description" class="form-control"></textarea>
-                    <div class="text-danger">{{ form.errors.description }}&nbsp;</div>
-                </div>
-                <button @click="send" :disabled="form.processing" type="button" class="btn btn-primary">Send</button>
-            </form>
+            <VCard :loading="form.processing" class="mt-3">
+                <VCardTitle tag="h1">Создать тэг</VCardTitle>
+                <VDivider class="mb-2"/>
+                <form @submit.prevent="send" class="mb-3 ml-2">
+                    <VTextField
+                        v-model="form.url"
+                        :counter="10"
+                        :error-messages="form.errors.url"
+                        label="Url"
+                        :maxlength="64"
+                    ></VTextField>
+
+                    <VTextField
+                        v-model="form.title"
+                        :counter="7"
+                        :error-messages="form.errors.title"
+                        label="Имя"
+                        :maxlength="64"
+                    ></VTextField>
+
+                    <VTextarea
+                        v-model="form.description"
+                        clearable
+                        :error-messages="form.errors.description"
+                        label="Описание">
+                    </VTextarea>
+                    <VBtn
+                        class="me-4"
+                        type="submit"
+                    >
+                        Создать
+                    </VBtn>
+
+                    <VBtn @click="resetForm">
+                        Очистить
+                    </VBtn>
+                </form>
+            </VCard>
         </AdminWrapper>
     </AdminLayout>
 </template>
@@ -39,6 +57,10 @@ const form = useForm({
 
 function send() {
     form.submit(TagsRoutes.store());
+}
+
+function resetForm() {
+    form.reset();
 }
 </script>
 

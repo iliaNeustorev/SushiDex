@@ -11,7 +11,8 @@ class TagCrudResource extends Data
         public int $id,
         public string $url,
         public string $title,
-        public string $description,
+        public ?string $description,
         public Carbon $created_at,
-    ) {}
+    ) {
+    }
 }

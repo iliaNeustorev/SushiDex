@@ -2,29 +2,16 @@
 
 namespace App\Http\Requests\Tag;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Http\RequestDTO\Tags\Admin\TagsSaveReqDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Spatie\LaravelData\WithData;
 
 class SaveRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    use withData;
+
+    public function dataClass(): string
     {
-        $uniqueUrl = Rule::unique('tags');
-
-        if (isset($this->tag)) {
-            $uniqueUrl->ignoreModel($this->tag);
-        }
-
-        return [
-            'url' => ['required', 'min:5', 'max:255', $uniqueUrl],
-            'title' => ['required', 'min:5', 'max:255'],
-            'description' => ['nullable'],
-        ];
+        return TagsSaveReqDTO::class;
     }
 }
