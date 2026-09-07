@@ -24,12 +24,16 @@ import PostsRoutes from '~gen/wayfinder/actions/App/Http/Controllers/Admin/PostC
 import Dashboard from '~gen/wayfinder/actions/App/Http/Controllers/Admin/DashboardController';
 import ProductRoutes from '~routes/Admin/ProductController';
 import CategoriesRoutes from '~routes/Admin/CategoryController';
+import TagsRoutes from '~routes/Admin/TagController';
+import UsersRoutes from "~routes/Admin/UserController.ts";
 
 const mainMenuItems = [
     {url: Dashboard.index().url, title: 'Админ панель'},
     {url: PostsRoutes.index().url, title: 'Посты'},
     {url: ProductRoutes.index().url, title: 'Продукты'},
-    {url: CategoriesRoutes.index().url, title: 'Категории'}
+    {url: CategoriesRoutes.index().url, title: 'Категории'},
+    {url: TagsRoutes.index().url, title: 'Тэги'},
+    {url: UsersRoutes.index().url, title: 'Пользователи', icon: '', guard: 'admin'}
 ] as const
 
 const page = usePage();

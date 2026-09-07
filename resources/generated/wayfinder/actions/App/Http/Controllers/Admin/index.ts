@@ -4,6 +4,7 @@ import DashboardController from './DashboardController'
 import TagController from './TagController'
 import CategoryController from './CategoryController'
 import ProductController from './ProductController'
+import UserController from './UserController'
 
 const Admin = {
     PostController: Object.assign(PostController, PostController),
@@ -12,6 +13,7 @@ const Admin = {
     TagController: Object.assign(TagController, TagController),
     CategoryController: Object.assign(CategoryController, CategoryController),
     ProductController: Object.assign(ProductController, ProductController),
+    UserController: Object.assign(UserController, UserController),
 }
 
 export default Admin

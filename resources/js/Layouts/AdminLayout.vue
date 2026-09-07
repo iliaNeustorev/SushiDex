@@ -78,6 +78,8 @@ import GeneralController from "~routes/GeneralController.ts";
 import ProductRoutes from "~routes/Admin/ProductController.ts";
 import SessionRoutes from "~routes/Auth/SessionController.ts";
 import CategoryRoutes from "~routes/Admin/CategoryController.ts";
+import TagsRoutes from "~routes/Admin/TagController.ts";
+import UsersRoutes from "~routes/Admin/UserController.ts";
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
 const page = usePage();
@@ -85,7 +87,9 @@ const mainMenuBase = [
     {to: GeneralController.index(), title: 'Главная', icon: '', guard: 'admin'},
     {to: PostsRoutes.index(), title: 'Посты', icon: '', guard: 'admin'},
     {to: ProductRoutes.index(), title: 'Продукты', icon: '', guard: 'admin'},
-    {to: CategoryRoutes.index(), title: 'Категории', icon: '', guard: 'admin'}
+    {to: CategoryRoutes.index(), title: 'Категории', icon: '', guard: 'admin'},
+    {to: TagsRoutes.index(), title: 'Тэги', icon: '', guard: 'admin'},
+    {to: UsersRoutes.index(), title: 'Пользователи', icon: '', guard: 'admin'}
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
