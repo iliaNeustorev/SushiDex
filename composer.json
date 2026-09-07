@@ -69,6 +69,9 @@
         ],
         "routes": [
             "@php artisan wayfinder:generate --path=resources/generated/wayfinder --skip-routes"
+        ],
+        "generate-types": [
+            "@php artisan typescript:transform"
         ]
     },
     "extra": {
