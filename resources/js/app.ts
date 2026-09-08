@@ -1,6 +1,7 @@
 import {createApp, h} from 'vue'
 import {createInertiaApp} from '@inertiajs/vue3'
 import initVuetifyPlugin from './plugins/vuetify';
+import '~css/base.css';
 
 createInertiaApp({
     resolve: name => {

@@ -27,6 +27,7 @@ export default defineConfig({
             '~types': fileURLToPath(new URL('./resources/generated/types', import.meta.url)),
             '~routes': fileURLToPath(new URL('./resources/generated/wayfinder/actions/App/Http/Controllers', import.meta.url)),
             '~vue': fileURLToPath(new URL('./resources/js', import.meta.url)),
+            '~css': fileURLToPath(new URL('./resources/css', import.meta.url)),
         }
     }
 });

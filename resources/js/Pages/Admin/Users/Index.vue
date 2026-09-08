@@ -61,10 +61,9 @@
 							{ key: 'name', title: 'ФИО', sortable: false },
 							{ key: 'address', title: 'Адрес', sortable: false },
 							{ key: 'phone', title: 'Телефон', sortable: false },
-							{ key: 'block', title: 'Бан', sortable: false },
-							{ key: 'roles', title: 'Роли' },
+							{ key: 'block', title: 'Бан', align: 'center' },
+							{ key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
 							{ key: 'created_at', title: 'Дата регистрации' },
-							//{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
 						]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
@@ -80,62 +79,51 @@
                             }}
                         </template>
                         <template #item.roles="{ item }">
-                            <p v-for="(role, i) in item.roles" :key="i">
-                                {{ role.description }}
-                            </p>
+                            <VAutocomplete
+                                :model-value="item.roles.map(role => role.id)"
+                                :items="rolesForSelect"
+                                :error-messages="changeRolesUserId === item.id ? changeRoles.errors.roleIds : undefined"
+                                item-title="description"
+                                item-value="id"
+                                label="Выбрать роли"
+                                chips
+                                closable-chips
+                                multiple
+                                @update:model-value="sendChangeRoles(item.id, $event)"
+                                variant="underlined"
+                            />
                         </template>
-                        <!--                        <template #item.actions="{ item }">-->
-                        <!--                            <VContainer>-->
-                        <!--                                <VRow class="align-center justify-center">-->
-                        <!--                                    <VCol cols="auto">-->
-                        <!--                                        <VBtn density="compact" color="green-darken-1">-->
-                        <!--                                            <Link :href="PostsRoutes.edit(item.id).url" class="text-decoration-none">-->
-                        <!--                                                <span class="text-white">Редактировать</span>-->
-                        <!--                                            </Link>-->
-                        <!--                                        </VBtn>-->
-                        <!--                                    </VCol>-->
-                        <!--                                    <VCol cols="auto">-->
-                        <!--                                        <VBtn @click="confirmRemove(item)" density="compact"-->
-                        <!--                                              color="deep-orange-lighten-1">-->
-                        <!--                                            <span class="text-white">Удалить</span>-->
-                        <!--                                        </VBtn>-->
-                        <!--                                    </VCol>-->
-                        <!--                                </VRow>-->
-                        <!--                            </VContainer>-->
-                        <!--                        </template>-->
+                        <template #item.block="{ item }">
+                            <div class="d-flex justify-center">
+                                <VCheckbox
+                                    class="flex-grow-0"
+                                    v-model="item.block"
+                                    color="red-darken-3"
+                                    hide-details
+                                    @update:model-value="sendBlock(item.id, item.block)"
+                                ></VCheckbox>
+                            </div>
+                        </template>
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <!--            <VDialog :model-value="!!postForRemove" max-width="420">-->
-            <!--                <VCard v-if="postForRemove">-->
-            <!--                    <VCardTitle>Удалить пост?</VCardTitle>-->
-            <!--                    <VCardText>«{{ postForRemove.title }}»</VCardText>-->
-            <!--                    <VCardActions>-->
-            <!--                        <VBtn-->
-            <!--                            :disabled="deleteForm.processing"-->
-            <!--                            @click="postForRemove = null">-->
-            <!--                            Отмена-->
-            <!--                        </VBtn>-->
-            <!--                        <VBtn-->
-            <!--                            :loading="deleteForm.processing"-->
-            <!--                            color="error"-->
-            <!--                            @click="removeConfirmed">-->
-            <!--                            Удалить-->
-            <!--                        </VBtn>-->
-            <!--                    </VCardActions>-->
-            <!--                </VCard>-->
-            <!--            </VDialog>-->
         </AdminWrapper>
     </AdminLayout>
 </template>
 
 <script setup lang="ts">
 
-import {router} from '@inertiajs/vue3';
-import {reactive, watch} from 'vue';
+import {router, useForm} from '@inertiajs/vue3';
+import {reactive, ref, watch} from 'vue';
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import UsersRoutes from "~routes/Admin/UserController"
-import type {RoleCrudResource, UserCrudResource, UsersQuery} from "~types/generated";
+import type {
+    RoleCrudResource,
+    UserChangeBlockDTO,
+    UserChangeRolesRequestDTO,
+    UserCrudResource,
+    UsersQuery
+} from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';
 import {debounce, merge} from 'lodash';
 import type {RequiredKeys} from "~vue/shared/objects.ts";
@@ -152,9 +140,9 @@ const queryDefaults: RequiredKeys<UsersQuery, 'filter'> = {
     filter: {}
 }
 const queryLocal = reactive(merge({}, queryDefaults, query));
-const onNameUpd = debounce((v: string | null) => queryLocal.filter.name = v ? v : undefined, 400);
-const onAddressUpd = debounce((v: string | null) => queryLocal.filter.address = v ? v : undefined, 400);
-const onPhoneUpd = debounce((v: string | null) => queryLocal.filter.phone = v ? v : undefined, 400);
+const onNameUpd = debounce((v: string | null) => queryLocal.filter.name = v ? v : undefined, 900);
+const onAddressUpd = debounce((v: string | null) => queryLocal.filter.address = v ? v : undefined, 900);
+const onPhoneUpd = debounce((v: string | null) => queryLocal.filter.phone = v ? v : undefined, 900);
 
 watch(queryLocal, applyReload);
 
@@ -162,6 +150,39 @@ function applyReload() {
     router.visit(UsersRoutes.index({
         query: queryLocal
     }));
+}
+
+const form = useForm<UserChangeBlockDTO>({
+    block: false
+});
+const changeRoles = useForm<UserChangeRolesRequestDTO>({
+    roleIds: []
+})
+const changeRolesUserId = ref<number | null>(null);
+
+function sendBlock(id: number, block: boolean) {
+    form.block = Boolean(block);
+    form.submit(UsersRoutes.changeBlock(id), {
+        preserveScroll: true,
+        preserveState: true,
+    });
+}
+
+function sendChangeRoles(userId: number, roleIds: number[]) {
+    changeRolesUserId.value = userId;
+    changeRoles.clearErrors();
+    changeRoles.roleIds = roleIds;
+    if (!roleIds.length) {
+        changeRoles.setError(
+            'roleIds',
+            'У пользователя должна быть хотя бы одна роль'
+        );
+        return;
+    }
+    changeRoles.submit(UsersRoutes.update(userId), {
+        preserveScroll: true,
+        preserveState: true,
+    });
 }
 
 const sortAdapter = useSpatieSortAdapter(() => queryLocal.sort, sort => queryLocal.sort = sort);

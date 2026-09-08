@@ -89,3 +89,5 @@ const menuItems = [
     },
 ];
 </script>
+
+<style scoped src="~css/pages/home.css"></style>

@@ -35,8 +35,6 @@ title: string;
 type: Type;
 parent_id: number | null;
 };
-export type ChangeRolesRequest = {
-};
 export type GeneralPagination = {
 page: number;
 total: number;
@@ -183,6 +181,9 @@ created_at: string;
 roles: Array<RolePublicResource>;
 address: string | null;
 };
+export type UserChangeBlockDTO = {
+block: boolean;
+};
 export type UserChangeRolesRequestDTO = {
 roleIds: Array<any>;
 };
@@ -193,7 +194,7 @@ last_name: string | null;
 middle_name: string | null;
 email: string | null;
 created_at: string;
-roles: Array<RolePublicResource>;
+roles: Array<RoleCrudResource>;
 address: string | null;
 block: boolean;
 phone: string | null;

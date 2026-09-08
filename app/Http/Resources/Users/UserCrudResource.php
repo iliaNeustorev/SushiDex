@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
-use App\Http\Resources\Role\RolePublicResource;
+use App\Http\Resources\Role\RoleCrudResource;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
@@ -20,11 +20,10 @@ class UserCrudResource extends Data
         public ?string $middle_name,
         public ?string $email,
         public Carbon $created_at,
-        #[DataCollectionOf(RolePublicResource::class)]
+        #[DataCollectionOf(RoleCrudResource::class)]
         public DataCollection $roles,
         public ?string $address,
         public bool $block,
         public ?string $phone,
-    ) {
-    }
+    ) {}
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\User\Admin\UsersQuery;
+use App\Http\Requests\Admin\User\ChangeBlockRequest;
 use App\Http\Requests\Admin\User\ChangeRolesRequest;
 use App\Http\Resources\General\GeneralPagination;
 use App\Http\Resources\Role\RoleCrudResource;
@@ -18,9 +19,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
-    public function __construct(public SystemHelperInterface $systemHelper)
-    {
-    }
+    public function __construct(public SystemHelperInterface $systemHelper) {}
 
     /**
      * Display a listing of the resource.
@@ -37,21 +36,31 @@ class UserController extends Controller
                     'phone',
                     AllowedFilter::callback(
                         'name',
-                        fn($q, $v) => $q->whereAny(
-                            ['first_name', 'middle_name', 'last_name'],
-                            'ILIKE',
-                            '%' . $v . '%'
-                        )
+                        function ($q, $v) {
+                            $words = preg_split('/\s+/', trim($v));
+
+                            foreach ($words as $word) {
+                                $q->where(
+                                    fn ($query) => $query->whereAny(
+                                        ['first_name', 'middle_name', 'last_name'],
+                                        'ILIKE',
+                                        "%$word%"
+                                    )
+                                );
+                            }
+                        }
                     ),
                 ])
                 ->allowedSorts(['id', 'created_at', 'block'])
+                ->orderByDesc('id')
                 ->paginate($filters['batch'] ?? 10);
 
             return GeneralPagination::fromPaginator($usersPaginator, UserCrudResource::class);
         };
+
         return Inertia::render('Admin/Users/Index', [
-            'rolesForSelect' => $rolesForSelect,
-            'users' => $users,
+            'rolesForSelect' => fn () => $rolesForSelect,
+            'users' => fn () => $users,
             'query' => $filters,
         ]);
     }
@@ -62,9 +71,18 @@ class UserController extends Controller
     public function update(ChangeRolesRequest $request, User $user)
     {
         $data = $request->getData()->toArray();
-        $user->roles()->sync($data);
+        $user->roles()->sync($data['roleIds']);
         $this->systemHelper->saveRolesUserInCache($user);
+
         return redirect()->back();
     }
 
+    public function changeBlock(ChangeBlockRequest $request, User $user)
+    {
+        $data = $request->getData()->toArray();
+        $user->block = $data['block'];
+        $user->save();
+
+        return redirect()->back();
+    }
 }

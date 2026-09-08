@@ -25,4 +25,5 @@ Route::middleware(['can:dev'])->group(function () {
     Route::resource('post-trash', PostTrashController::class)->except('show', 'create', 'store', 'edit');
     Route::resource('products', ProductController::class)->except(['show']);
     Route::resource('users', UserController::class)->only(['index', 'update']);
+    Route::put('users/{user}/change-block', [UserController::class, 'changeBlock'])->name('users.change-block');
 });

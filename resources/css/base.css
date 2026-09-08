@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Prata&display=swap');
+
+.sushi-page {
+    --ink: #171716;
+    --paper: #f5f0e8;
+    --accent: #df5f45;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+}
+
+.shell {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, .65);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .19em;
+    text-transform: uppercase;
+}
+
+.eyebrow span {
+    width: 34px;
+    height: 1px;
+    background: var(--accent);
+}
+
+.eyebrow.dark {
+    color: #806f62;
+}
+
+.inner-page {
+    min-height: calc(100vh - 180px);
+    padding: 76px 0 112px;
+}
+
+.page-intro {
+    max-width: 720px;
+    margin-bottom: 52px;
+}
+
+.page-intro h1 {
+    margin: 0;
+    font-family: 'Prata', serif;
+    font-size: clamp(44px, 6vw, 72px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -.035em;
+}
+
+.page-intro > p:last-child {
+    max-width: 590px;
+    margin: 20px 0 0;
+    color: #786f66;
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+@media (max-width: 560px) {
+    .shell {
+        width: min(100% - 32px, 1180px);
+    }
+
+    .inner-page {
+        padding: 54px 0 78px;
+    }
+}

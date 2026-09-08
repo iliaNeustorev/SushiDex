@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests\Admin\User;
 
-use App\Http\RequestDTO\User\Admin\UserChangeRolesRequestDTO;
+use App\Http\RequestDTO\User\Admin\UserChangeBlockDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Spatie\LaravelData\WithData;
 
-class ChangeRolesRequest extends FormRequest
+class ChangeBlockRequest extends FormRequest
 {
     use WithData;
 
     public function dataClass(): string
     {
-        return UserChangeRolesRequestDTO::class;
+        return UserChangeBlockDTO::class;
     }
 }

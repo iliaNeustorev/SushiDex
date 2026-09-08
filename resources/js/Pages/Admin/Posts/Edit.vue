@@ -42,7 +42,7 @@
                         item-title="title"
                         item-value="id"
                         multiple
-                        label="Tags"
+                        label="Теги"
                     ></VSelect>
                 </VCardText>
                 <VCardActions>
