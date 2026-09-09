@@ -11,9 +11,6 @@ services:
             TZ: "Europe/Moscow"
         depends_on:
             - app
-            - db
-            - node
-            - redis
 
     app:
         build:
@@ -30,21 +27,15 @@ services:
 
 
     db:
-        image: postgres
+        image: postgres:17.6
         restart: always
         volumes:
             - ../pgdata:/var/lib/postgresql/data
         ports:
-            - "5432:5432"
+            - "127.0.0.1:5432:5432"
         environment:
             POSTGRES_USER: ${DB_USERNAME}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
-
-    adminer:
-        image: adminer
-        restart: always
-        ports:
-            - "8080:8080"
 
     node:
         build:
@@ -56,20 +47,15 @@ services:
             - .:/var/www
             - node_modules:/var/www/node_modules
         ports:
-            - "5173:5173"
+            - "127.0.0.1:5173:5173"
         tty: true
         command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
 
     redis:
-        image: redis:latest
+        image: redis:7.4.2
         restart: always
-        ports:
-            - "6382:6379"
         volumes:
             - redis_data:/data
-        environment:
-            - REDIS_PORT=${REDIS_PORT}
-            - REDIS_DATABASES=16
 
 volumes:
     redis_data:

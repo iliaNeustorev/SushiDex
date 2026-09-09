@@ -1,14 +1,8 @@
-FROM node:20
+FROM node:24-alpine
 
 WORKDIR /var/www
 
 # Установим необходимые пакеты
-RUN apt-get update && apt-get install -y \
-    vim \
-    zip \
-    unzip \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache git
 
 EXPOSE 5173
