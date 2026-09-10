@@ -99,7 +99,7 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="categoryForRemove = item" density="compact"
+                                        <VBtn @click="confirmRemove(item)" density="compact"
                                               color="deep-orange-lighten-1">
                                             <span class="text-white">Удалить</span>
                                         </VBtn>
@@ -159,19 +159,36 @@ const types: Array<{ title: string, value: Type }> = [
     {value: 2, title: 'Блог'},
 ]
 
-const queryDefaults: RequiredKeys<CategoriesQuery, 'filter'> = {filter: {}};
+const queryDefaults: RequiredKeys<CategoriesQuery, 'filter'> = {
+    filter: {}
+};
+
 const queryLocal = reactive(merge({}, queryDefaults, query));
-const onTitleUpdate = debounce((value: string | null) => queryLocal.filter.title = value || undefined, 400);
-const onUrlUpdate = debounce((value: string | null) => queryLocal.filter.url = value || undefined, 400);
+const onTitleUpdate = debounce((value: string | null) => queryLocal.filter.title = value || undefined, 900);
+const onUrlUpdate = debounce((value: string | null) => queryLocal.filter.url = value || undefined, 900);
+
 const sortAdapter = useSpatieSortAdapter(() => queryLocal.sort, sort => queryLocal.sort = sort);
-const dateRangeAdapter = useSpatieDateRangeAdapter([() => queryLocal.filter.date_from, () => queryLocal.filter.date_to], ([dateFrom, dateTo]) => {
-    queryLocal.filter.date_from = dateFrom;
-    queryLocal.filter.date_to = dateTo;
-});
-watch(queryLocal, () => router.visit(CategoriesRoutes.index({query: queryLocal})));
+const dateRangeAdapter = useSpatieDateRangeAdapter([
+        () => queryLocal.filter.date_from, () => queryLocal.filter.date_to],
+    ([dateFrom, dateTo]) => {
+        queryLocal.filter.date_from = dateFrom;
+        queryLocal.filter.date_to = dateTo;
+    });
+
+watch(queryLocal, applyReload);
+
+function applyReload() {
+    router.visit(CategoriesRoutes.index({
+        query: queryLocal
+    }));
+}
 
 const categoryForRemove = ref<CategoryCrudResource | null>(null);
 const deleteForm = useForm({});
+
+function confirmRemove(category: CategoryCrudResource | null) {
+    categoryForRemove.value = category;
+}
 
 function removeConfirmed() {
     if (categoryForRemove.value) {

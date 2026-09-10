@@ -19,7 +19,7 @@ class PostPublicResource extends Data
         public ?string $content,
         public Carbon $created_at,
         public CategoryPublicResource $category,
-        public ?UserPublicResource $user,
+        public UserPublicResource $user,
         #[DataCollectionOf(TagPublicResource::class)]
         public DataCollection $tags,
     ) {

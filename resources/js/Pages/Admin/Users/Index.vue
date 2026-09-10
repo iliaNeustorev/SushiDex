@@ -60,7 +60,7 @@
 							{ key: 'id', title: 'ID' },
 							{ key: 'name', title: 'ФИО', sortable: false },
 							{ key: 'address', title: 'Адрес', sortable: false },
-							{ key: 'phone', title: 'Телефон', sortable: false },
+							{ key: 'phone', title: 'Телефон'},
 							{ key: 'block', title: 'Бан', align: 'center' },
 							{ key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
 							{ key: 'created_at', title: 'Дата регистрации' },
@@ -72,6 +72,13 @@
                     >
                         <template #item.created_at="{ item }">
                             {{ (new Date(item.created_at)).toLocaleString() }}
+                        </template>
+                        <template #item.phone="{ item }">
+                            {{
+                                item.phone !== null
+                                    ? (item.phone.phone + ' (' + new Date(item.phone.verified_at).toLocaleString() + ')')
+                                    : 'не указан'
+                            }}
                         </template>
                         <template #item.name="{ item }">
                             {{
@@ -148,8 +155,13 @@ watch(queryLocal, applyReload);
 
 function applyReload() {
     router.visit(UsersRoutes.index({
-        query: queryLocal
-    }));
+        query: queryLocal,
+    }), {
+        only: ['users', 'query'],
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
 }
 
 const form = useForm<UserChangeBlockDTO>({

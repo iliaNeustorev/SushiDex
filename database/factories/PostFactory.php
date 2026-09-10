@@ -19,7 +19,7 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
-        $dt = fake()->dateTimeBetween('-30 days', 'now');
+        $dt = fake()->dateTimeBetween('-30 days');
         $status = Status::cases();
         $users = User::get();
 

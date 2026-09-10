@@ -33,23 +33,23 @@ class ProductController extends Controller
     {
         Gate::authorize('viewAny', Product::class);
         $query = ProductsQuery::validateAndCreate($request->query())->toArray();
+        $products = function () use ($query) {
+            $paginator = QueryBuilder::for(Product::class)
+                ->with('category')
+                ->allowedFilters([
+                    'title',
+                    AllowedFilter::exact('category_id'),
+                    AllowedFilter::callback('date_from', fn($builder, $value) => $builder->where('created_at', '>=', $value)),
+                    AllowedFilter::callback('date_to', fn($builder, $value) => $builder->where('created_at', '<=', $value . ' 23:59:59')),
+                ])
+                ->defaultSort('-id')
+                ->allowedSorts(['id', 'title', 'price', 'created_at'])
+                ->paginate($query['batch'] ?? 10);
 
+            return GeneralPagination::fromPaginator($paginator, ProductCrudResource::class);
+        };
         return Inertia::render('Admin/Products/Index', [
-            'products' => function () use ($query) {
-                $paginator = QueryBuilder::for(Product::class)
-                    ->with('category')
-                    ->allowedFilters([
-                        'title',
-                        AllowedFilter::exact('category_id'),
-                        AllowedFilter::callback('date_from', fn($builder, $value) => $builder->where('created_at', '>=', $value)),
-                        AllowedFilter::callback('date_to', fn($builder, $value) => $builder->where('created_at', '<=', $value . ' 23:59:59')),
-                    ])
-                    ->defaultSort('-id')
-                    ->allowedSorts(['id', 'title', 'price', 'created_at'])
-                    ->paginate($query['batch'] ?? 10);
-
-                return GeneralPagination::fromPaginator($paginator, ProductCrudResource::class);
-            },
+            'products' => $products,
             'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
             'query' => $query,
         ]);
@@ -63,7 +63,7 @@ class ProductController extends Controller
         Gate::authorize('create', Product::class);
 
         return Inertia::render('Admin/Products/Create', [
-            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'categories' => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
         ]);
     }
 

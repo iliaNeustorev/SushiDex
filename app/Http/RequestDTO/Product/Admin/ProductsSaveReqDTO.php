@@ -17,7 +17,7 @@ class ProductsSaveReqDTO extends Data
 {
     public function __construct(
         #[
-            Min(5),
+            Min(3),
             Max(255),
         ]
         public string $title,
@@ -37,7 +37,8 @@ class ProductsSaveReqDTO extends Data
         public ?string $old_price,
         #[SpatieRule(new SoftExists(Category::class))]
         public int $category_id,
-    ) {}
+    ) {
+    }
 
     public static function rules(): array
     {

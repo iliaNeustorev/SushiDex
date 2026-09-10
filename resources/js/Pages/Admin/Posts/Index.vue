@@ -151,7 +151,7 @@ const queryDefaults: RequiredKeys<PostsQuery, 'filter'> = {
     filter: {}
 }
 const queryLocal = reactive(merge({}, queryDefaults, query));
-const onTitleUpd = debounce((v: string | null) => queryLocal.filter.title = v ? v : undefined, 400);
+const onTitleUpd = debounce((v: string | null) => queryLocal.filter.title = v ? v : undefined, 900);
 
 watch(queryLocal, applyReload);
 

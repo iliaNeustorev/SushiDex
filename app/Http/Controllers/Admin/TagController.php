@@ -30,8 +30,8 @@ class TagController extends Controller
         };
 
         return Inertia::render('Admin/Tags/Index', [
-            'query' => $filters,
             'tags' => $tags,
+            'query' => $filters,
         ]);
     }
 

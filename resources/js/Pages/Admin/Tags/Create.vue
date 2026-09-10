@@ -48,8 +48,9 @@ import {useForm} from "@inertiajs/vue3";
 import AdminLayout from '~vue/Layouts/AdminLayout.vue';
 import TagsRoutes from "~routes/Admin/TagController";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
+import type {TagsSaveReqDTO} from "~types/generated";
 
-const form = useForm({
+const form = useForm<TagsSaveReqDTO>({
     url: '',
     title: '',
     description: null,

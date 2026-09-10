@@ -69,7 +69,7 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="productForRemove = item" density="compact"
+                                        <VBtn @click="confirmRemove(item)" density="compact"
                                               color="deep-orange-lighten-1">
                                             <span class="text-white">Удалить</span>
                                         </VBtn>
@@ -115,18 +115,42 @@ const {query = {}} = defineProps<{
     categories: CategoryCrudResource[],
     query: ProductsQuery
 }>();
-const queryDefaults: RequiredKeys<ProductsQuery, 'filter'> = {filter: {}};
+
+const queryDefaults: RequiredKeys<ProductsQuery, 'filter'> = {
+    filter: {}
+};
+
 const queryLocal = reactive(merge({}, queryDefaults, query));
-const onTitleUpdate = debounce((value: string | null) => queryLocal.filter.title = value || undefined, 400);
+const onTitleUpdate = debounce((value: string | null) => queryLocal.filter.title = value || undefined, 900);
+
 const sortAdapter = useSpatieSortAdapter(() => queryLocal.sort, sort => queryLocal.sort = sort);
-const dateRangeAdapter = useSpatieDateRangeAdapter([() => queryLocal.filter.date_from, () => queryLocal.filter.date_to], ([dateFrom, dateTo]) => {
-    queryLocal.filter.date_from = dateFrom;
-    queryLocal.filter.date_to = dateTo;
-});
-watch(queryLocal, () => router.visit(ProductRoutes.index({query: queryLocal})));
+const dateRangeAdapter = useSpatieDateRangeAdapter([
+        () => queryLocal.filter.date_from, () => queryLocal.filter.date_to],
+    ([dateFrom, dateTo]) => {
+        queryLocal.filter.date_from = dateFrom;
+        queryLocal.filter.date_to = dateTo;
+    });
+
+watch(queryLocal, applyReload);
+
+function applyReload() {
+    router.visit(ProductRoutes.index({
+            query: queryLocal
+        }), {
+            only: ['products', 'query'],
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        }
+    );
+}
 
 const productForRemove = ref<ProductCrudResource | null>(null);
 const deleteForm = useForm({});
+
+function confirmRemove(product: ProductCrudResource | null) {
+    productForRemove.value = product
+}
 
 function removeConfirmed() {
     if (productForRemove.value) {

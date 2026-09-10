@@ -63,13 +63,19 @@
 </template>
 
 <script setup lang="ts">
-import type {CategoryCrudResource, PostCrudResource, TagCrudResource, ImageCrudResource} from "~types/generated";
+import type {
+    CategoryCrudResource,
+    PostCrudResource,
+    TagCrudResource,
+    ImageCrudResource,
+} from "~types/generated";
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import {useForm, router} from "@inertiajs/vue3";
 import PostsRoutes from "~routes/Admin/PostController.ts";
 import ImagesUploader from '~vue/components/widgets/ImagesUploader.vue';
 import AdminImages from "~routes/Admin/ImagesController.ts";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
+import type {PostForm} from "~vue/shared/forms.ts";
 
 const props = defineProps<{
     categories: CategoryCrudResource[],
@@ -78,7 +84,7 @@ const props = defineProps<{
     images: ImageCrudResource[]
 }>();
 
-const form = useForm({
+const form = useForm<PostForm>({
     url: props.post.url,
     title: props.post.title,
     content: props.post.content,

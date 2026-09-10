@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\Spattie\CustomSort\SortByFieldRelation;
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\User\Admin\UsersQuery;
 use App\Http\Requests\Admin\User\ChangeBlockRequest;
@@ -15,11 +16,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
-    public function __construct(public SystemHelperInterface $systemHelper) {}
+    public function __construct(public SystemHelperInterface $systemHelper)
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -30,10 +34,10 @@ class UserController extends Controller
         $filters = UsersQuery::validateAndCreate($request->query())->toArray();
         $users = function () use ($filters) {
             $usersPaginator = QueryBuilder::for(User::class)
-                ->with('roles')
+                ->with(['roles', 'phone'])
                 ->allowedFilters([
                     'address',
-                    'phone',
+                    AllowedFilter::partial('phone', 'phone.phone'),
                     AllowedFilter::callback(
                         'name',
                         function ($q, $v) {
@@ -41,7 +45,7 @@ class UserController extends Controller
 
                             foreach ($words as $word) {
                                 $q->where(
-                                    fn ($query) => $query->whereAny(
+                                    fn($query) => $query->whereAny(
                                         ['first_name', 'middle_name', 'last_name'],
                                         'ILIKE',
                                         "%$word%"
@@ -51,16 +55,20 @@ class UserController extends Controller
                         }
                     ),
                 ])
-                ->allowedSorts(['id', 'created_at', 'block'])
-                ->orderByDesc('id')
+                ->defaultSort('-id')
+                ->allowedSorts([
+                    'id',
+                    'created_at',
+                    'block',
+                    AllowedSort::custom('phone', new SortByFieldRelation('phone'), 'phone'),
+                ])
                 ->paginate($filters['batch'] ?? 10);
-
             return GeneralPagination::fromPaginator($usersPaginator, UserCrudResource::class);
         };
 
         return Inertia::render('Admin/Users/Index', [
-            'rolesForSelect' => fn () => $rolesForSelect,
-            'users' => fn () => $users,
+            'rolesForSelect' => fn() => $rolesForSelect,
+            'users' => $users,
             'query' => $filters,
         ]);
     }
