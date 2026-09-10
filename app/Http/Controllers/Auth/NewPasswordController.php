@@ -21,7 +21,7 @@ class NewPasswordController extends Controller
 
     public function store(PasswordResetRequest $request): RedirectResponse
     {
-        $data = $request->validated();
+        $data = $request->getData()->toArray();
         $status = Password::reset(
             $data,
             function ($user, $password) {

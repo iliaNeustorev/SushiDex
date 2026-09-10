@@ -1,26 +1,10 @@
-<script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthLayout from '~vue/Layouts/AuthLayout.vue';
-import SessionRoutes from '~routes/Auth/SessionController';
-import RegisterRoutes from '~routes/Auth/RegisterController';
-import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
-
-const form = useForm({
-    email: '',
-    password: '',
-    remember: true,
-});
-
-function send(): void {
-    form.submit(SessionRoutes.store());
-}
-</script>
-
 <template>
-    <Head title="Вход — SushiDex" />
+    <Head title="Вход — SushiDex"/>
     <AuthLayout>
         <template #title>С возвращением</template>
-        <template #description>Войдите, чтобы увидеть историю заказов, сохранить любимые блюда и пользоваться бонусами.</template>
+        <template #description>Войдите, чтобы увидеть историю заказов, сохранить любимые блюда и пользоваться
+            бонусами.
+        </template>
 
         <p class="auth-kicker">Личный кабинет</p>
         <h2 class="auth-heading">Войти в аккаунт</h2>
@@ -59,6 +43,27 @@ function send(): void {
             </VBtn>
         </form>
 
-        <p class="auth-switch">Впервые в SushiDex?<Link :href="RegisterRoutes.create().url">Создать аккаунт</Link></p>
+        <p class="auth-switch">Впервые в SushiDex?
+            <Link :href="RegisterRoutes.create().url">Создать аккаунт</Link>
+        </p>
     </AuthLayout>
 </template>
+
+<script setup lang="ts">
+import {Head, Link, useForm} from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import SessionRoutes from '~routes/Auth/SessionController';
+import RegisterRoutes from '~routes/Auth/RegisterController';
+import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
+import type {LoginReqDTO} from "~types/generated";
+
+const form = useForm<LoginReqDTO>({
+    email: '',
+    password: '',
+    remember: true,
+});
+
+function send(): void {
+    form.submit(SessionRoutes.store());
+}
+</script>

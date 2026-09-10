@@ -52,10 +52,20 @@ item: string;
 id: number;
 images: File[];
 };
+export type LoginReqDTO = {
+email: string;
+password: string;
+remember: boolean;
+};
 export type OrderSaveReqDTO = {
 type: TypePaid;
 need_delivery: boolean;
 total_price: string;
+};
+export type PhoneCrudResource = {
+user: UserPublicResource | null;
+phone: string;
+verified_at: string;
 };
 export type PostCrudResource = {
 id: number;
@@ -74,7 +84,7 @@ title: string | null;
 content: string | null;
 created_at: string;
 category: CategoryPublicResource;
-user: UserPublicResource | null;
+user: UserPublicResource;
 tags: Array<TagPublicResource>;
 };
 export type PostsQuery = {
@@ -129,6 +139,19 @@ content: string | null;
 price: string;
 old_price: string | null;
 category_id: number;
+};
+export type RegisterReqDTO = {
+first_name: string;
+email: string;
+password: string;
+password_confirmation: string;
+phone: string | null;
+};
+export type ResetPasswordReqDTO = {
+token: string;
+email: string | null;
+password: string;
+password_confirmation: string;
 };
 export type RoleCrudResource = {
 id: number;
@@ -197,7 +220,7 @@ created_at: string;
 roles: Array<RoleCrudResource>;
 address: string | null;
 block: boolean;
-phone: string | null;
+phone: PhoneCrudResource | null;
 };
 export type UserPublicResource = {
 id: number;

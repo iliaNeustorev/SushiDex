@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\Phone\Admin\PhoneCrudResource;
 use App\Http\Resources\Role\RoleCrudResource;
+use App\Models\Phone;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
@@ -24,6 +26,7 @@ class UserCrudResource extends Data
         public DataCollection $roles,
         public ?string $address,
         public bool $block,
-        public ?string $phone,
-    ) {}
+        public ?PhoneCrudResource $phone,
+    ) {
+    }
 }

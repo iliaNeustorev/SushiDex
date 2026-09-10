@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, useForm} from '@inertiajs/vue3';
 import AuthLayout from '~vue/Layouts/AuthLayout.vue';
 import ResetPasswordRoutes from '~routes/Auth/NewPasswordController';
 import SessionRoutes from '~routes/Auth/SessionController';
+import type {ResetPasswordReqDTO} from "~types/generated";
 
-const { token } = defineProps<{
+const {token} = defineProps<{
     token: string;
 }>();
 
 const params = new URLSearchParams(window.location.search);
 const email = params.get('email');
 
-const form = useForm({
+const form = useForm<ResetPasswordReqDTO>({
     token,
     email,
     password: '',
@@ -24,10 +25,12 @@ function send(): void {
 </script>
 
 <template>
-    <Head title="Новый пароль — SushiDex" />
+    <Head title="Новый пароль — SushiDex"/>
     <AuthLayout>
         <template #title>Придумайте новый пароль</template>
-        <template #description>Остался последний шаг. Укажите новый пароль — после сохранения вы снова сможете войти в свой аккаунт.</template>
+        <template #description>Остался последний шаг. Укажите новый пароль — после сохранения вы снова сможете войти в
+            свой аккаунт.
+        </template>
 
         <p class="auth-kicker">Новый пароль</p>
         <h2 class="auth-heading">Восстановление доступа</h2>
@@ -63,6 +66,8 @@ function send(): void {
             </VBtn>
         </form>
 
-        <p class="auth-switch">Хотите вернуться?<Link :href="SessionRoutes.create().url">На страницу входа</Link></p>
+        <p class="auth-switch">Хотите вернуться?
+            <Link :href="SessionRoutes.create().url">На страницу входа</Link>
+        </p>
     </AuthLayout>
 </template>

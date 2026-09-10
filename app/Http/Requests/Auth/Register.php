@@ -2,22 +2,16 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\RequestDTO\Auth\RegisterReqDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules;
+use Spatie\LaravelData\WithData;
 
 class Register extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    use WithData;
 
-    public function rules(): array
+    public function dataClass(): string
     {
-        return [
-            'first_name' => ['required', 'string', 'min:3', 'max:255'],
-            'email' => ['required', 'string', 'email', 'min:3', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ];
+        return RegisterReqDTO::class;
     }
 }

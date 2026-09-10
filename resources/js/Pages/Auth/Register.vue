@@ -1,26 +1,10 @@
-<script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthLayout from '~vue/Layouts/AuthLayout.vue';
-import RegisterRoutes from '~routes/Auth/RegisterController';
-import SessionRoutes from '~routes/Auth/SessionController';
-
-const form = useForm({
-    first_name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-});
-
-function send(): void {
-    form.post(RegisterRoutes.store().url);
-}
-</script>
-
 <template>
-    <Head title="Регистрация — SushiDex" />
+    <Head title="Регистрация — SushiDex"/>
     <AuthLayout>
         <template #title>Станьте частью SushiDex</template>
-        <template #description>Создайте аккаунт — и любимые блюда, адреса доставки и история заказов всегда будут под рукой.</template>
+        <template #description>Создайте аккаунт — и любимые блюда, адреса доставки и история заказов всегда будут под
+            рукой.
+        </template>
 
         <p class="auth-kicker">Новый аккаунт</p>
         <h2 class="auth-heading">Регистрация</h2>
@@ -33,6 +17,14 @@ function send(): void {
                 autocomplete="given-name"
                 label="Ваше имя"
                 variant="outlined"
+            />
+            <VTextField
+                variant="outlined"
+                v-model="form.phone"
+                :error-messages="form.errors.phone"
+                label="Телефон"
+                placeholder="79991234567"
+                validate-on="blur"
             />
             <VTextField
                 v-model="form.email"
@@ -62,6 +54,28 @@ function send(): void {
             </VBtn>
         </form>
 
-        <p class="auth-switch">Уже зарегистрированы?<Link :href="SessionRoutes.create().url">Войти</Link></p>
+        <p class="auth-switch">Уже зарегистрированы?
+            <Link :href="SessionRoutes.create().url">Войти</Link>
+        </p>
     </AuthLayout>
 </template>
+
+<script setup lang="ts">
+import {Head, Link, useForm} from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import RegisterRoutes from '~routes/Auth/RegisterController';
+import SessionRoutes from '~routes/Auth/SessionController';
+import type {RegisterReqDTO} from "~types/generated";
+
+const form = useForm<RegisterReqDTO>({
+    first_name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    phone: null,
+});
+
+function send(): void {
+    form.post(RegisterRoutes.store().url);
+}
+</script>

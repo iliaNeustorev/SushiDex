@@ -2,22 +2,16 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\RequestDTO\Auth\ResetPasswordReqDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules;
+use Spatie\LaravelData\WithData;
 
 class PasswordReset extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    use WithData;
 
-    public function rules(): array
+    public function dataClass(): string
     {
-        return [
-            'token' => ['required', 'string'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ];
+        return ResetPasswordReqDTO::class;
     }
 }
