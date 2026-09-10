@@ -26,34 +26,6 @@
                         </VListItemTitle>
                     </VListItem>
                 </VList>
-                <VDialog
-                    v-model="closeModalLogout"
-                    max-width="600"
-                    persistent
-                >
-                    <template v-slot:activator="{ props: closeModalLogout }">
-                        <VBtn class="mt-auto text-h6 mb-6" v-bind="closeModalLogout">
-                            Выйти из аккаунта
-                        </VBtn>
-                    </template>
-
-                    <VCard
-                        prepend-icon="mdi-map-marker"
-                        title="Вы действительно хотите выйти?"
-                        class="text-center"
-                    >
-                        <template v-slot:actions>
-                            <VSpacer></VSpacer>
-                            <VBtn @click="closeModalLogout = false">
-                                Отмена
-                            </VBtn>
-
-                            <VBtn @click="logout">
-                                ОК
-                            </VBtn>
-                        </template>
-                    </VCard>
-                </VDialog>
             </div>
         </VNavigationDrawer>
         <VMain class="appMain">
@@ -70,13 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import {Link, usePage, useForm} from '@inertiajs/vue3';
-import {computed, ref} from 'vue';
+import {Link, usePage} from '@inertiajs/vue3';
+import {computed} from 'vue';
 import type {UserAuthResource} from "~types/generated";
 import PostsRoutes from "~routes/Admin/PostController.ts";
 import GeneralController from "~routes/GeneralController.ts";
 import ProductRoutes from "~routes/Admin/ProductController.ts";
-import SessionRoutes from "~routes/Auth/SessionController.ts";
 import CategoryRoutes from "~routes/Admin/CategoryController.ts";
 import TagsRoutes from "~routes/Admin/TagController.ts";
 import UsersRoutes from "~routes/Admin/UserController.ts";
@@ -95,16 +66,4 @@ const mainMenuBase = [
 const mainMenu = computed(() => mainMenuBase.filter(item =>
     (item.guard === 'admin' && props.user)
 ))
-
-let closeModalLogout = ref<boolean>(false);
-
-const logoutForm = useForm({});
-
-function logout() {
-    logoutForm.submit(SessionRoutes.logout(), {
-        onFinish() {
-            closeModalLogout.value = false
-        }
-    })
-}
 </script>
