@@ -37,6 +37,7 @@ class ProductsSaveReqDTO extends Data
         public ?string $old_price,
         #[SpatieRule(new SoftExists(Category::class))]
         public int $category_id,
+        public bool $active,
     ) {
     }
 

@@ -60,7 +60,8 @@
 							{ key: 'id', title: 'ID' },
 							{ key: 'name', title: 'ФИО', sortable: false },
 							{ key: 'address', title: 'Адрес', sortable: false },
-							{ key: 'phone', title: 'Телефон'},
+							{ key: 'phone', title: 'Телефон' },
+							{ key:'verified_at', title:'Верификация номера' },
 							{ key: 'block', title: 'Бан', align: 'center' },
 							{ key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
 							{ key: 'created_at', title: 'Дата регистрации' },
@@ -74,11 +75,10 @@
                             {{ (new Date(item.created_at)).toLocaleString() }}
                         </template>
                         <template #item.phone="{ item }">
-                            {{
-                                item.phone !== null
-                                    ? (item.phone.phone + ' (' + new Date(item.phone.verified_at).toLocaleString() + ')')
-                                    : 'не указан'
-                            }}
+                            {{ item.phone !== null ? item.phone.phone : 'не указан' }}
+                        </template>
+                        <template #item.verified_at="{ item }">
+                            {{ item.phone !== null ? new Date(item.phone.verified_at).toLocaleString() : '-' }}
                         </template>
                         <template #item.name="{ item }">
                             {{
@@ -158,7 +158,6 @@ function applyReload() {
         query: queryLocal,
     }), {
         only: ['users', 'query'],
-        preserveState: true,
         preserveScroll: true,
         replace: true,
     });

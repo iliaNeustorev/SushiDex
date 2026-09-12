@@ -1,48 +1,78 @@
 <template>
     <AdminLayout>
         <AdminWrapper>
-            <VCard class="mt-3" :loading="form.processing">
+            <VCard class="mb-4" :loading="form.processing">
                 <VCardTitle tag="h1">Редактировать товар</VCardTitle>
                 <VDivider class="mb-2"/>
                 <VCardText>
-                    <form @submit.prevent="form.submit(ProductRoutes.update(product))">
-                        <VTextField v-model="form.title" label="Название" :error-messages="form.errors.title"/>
-                        <VSelect v-model="form.category_id" :items="categories" item-title="title" item-value="id"
-                                 label="Категория" :error-messages="form.errors.category_id"/>
-                        <VTextarea v-model="form.description" label="Краткое описание"
-                                   :error-messages="form.errors.description"/>
-                        <VTextarea v-model="form.content" label="Описание" :error-messages="form.errors.content"/>
-                        <VTextField v-model="form.price" type="number" step="0.01" label="Цена"
-                                    :error-messages="form.errors.price"/>
-                        <VTextField v-model="form.old_price" type="number" step="0.01" label="Старая цена"
-                                    :error-messages="form.errors.old_price"/>
-                        <VBtn type="submit" color="primary" :disabled="form.processing">Сохранить</VBtn>
-                    </form>
+                    <VTextField
+                        v-model="form.title"
+                        :error-messages="form.errors.title"
+                        variant="outlined"
+                        label="Название"
+                        class="mb-1"
+                    />
+                    <VSelect
+                        v-model="form.category_id"
+                        :error-messages="form.errors.category_id"
+                        :items="categories"
+                        item-title="title"
+                        item-value="id"
+                        variant="outlined"
+                        label="Категория"
+                        class="mb-1"
+                    />
+                    <VTextarea
+                        v-model="form.description"
+                        :error-messages="form.errors.description"
+                        variant="outlined"
+                        label="Краткое описание"
+                        class="mb-1"
+                    />
+                    <VTextarea
+                        v-model="form.content"
+                        :error-messages="form.errors.content"
+                        variant="outlined"
+                        label="Описание"
+                        class="mb-1"
+                    />
+                    <VTextField
+                        v-model="form.price"
+                        :error-messages="form.errors.price"
+                        type="number"
+                        step="0.01"
+                        variant="outlined"
+                        label="Цена"
+                        class="mb-1"
+                    />
+                    <VTextField
+                        v-model="form.old_price"
+                        :error-messages="form.errors.old_price"
+                        type="number"
+                        step="0.01"
+                        variant="outlined"
+                        label="Старая цена"
+                        class="mb-1"
+                    />
                 </VCardText>
+                <VCardActions>
+                    <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>
+                </VCardActions>
             </VCard>
-            <VCard class="my-4">
-                <VCardText>
-                    <VRow>
-                        <VCol v-for="image in images" :key="image.id" cols="2">
-                            <img :src="`/storage/${image.path}`" class="w-100" alt="">
-                            <VBtn color="error" @click="removeImage(image.id)">Удалить</VBtn>
-                        </VCol>
-                    </VRow>
-                </VCardText>
-            </VCard>
+            <ShowImages :images="images"/>
             <ImagesUploader item="product" :id="product.id"/>
         </AdminWrapper>
     </AdminLayout>
 </template>
 
 <script setup lang="ts">
-import {router, useForm} from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import AdminLayout from '~vue/Layouts/AdminLayout.vue';
 import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import ImagesUploader from '~vue/components/widgets/ImagesUploader.vue';
 import ProductRoutes from '~routes/Admin/ProductController';
-import ImageRoutes from '~routes/Admin/ImagesController';
 import type {CategoryCrudResource, ImageCrudResource, ProductCrudResource, ProductsSaveReqDTO} from '~types/generated';
+import ShowImages from "~vue/components/widgets/ShowImages.vue";
 
 const props = defineProps<{
     product: ProductCrudResource,
@@ -56,9 +86,10 @@ const form = useForm<ProductsSaveReqDTO>({
     price: props.product.price,
     old_price: props.product.old_price,
     category_id: props.product.category.id,
+    active: props.product.active
 });
 
-function removeImage(image: number) {
-    router.delete(ImageRoutes.destroy({image}).url, {only: ['images'], preserveScroll: true});
+function sendEdit() {
+    form.submit(ProductRoutes.update(props.product));
 }
 </script>

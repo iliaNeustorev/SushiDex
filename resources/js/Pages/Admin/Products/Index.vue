@@ -45,6 +45,7 @@
                             {key: 'title', title: 'Название'},
                             {key: 'category.title', title: 'Категория', sortable: false},
                             {key: 'price', title: 'Цена'},
+                            {key:'active', title:'Активен'},
                             {key: 'created_at', title: 'Дата создания'},
                             {key: 'actions', title: 'Действия', sortable: false, align: 'center'}
                         ]"
@@ -54,6 +55,7 @@
                         @update:sort-by="sortAdapter.onSort"
                     >
                         <template #item.price="{ item }">{{ item.price }} ₽</template>
+                        <template #item.active="{ item }">{{ item.active ? 'Да' : 'Нет' }}</template>
                         <template #item.created_at="{ item }">{{
                                 new Date(item.created_at).toLocaleString()
                             }}
@@ -138,7 +140,6 @@ function applyReload() {
             query: queryLocal
         }), {
             only: ['products', 'query'],
-            preserveState: true,
             preserveScroll: true,
             replace: true,
         }

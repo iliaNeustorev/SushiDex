@@ -15,7 +15,7 @@
                     v-model="form.title"
                     :counter="7"
                     :error-messages="form.errors.title"
-                    label="Title"
+                    label="Название"
                 ></VTextField>
 
                 <VSelect
@@ -40,14 +40,7 @@
 
             </VCard>
 
-            <VCard class="mb-4">
-                <VRow>
-                    <VCol v-for="img in images" cols="2">
-                        <img :src="'/storage/' + img.path" alt="" class="w-100">
-                        <VBtn @click="removeImage(img.id)" color="error">X</VBtn>
-                    </VCol>
-                </VRow>
-            </VCard>
+            <ShowImages :images="images"/>
             <ImagesUploader item="category" :id="category.id"/>
 
         </AdminWrapper>
@@ -56,16 +49,12 @@
 
 <script setup lang="ts">
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
-import {router, useForm} from "@inertiajs/vue3";
-import type {
-    CategoriesSaveReqDTO,
-    CategoryCrudResource,
-    ImageCrudResource,
-} from "~types/generated";
+import {useForm} from "@inertiajs/vue3";
+import type {CategoriesSaveReqDTO, CategoryCrudResource, ImageCrudResource} from "~types/generated";
 import CategoriesRoutes from "~routes/Admin/CategoryController.ts";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import ImagesUploader from "~vue/components/widgets/ImagesUploader.vue";
-import AdminImages from "~routes/Admin/ImagesController.ts";
+import ShowImages from "~vue/components/widgets/ShowImages.vue";
 
 const props = defineProps<{
     category: CategoryCrudResource,
@@ -82,12 +71,5 @@ const form = useForm<CategoriesSaveReqDTO>({
 
 function sendEdit() {
     form.submit(CategoriesRoutes.update(props.category));
-}
-
-function removeImage(image: number) {
-    router.visit(AdminImages.destroy({image}), {
-        only: ['images']/* ,
-		preserveScroll: true */
-    })
 }
 </script>

@@ -16,14 +16,14 @@
                         v-model.trim.lazy="form.title"
                         :error-messages="form.errors.title"
                         variant="outlined"
-                        label="Title"
+                        label="Название"
                         class="mb-1"
                     />
                     <VTextarea
                         v-model.trim.lazy="form.content"
                         :error-messages="form.errors.content"
                         variant="outlined"
-                        label="Content"
+                        label="Контент"
                         class="mb-1"
                     />
                     <VSelect
@@ -32,7 +32,7 @@
                         :items="categories"
                         item-title="title"
                         item-value="id"
-                        label="Category"
+                        label="Категория"
                     ></VSelect>
 
                     <VSelect
@@ -49,14 +49,7 @@
                     <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>
                 </VCardActions>
             </VCard>
-            <VCard class="mb-4">
-                <VRow>
-                    <VCol v-for="img in images" cols="2">
-                        <img :src="'/storage/' + img.path" alt="" class="w-100">
-                        <VBtn @click="removeImage(img.id)" color="error">X</VBtn>
-                    </VCol>
-                </VRow>
-            </VCard>
+            <ShowImages :images="images"/>
             <ImagesUploader item="post" :id="post.id"/>
         </AdminWrapper>
     </AdminLayout>
@@ -70,12 +63,12 @@ import type {
     ImageCrudResource,
 } from "~types/generated";
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
-import {useForm, router} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import PostsRoutes from "~routes/Admin/PostController.ts";
 import ImagesUploader from '~vue/components/widgets/ImagesUploader.vue';
-import AdminImages from "~routes/Admin/ImagesController.ts";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import type {PostForm} from "~vue/shared/forms.ts";
+import ShowImages from "~vue/components/widgets/ShowImages.vue";
 
 const props = defineProps<{
     categories: CategoryCrudResource[],
@@ -83,7 +76,6 @@ const props = defineProps<{
     post: PostCrudResource,
     images: ImageCrudResource[]
 }>();
-
 const form = useForm<PostForm>({
     url: props.post.url,
     title: props.post.title,
@@ -94,12 +86,5 @@ const form = useForm<PostForm>({
 
 function sendEdit() {
     form.submit(PostsRoutes.update(props.post));
-}
-
-function removeImage(image: number) {
-    router.visit(AdminImages.destroy({image}), {
-        only: ['images']/* ,
-		preserveScroll: true */
-    })
 }
 </script>

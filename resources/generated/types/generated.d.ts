@@ -119,6 +119,7 @@ category: CategoryCrudResource;
 created_at: string;
 updated_at: string;
 count_paid: number | null;
+active: boolean;
 };
 export type ProductsQuery = {
 filter?: ProductsQueryFilters;
@@ -139,6 +140,7 @@ content: string | null;
 price: string;
 old_price: string | null;
 category_id: number;
+active: boolean;
 };
 export type RegisterReqDTO = {
 first_name: string;

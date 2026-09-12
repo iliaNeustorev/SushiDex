@@ -16,7 +16,7 @@
                         v-model="form.title"
                         :counter="7"
                         :error-messages="form.errors.title"
-                        label="Заголовок"
+                        label="Название"
                     ></VTextField>
 
                     <VSelect

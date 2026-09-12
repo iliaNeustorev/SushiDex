@@ -18,13 +18,14 @@ class ImagesUploadReqDTO extends Data
 
         #[Min(1), Max(5), LiteralTypeScriptType('File[]')]
         public array $images,
-    ) {}
+    ) {
+    }
 
     public static function rules(): array
     {
         return [
             'item' => Rule::in(array_keys(config('app.imageables', []))),
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,webp|max:10048',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }

@@ -17,12 +17,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
-    public function __construct(private readonly ProductAdminService $products)
+    public function __construct(private readonly ProductAdminService $productAdminService)
     {
     }
 
@@ -34,19 +32,13 @@ class ProductController extends Controller
         Gate::authorize('viewAny', Product::class);
         $query = ProductsQuery::validateAndCreate($request->query())->toArray();
         $products = function () use ($query) {
-            $paginator = QueryBuilder::for(Product::class)
-                ->with('category')
-                ->allowedFilters([
-                    'title',
-                    AllowedFilter::exact('category_id'),
-                    AllowedFilter::callback('date_from', fn($builder, $value) => $builder->where('created_at', '>=', $value)),
-                    AllowedFilter::callback('date_to', fn($builder, $value) => $builder->where('created_at', '<=', $value . ' 23:59:59')),
-                ])
-                ->defaultSort('-id')
-                ->allowedSorts(['id', 'title', 'price', 'created_at'])
-                ->paginate($query['batch'] ?? 10);
+            $productsPaginator = $this->productAdminService->getProductsWithPaginate($query);
+            if (isset($query['page']) && $query['page'] > $productsPaginator->lastPage()) {
+                $query['page'] = $productsPaginator->lastPage();
 
-            return GeneralPagination::fromPaginator($paginator, ProductCrudResource::class);
+                return redirect()->route('admin.products.index', $query);
+            }
+            return GeneralPagination::fromPaginator($productsPaginator, ProductCrudResource::class);
         };
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,
@@ -73,7 +65,8 @@ class ProductController extends Controller
     public function store(SaveRequest $request): RedirectResponse
     {
         Gate::authorize('create', Product::class);
-        $product = $this->products->create($request->getData());
+        $data = $request->getData()->toArray();
+        $product = Product::create($data);
 
         return redirect()->route('admin.products.edit', $product);
     }
@@ -99,8 +92,8 @@ class ProductController extends Controller
     public function update(SaveRequest $request, Product $product): RedirectResponse
     {
         Gate::authorize('update', $product);
-        $this->products->update($product, $request->getData());
-
+        $data = $request->getData()->toArray();
+        $product->update($data);
         return redirect()->back()->with('notice', 'products.updated');
     }
 
@@ -110,7 +103,7 @@ class ProductController extends Controller
     public function destroy(Product $product): RedirectResponse
     {
         Gate::authorize('delete', $product);
-        $this->products->delete($product);
+        $this->productAdminService->delete($product);
 
         return redirect()->route('admin.products.index')->with('notice', 'products.deleted');
     }

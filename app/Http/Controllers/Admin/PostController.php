@@ -16,18 +16,19 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Services\Image\Service as ImageService;
+use App\Services\Post\PostAdminService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
 
-    public function __construct(private readonly ImageService $imageService)
-    {
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly PostAdminService $postAdminService
+    ) {
     }
 
     /**
@@ -36,22 +37,8 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $filters = PostsQuery::validateAndCreate($request->query())->toArray();
-        $user = $request->user();
-        $posts = function () use ($user) {
-            $postsPaginator = QueryBuilder::for(Post::class::byUserId($user->id))
-                ->with(['user', 'category', 'tags'])
-                ->allowedFilters([
-                    'title',
-                    AllowedFilter::exact('status'),
-                    AllowedFilter::callback(
-                        'tags',
-                        fn($query, $values) => $query->whereHas('tags', fn($q) => $q->whereIn('tag_id', (array)$values))
-                    ),
-                    AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
-                    AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
-                ])
-                ->allowedSorts(['id', 'title', 'created_at'])
-                ->paginate($query['batch'] ?? 10);
+        $posts = function () use ($filters) {
+            $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
 
             if (isset($query['page']) && $query['page'] > $postsPaginator->lastPage()) {
                 $query['page'] = $postsPaginator->lastPage();
@@ -83,10 +70,10 @@ class PostController extends Controller
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
-            'categories' => $categories,
+            'categories' => fn() => $categories,
             'statuses' => $statuses,
             'query' => $filters,
-            'tags' => $tags,
+            'tags' => fn() => $tags,
         ]);
     }
 

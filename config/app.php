@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\Category;
-use App\Models\Post;
-use App\Models\Product;
-
 return [
 
     /*
@@ -43,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -105,7 +101,7 @@ return [
 
     'previous_keys' => [
         ...array_filter(
-            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
+            explode(',', (string)env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
 
@@ -131,15 +127,15 @@ return [
 
     'imageables' => [
         'post' => [
-            'model' => Post::class,
+            'model' => \App\Models\Post::class,
             'catalog' => 'posts',
         ],
         'category' => [
-            'model' => Category::class,
+            'model' => \App\Models\Category::class,
             'catalog' => 'categories',
         ],
         'product' => [
-            'model' => Product::class,
+            'model' => \App\Models\Product::class,
             'catalog' => 'products',
         ],
     ],
