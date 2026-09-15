@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\Register as RegisterRequest;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -29,8 +30,9 @@ class RegisterController extends Controller
         $user->roles()->sync($roles);
         $request->session()->regenerate();
         Auth::login($user);
-        // TODO: отправить письмо на почту
+        event(new Registered($user));
+
         // TODO: отправить смс если ввели номер
-        return redirect()->route('posts.index')->with('notification', 'auth.register');
+        return redirect()->route('profile.index')->with('notification', 'auth.register');
     }
 }

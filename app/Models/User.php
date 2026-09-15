@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Mails\Auth\AuthVerifyEmailSend;
+use App\Mails\Auth\ResetPasswordEmailSend;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'middle_name',
         'last_name',
         'email',
+        'address',
         'password',
         'block',
     ];
@@ -81,5 +84,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function pendingPhones(): HasMany
     {
         return $this->hasMany(PendingPhone::class);
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new AuthVerifyEmailSend);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordEmailSend($token));
     }
 }

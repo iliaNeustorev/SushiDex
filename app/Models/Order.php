@@ -33,4 +33,9 @@ class Order extends Model
             ->withPivot(['id', 'count', 'price'])
             ->withTimestamps();
     }
+
+    public function scopeByUserId($query, int $userId): void
+    {
+        $query->where('user_id', $userId);
+    }
 }

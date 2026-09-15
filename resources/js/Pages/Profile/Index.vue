@@ -1,18 +1,220 @@
 <template>
-    <Head title="Личный кабинет — SushiDex" />
-    <MainLayout><main class="inner-page profile-page"><div class="shell">
-        <header class="profile-header"><div class="profile-avatar">А</div><div><p class="eyebrow dark"><span></span> Личный кабинет</p><h1>Анна Соколова</h1><p>Добрый вечер! Здесь собрана информация о ваших заказах и бонусах.</p></div></header>
-        <div class="profile-grid">
-            <aside class="profile-nav"><span class="active"><i>01</i> Обзор</span><span><i>02</i> Мои заказы</span><span><i>03</i> Адреса</span><span><i>04</i> Настройки</span></aside>
-            <div class="profile-content">
-                <section class="bonus-card"><div><p>Ваш бонусный баланс</p><strong>1 240 <small>бонусов</small></strong><span>1 бонус = 1 ₽</span></div><div class="bonus-mark">よ</div></section>
-                <section class="order-section"><div class="block-heading"><div><span>Последний заказ</span><h2>Заказ № 1048</h2></div><strong>Доставлен</strong></div><div class="order-details"><div><span>Дата</span><strong>14 августа, 19:40</strong></div><div><span>Состав</span><strong>3 позиции</strong></div><div><span>Сумма</span><strong>1 790 ₽</strong></div></div><div class="order-products"><span>Филадельфия Classic × 1</span><span>Тунец Tataki × 1</span><span>Моти Манго × 2</span></div></section>
-                <section class="address-card"><div><span>Основной адрес</span><h2>ул. Большая Никитская, 24</h2><p>Квартира 18, подъезд 2, этаж 5</p></div><span class="address-icon">⌖</span></section>
+    <Head title="Личный кабинет — SushiDex"/>
+    <MainLayout>
+        <main class="inner-page profile-page">
+            <div class="shell">
+                <header class="profile-header">
+                    <div class="profile-avatar">{{ avatarLetter }}</div>
+                    <div>
+                        <p class="eyebrow dark"><span></span> Личный кабинет</p>
+                        <h1>{{ fullName }}</h1>
+                        <p>Добрый вечер! Здесь собрана информация о ваших заказах и бонусах.</p>
+                    </div>
+                </header>
+
+                <div class="profile-grid">
+                    <VTabs
+                        v-model="activeTab"
+                        class="profile-nav"
+                        :direction="mdAndUp ? 'vertical' : 'horizontal'"
+                        :show-arrows="!mdAndUp"
+                        color="#df5f45"
+                        mandatory="force"
+                    >
+                        <VTab
+                            v-for="tab in tabs"
+                            :key="tab.key"
+                            :value="tab.key"
+                            :ripple="false"
+                        >
+                            <span class="profile-tab-label">
+                                <i>{{ tab.number }}</i>
+                                {{ tab.title }}
+                            </span>
+                        </VTab>
+                    </VTabs>
+
+                    <VTabsWindow v-model="activeTab" class="profile-tab-content">
+                        <VTabsWindowItem value="overview">
+                            <ProfileOverviewTab :client="client" :orders="orders"/>
+                        </VTabsWindowItem>
+                        <VTabsWindowItem value="orders">
+                            <ProfileOrdersTab :orders="orders"/>
+                        </VTabsWindowItem>
+                        <VTabsWindowItem value="settings">
+                            <ProfileSettingsTab
+                                :client="client"
+                                :full-name="fullName"
+                            />
+                        </VTabsWindowItem>
+                    </VTabsWindow>
+                </div>
             </div>
-        </div>
-    </div></main></MainLayout>
+        </main>
+    </MainLayout>
 </template>
-<script setup lang="ts">import { Head } from '@inertiajs/vue3';import MainLayout from '~vue/Layouts/MainLayout.vue';</script>
+
+<script setup lang="ts">
+import {Head} from '@inertiajs/vue3';
+import {computed, ref} from 'vue';
+import {useDisplay} from 'vuetify';
+import type {OrderPublicResource, UserProfileResource} from '~types/generated';
+import MainLayout from '~vue/Layouts/MainLayout.vue';
+import ProfileOrdersTab from './Tabs/ProfileOrdersTab.vue';
+import ProfileOverviewTab from './Tabs/ProfileOverviewTab.vue';
+import ProfileSettingsTab from './Tabs/ProfileSettingsTab.vue';
+
+type ProfileTab = 'overview' | 'orders' | 'settings';
+
+const {client, orders} = defineProps<{
+    client: UserProfileResource,
+    orders: OrderPublicResource[]
+}>();
+
+const {mdAndUp} = useDisplay();
+
+const tabs: Array<{ key: ProfileTab; number: string; title: string }> = [
+    {key: 'overview', number: '01', title: 'Обзор'},
+    {key: 'orders', number: '02', title: 'Мои заказы'},
+    {key: 'settings', number: '03', title: 'Настройки'},
+];
+
+const activeTab = ref<ProfileTab>('overview');
+const fullName = computed(() =>
+    [client.last_name, client.first_name, client.middle_name]
+        .filter(Boolean)
+        .join(' '),
+);
+const avatarLetter = computed(() => client.first_name.trim().charAt(0).toUpperCase() || '?');
+</script>
+
 <style scoped>
-.profile-header{display:flex;align-items:center;gap:28px;margin-bottom:58px}.profile-avatar{flex:0 0 92px;width:92px;height:92px;display:grid;place-items:center;border-radius:50%;background:#df5f45;color:#fff;font-family:'Prata',serif;font-size:38px}.profile-header .eyebrow{margin-bottom:12px}.profile-header h1{margin:0;font-family:'Prata',serif;font-size:clamp(38px,5vw,58px);font-weight:400;line-height:1.1}.profile-header>div>p:last-child{margin:13px 0 0;color:#81766c;font-size:14px}.profile-grid{display:grid;grid-template-columns:240px 1fr;gap:62px}.profile-nav{display:flex;flex-direction:column;align-self:start;border-top:1px solid #d9cec2}.profile-nav span{display:flex;gap:17px;padding:18px 4px;border-bottom:1px solid #d9cec2;color:#7d736a;font-size:13px;font-weight:600}.profile-nav span.active{color:#df5f45}.profile-nav i{color:#ada096;font-size:9px;font-style:normal}.profile-content{display:grid;grid-template-columns:1.25fr .75fr;gap:22px}.bonus-card{grid-column:1/-1;min-height:230px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;padding:42px 48px;background:#252522;color:#fff}.bonus-card p{margin:0 0 16px;color:rgba(255,255,255,.55);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.bonus-card strong{display:block;font-family:'Prata',serif;color:#f09172;font-size:48px;font-weight:400}.bonus-card strong small{color:#fff;font-family:'Manrope',sans-serif;font-size:13px}.bonus-card span{color:rgba(255,255,255,.48);font-size:11px}.bonus-mark{width:150px;height:150px;display:grid;place-items:center;border:1px solid rgba(240,145,114,.55);border-radius:50%;color:#f09172;font-family:serif;font-size:72px}.order-section,.address-card{padding:31px;border:1px solid #e0d6cb;background:#fffaf4}.block-heading{display:flex;justify-content:space-between;gap:20px;padding-bottom:22px;border-bottom:1px solid #e0d6cb}.block-heading span,.address-card span{color:#9c8f84;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.block-heading h2,.address-card h2{margin:6px 0 0;font-family:'Prata',serif;font-size:23px;font-weight:400}.block-heading>strong{align-self:start;padding:7px 10px;background:#e7eee0;color:#687a50;font-size:9px;letter-spacing:.08em;text-transform:uppercase}.order-details{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:22px 0}.order-details div{display:flex;flex-direction:column;gap:5px}.order-details span{color:#a0958a;font-size:10px}.order-details strong{font-size:11px}.order-products{display:flex;flex-direction:column;gap:9px;padding-top:18px;border-top:1px solid #e0d6cb;color:#70665d;font-size:11px}.address-card{position:relative}.address-card p{margin-top:14px;color:#887d73;font-size:12px;line-height:1.6}.address-icon{position:absolute;right:28px;bottom:25px;color:#df5f45!important;font-size:28px!important}@media(max-width:900px){.profile-grid{grid-template-columns:1fr;gap:35px}.profile-nav{flex-direction:row;overflow-x:auto}.profile-nav span{min-width:max-content;padding:14px 20px}.profile-content{grid-template-columns:1fr}}@media(max-width:560px){.profile-header{align-items:flex-start;flex-direction:column}.bonus-card{padding:32px 25px}.bonus-mark{width:95px;height:95px;font-size:48px}.order-details{grid-template-columns:1fr}}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 58px;
+}
+
+.profile-avatar {
+    flex: 0 0 92px;
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #df5f45;
+    color: #fff;
+    font-family: 'Prata', serif;
+    font-size: 38px;
+}
+
+.profile-header .eyebrow {
+    margin-bottom: 12px;
+}
+
+.profile-header h1 {
+    margin: 0;
+    font-family: 'Prata', serif;
+    font-size: clamp(38px, 5vw, 58px);
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.profile-header > div > p:last-child {
+    margin: 13px 0 0;
+    color: #81766c;
+    font-size: 14px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 62px;
+}
+
+.profile-nav {
+    align-self: start;
+    width: 100%;
+    height: auto;
+    border-top: 1px solid #d9cec2;
+}
+
+.profile-nav :deep(.v-slide-group__content) {
+    width: 100%;
+}
+
+.profile-nav :deep(.v-tab) {
+    justify-content: flex-start;
+    min-width: 0;
+    height: auto;
+    min-height: 49px;
+    display: flex;
+    width: 100%;
+    padding: 18px 4px;
+    border-bottom: 1px solid #d9cec2;
+    color: #7d736a;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    transition: color .2s ease;
+}
+
+.profile-nav :deep(.v-tab:hover),
+.profile-nav :deep(.v-tab:focus-visible),
+.profile-nav :deep(.v-tab--selected) {
+    color: #df5f45;
+}
+
+.profile-nav :deep(.v-tab__slider) {
+    display: none;
+}
+
+.profile-tab-label {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.profile-tab-label i {
+    color: #ada096;
+    font-size: 9px;
+    font-style: normal;
+}
+
+.profile-tab-content {
+    min-width: 0;
+}
+
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .profile-nav {
+        border-top: 0;
+        border-left: 1px solid #d9cec2;
+    }
+
+    .profile-nav :deep(.v-slide-group__content) {
+        width: auto;
+    }
+
+    .profile-nav :deep(.v-tab) {
+        min-width: max-content;
+        padding: 14px 20px;
+        border-top: 1px solid #d9cec2;
+        border-right: 1px solid #d9cec2;
+    }
+}
+
+@media (max-width: 560px) {
+    .profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
 </style>

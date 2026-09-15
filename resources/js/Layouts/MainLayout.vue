@@ -59,10 +59,10 @@
                                 <span>{{ user.email }}</span>
                             </div>
                         </div>
-                        <VDivider />
+                        <VDivider/>
                         <div class="user-menu-actions">
                             <VListItem
-                                :href="GeneralRoutes.profile().url"
+                                :href="ProfileRoutes.index().url"
                                 prepend-icon="mdi-account-outline"
                                 title="Личный кабинет"
                             />
@@ -125,6 +125,7 @@ import type {UserAuthResource} from "~types/generated";
 import Posts from "~routes/PostController.ts";
 import AdminDashboard from "~routes/Admin/DashboardController.ts";
 import GeneralRoutes from '~routes/GeneralController';
+import ProfileRoutes from '~routes/Client/ProfileController';
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
 const user = props.user
