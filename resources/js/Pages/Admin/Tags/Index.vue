@@ -122,7 +122,7 @@ import type {TypedPagination} from "~vue/shared/pagination.ts";
 import type {TagsQuery, TagCrudResource} from "~types/generated";
 import type {RequiredKeys} from "~vue/shared/objects.ts";
 import {reactive, ref, watch} from "vue";
-import {debounce, merge} from "lodash";
+import {debounce, merge} from "lodash-es";
 import useSpatieSortAdapter from "~vue/composables/useSpatieSortAdapter.ts";
 
 const {query = {}} = defineProps<{

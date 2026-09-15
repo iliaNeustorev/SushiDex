@@ -132,7 +132,7 @@ import type {
     UsersQuery
 } from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';
-import {debounce, merge} from 'lodash';
+import {debounce, merge} from 'lodash-es';
 import type {RequiredKeys} from "~vue/shared/objects.ts";
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";

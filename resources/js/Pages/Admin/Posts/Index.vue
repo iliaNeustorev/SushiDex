@@ -133,9 +133,9 @@ import {Link, useForm, router} from '@inertiajs/vue3';
 import {reactive, ref, watch, computed} from 'vue';
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import PostsRoutes from "~routes/Admin/PostController"
-import type {PostCrudResource, PostsQuery, Status, TagCrudResource} from "~types/generated";
+import type {PostCrudResource, PostsQuery, PostStatus, TagCrudResource} from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';
-import {debounce, merge} from 'lodash';
+import {debounce, merge} from 'lodash-es';
 import type {RequiredKeys} from "~vue/shared/objects.ts";
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
@@ -161,7 +161,7 @@ function applyReload() {
     }));
 }
 
-const statuses: Array<{ title: string, value: Status }> = [
+const statuses: Array<{ title: string, value: PostStatus }> = [
     {value: 0, title: 'Опубликованные'},
     {value: 5, title: 'Черновики'},
     {value: 10, title: 'На модерации'},

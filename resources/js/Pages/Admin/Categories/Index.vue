@@ -139,7 +139,7 @@
 <script setup lang="ts">
 import {reactive, ref, watch} from 'vue';
 import {Link, router, useForm} from '@inertiajs/vue3';
-import {debounce, merge} from 'lodash';
+import {debounce, merge} from 'lodash-es';
 import AdminLayout from '~vue/Layouts/AdminLayout.vue';
 import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import CategoriesRoutes from '~routes/Admin/CategoryController';
