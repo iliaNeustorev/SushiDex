@@ -2,6 +2,9 @@
 
 namespace App\Enums\Posts;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript('PostStatus')]
 enum Status: int
 {
     case DRAFT = 0;

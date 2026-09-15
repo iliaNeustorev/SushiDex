@@ -2,6 +2,9 @@
 
 namespace App\Enums\Orders;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript('OrderStatus')]
 enum Status: int
 {
     case NEW = 1;

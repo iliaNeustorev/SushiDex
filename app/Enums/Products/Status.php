@@ -2,6 +2,9 @@
 
 namespace App\Enums\Products;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript('ProductStatus')]
 enum Status: int
 {
     case IN_CART = 1;

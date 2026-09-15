@@ -2,18 +2,15 @@
 
 namespace App\Services\Product;
 
-use App\Http\RequestDTO\Product\Admin\ProductsSaveReqDTO;
 use App\Models\Product;
 use App\Services\Image\Service as ImageService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-readonly class ProductAdminService
+class ProductAdminService
 {
-    public function __construct(private ImageService $imageService)
-    {
-    }
+    public function __construct(private ImageService $imageService) {}
 
     public function delete(Product $product): void
     {
@@ -28,8 +25,8 @@ readonly class ProductAdminService
             ->allowedFilters([
                 'title',
                 AllowedFilter::exact('category_id'),
-                AllowedFilter::callback('date_from', fn($query, $value) => $query->where('created_at', '>=', $value)),
-                AllowedFilter::callback('date_to', fn($query, $value) => $query->where('created_at', '<=', $value . ' 23:59:59')),
+                AllowedFilter::callback('date_from', fn ($query, $value) => $query->where('created_at', '>=', $value)),
+                AllowedFilter::callback('date_to', fn ($query, $value) => $query->where('created_at', '<=', $value.' 23:59:59')),
             ])
             ->defaultSort('-id')
             ->allowedSorts(['id', 'title', 'price', 'created_at'])

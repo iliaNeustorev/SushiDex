@@ -35,6 +35,10 @@ title: string;
 type: Type;
 parent_id: number | null;
 };
+export type ConfirmCodeReqDTO = {
+code: string;
+id: number;
+};
 export type GeneralPagination = {
 page: number;
 total: number;
@@ -57,13 +61,34 @@ email: string;
 password: string;
 remember: boolean;
 };
+export type OrderPublicResource = {
+status_text: string;
+type_paid_text: string;
+id: number;
+total_price: string;
+status: OrderStatus;
+type_paid: TypePaid;
+need_delivery: boolean;
+created_at: string;
+items_count: number;
+};
 export type OrderSaveReqDTO = {
 type: TypePaid;
 need_delivery: boolean;
 total_price: string;
 };
+export enum OrderStatus { NEW = 1, PAID = 2, PROCESSING = 3, COMPLETED = 4, CANCELLED = 5 };
+export type PendingPhoneProfileResource = {
+id: number;
+phone: string;
+created_at: string;
+};
 export type PhoneCrudResource = {
 user: UserPublicResource | null;
+phone: string;
+verified_at: string;
+};
+export type PhoneProfileResource = {
 phone: string;
 verified_at: string;
 };
@@ -73,7 +98,7 @@ url: string;
 title: string;
 content: string;
 created_at: string;
-status: Status;
+status: PostStatus;
 category: CategoryCrudResource;
 tags: Array<TagCrudResource>;
 };
@@ -87,6 +112,7 @@ category: CategoryPublicResource;
 user: UserPublicResource;
 tags: Array<TagPublicResource>;
 };
+export enum PostStatus { DRAFT = 0, MODERATING = 5, PUBLISHED = 10, REJECTED = 15 };
 export type PostsQuery = {
 filter?: PostsQueryFilters;
 sort?: string;
@@ -96,7 +122,7 @@ tagSearch?: string;
 };
 export type PostsQueryFilters = {
 title?: string;
-status?: Status;
+status?: PostStatus;
 date_from?: string;
 date_to?: string;
 tags?: string;
@@ -121,6 +147,7 @@ updated_at: string;
 count_paid: number | null;
 active: boolean;
 };
+export enum ProductStatus { IN_CART = 1, ORDERED = 2 };
 export type ProductsQuery = {
 filter?: ProductsQueryFilters;
 sort?: string;
@@ -141,6 +168,12 @@ price: string;
 old_price: string | null;
 category_id: number;
 active: boolean;
+};
+export type ProfileSaveReqDTO = {
+first_name: string;
+middle_name: string | null;
+last_name: string | null;
+address: string | null;
 };
 export type RegisterReqDTO = {
 first_name: string;
@@ -165,9 +198,9 @@ name: Roles;
 description: string;
 };
 export enum Roles { USER = 'user', AUTHOR = 'author', ADMIN = 'admin', DEVELOPER = 'dev' };
-export enum Status { DRAFT = 0, MODERATING = 5, PUBLISHED = 10, REJECTED = 15 };
-export enum Status { NEW = 1, PAID = 2, PROCESSING = 3, COMPLETED = 4, CANCELLED = 5 };
-export enum Status { IN_CART = 1, ORDERED = 2 };
+export type SendCodeReqDTO = {
+id: number;
+};
 export type TagCrudResource = {
 id: number;
 url: string;
@@ -223,6 +256,16 @@ roles: Array<RoleCrudResource>;
 address: string | null;
 block: boolean;
 phone: PhoneCrudResource | null;
+};
+export type UserProfileResource = {
+id: number;
+first_name: string;
+last_name: string | null;
+middle_name: string | null;
+email: string | null;
+address: string | null;
+phone: PhoneProfileResource | null;
+pendingPhones: Array<PendingPhoneProfileResource>;
 };
 export type UserPublicResource = {
 id: number;
