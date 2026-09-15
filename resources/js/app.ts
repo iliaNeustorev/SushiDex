@@ -5,8 +5,8 @@ import '~css/base.css';
 
 createInertiaApp({
     resolve: name => {
-        const pages = import.meta.glob('./Pages/**/*.vue', {eager: false});
-        return pages[`./Pages/${name}.vue`]() as any;
+        const pages = import.meta.glob('./Pages/**/*.vue', {eager: true});
+        return pages[`./Pages/${name}.vue`] as any;
     },
     setup({el, App, props, plugin}) {
         const vuetify = initVuetifyPlugin();

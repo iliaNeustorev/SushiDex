@@ -2,6 +2,7 @@ import {createInertiaApp} from '@inertiajs/vue3'
 import createServer from '@inertiajs/vue3/server'
 import {renderToString} from '@vue/server-renderer'
 import {createSSRApp, h} from 'vue'
+import initVuetifyPlugin from "./plugins/vuetify";
 
 createServer(page =>
     createInertiaApp({
@@ -12,10 +13,12 @@ createServer(page =>
             return pages[`./Pages/${name}.vue`] as any
         },
         setup({App, props, plugin}) {
-
+            const vuetify = initVuetifyPlugin()
             return createSSRApp({
                 render: () => h(App, props),
-            }).use(plugin)
+            })
+                .use(plugin)
+                .use(vuetify)
         },
     }),
 )

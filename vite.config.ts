@@ -29,5 +29,8 @@ export default defineConfig({
             '~vue': fileURLToPath(new URL('./resources/js', import.meta.url)),
             '~css': fileURLToPath(new URL('./resources/css', import.meta.url)),
         }
+    },
+    ssr: {
+        noExternal: [/\.css$/, /^vuetify/]
     }
 });
