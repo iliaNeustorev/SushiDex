@@ -1,61 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SushiDex
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Веб-приложение на Laravel и Vue для каталога, блога и управления контентом. В проекте есть публичная часть, личный кабинет пользователя и административная панель с разграничением доступа по ролям.
 
-## About Laravel
+## Возможности
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- каталог товаров и категории;
+- блог: публикации, теги, категории и корзина удалённых записей;
+- регистрация, авторизация, восстановление пароля и подтверждение email;
+- профиль пользователя, история заказов и подтверждение номера телефона;
+- корзина и оформление заказов на уровне сервисов приложения;
+- загрузка и фоновая обработка изображений;
+- административная панель для управления контентом, товарами и пользователями;
+- роли `user`, `author`, `admin` и `dev`;
+- серверный рендеринг Inertia (SSR).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Стек
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Backend:** PHP 8.3, Laravel 12, PostgreSQL 17, Redis, Inertia.js, Spatie Laravel Data, Spatie Query Builder.
 
-## Learning Laravel
+**Frontend:** Vue 3, TypeScript, Vuetify 3, Vite 7, Wayfinder, Material Design Icons.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Инфраструктура:** Docker Compose, Nginx, PHP-FPM, Node.js 24.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Запуск через Docker
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Требования
 
-## Laravel Sponsors
+- Docker;
+- Docker Compose v2;
+- свободный порт `8859` для приложения и `5173` для Vite.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Установка
 
-### Premium Partners
+1. Скопируйте файл окружения:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+cp .env.example .env
+```
 
-## Contributing
+2. Настройте подключение к сервисам Docker в `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```dotenv
+APP_NAME=SushiDex
+APP_URL=http://localhost:8859
 
-## Code of Conduct
+DB_CONNECTION=pgsql
+DB_HOST=db
+DB_PORT=5432
+DB_DATABASE=sushidex
+DB_USERNAME=sushidex
+DB_PASSWORD=secret
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+REDIS_CLIENT=phpredis
+REDIS_HOST=redis
+REDIS_PORT=6379
 
-## Security Vulnerabilities
+MAIL_MAILER=log
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> PostgreSQL в текущем `compose.yaml` создаёт базу с именем пользователя, поэтому значения `DB_DATABASE` и `DB_USERNAME` должны совпадать при первом запуске нового тома данных.
 
-## License
+3. Соберите и запустите контейнеры:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+docker compose up -d --build
+```
+
+Контейнер `node` сам выполнит `npm ci` и запустит Vite в режиме разработки.
+
+4. Установите PHP-зависимости и подготовьте приложение:
+
+```bash
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
+docker compose exec app php artisan storage:link
+```
+
+5. При необходимости добавьте системные роли и тестовые данные:
+
+```bash
+docker compose exec app php artisan db:seed --class=Roles
+docker compose exec app php artisan db:seed
+```
+
+После запуска приложение доступно по адресу [http://localhost:8859](http://localhost:8859).
+
+Тестовые пользователи из `DatabaseSeeder` получают пароль `password`; их email-адреса генерируются случайно и выводятся только в базе данных.
+
+## Фоновые задачи
+
+Подтверждение email, восстановление пароля и обработка изображений выполняются через очередь. В отдельном терминале запустите worker:
+
+```bash
+docker compose exec app php artisan queue:work
+```
+
+По умолчанию письма записываются в `storage/logs/laravel.log`, если используется `MAIL_MAILER=log`.
+
+## Команды разработки
+
+```bash
+# Проверка типов Vue и TypeScript
+docker compose exec node npm run check:vue
+
+# ESLint
+docker compose exec node npm run lint
+
+# Форматирование PHP-кода
+docker compose exec app vendor/bin/pint
+
+# Backend-тесты
+docker compose exec app composer test
+
+# Production-сборка клиента и SSR
+docker compose exec node npm run build
+```
+
+После изменения контроллеров, DTO или маршрутов обновите сгенерированные TypeScript-файлы:
+
+```bash
+docker compose exec app composer generate-types
+docker compose exec app composer routes
+```
+
+Сгенерированный код находится в `resources/generated` и не должен редактироваться вручную.
+
+## Структура проекта
+
+```text
+app/
+├── Http/Controllers/     HTTP-контроллеры публичной части, профиля и админки
+├── Http/RequestDTO/      входные DTO и правила валидации
+├── Integrations/Sms/     SMS-интеграции и адаптеры
+├── Jobs/                 фоновые задания
+└── Services/             бизнес-логика приложения
+resources/
+├── js/Pages/             страницы Inertia/Vue
+├── js/Components/        переиспользуемые Vue-компоненты
+└── generated/            типы и маршруты, созданные генераторами
+routes/
+├── web.php               публичные маршруты и профиль
+├── auth.php              авторизация и подтверждение email
+└── admin.php             маршруты административной панели
+_docker/                  конфигурация PHP, Nginx и Node.js
+```
+
+## Доступ в административную панель
+
+Административные маршруты находятся под префиксом `/admin` и защищены ролями:
+
+- `author` — управление публикациями и изображениями;
+- `admin` и `dev` — модерация и публикация записей;
+- `dev` — управление справочниками, товарами и пользователями.
+
+Для локальной разработки назначить роли существующему пользователю можно через Tinker:
+
+```bash
+docker compose exec app php artisan tinker
+```
+
+После изменения ролей следует очистить кеш приложения:
+
+```bash
+docker compose exec app php artisan cache:clear
+```
+
+## SMS-подтверждение
+
+В окружениях `local` и `testing` используется тестовый SMS-адаптер без реальной отправки. Для остальных окружений подключается `SmsAeroAdapter`.
+
+Класс `SmsAero` сейчас является заготовкой и всегда сообщает об успешной отправке. Перед production-развёртыванием необходимо реализовать вызов API провайдера, добавить его настройки в окружение и обработать ответы сервиса.
+
+## Остановка проекта
+
+```bash
+docker compose down
+```
