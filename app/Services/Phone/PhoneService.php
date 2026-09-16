@@ -21,7 +21,7 @@ class PhoneService
 
     public function sendVerificationCode(User $client, PendingPhone $pendingPhone): void
     {
-        $limiterKey = 'send-sms:'.$client->id;
+        $limiterKey = "send-sms:{$client->id}:{$pendingPhone->id}";
 
         $executed = RateLimiter::attempt(
             $limiterKey,
@@ -74,7 +74,7 @@ class PhoneService
                 'phone' => $pendingPhone->phone,
                 'verified_at' => Carbon::now(),
             ]);
-            $pendingPhone->delete();
+            PendingPhone::where('phone', $pendingPhone->phone)->delete();
         });
         RateLimiter::clear($limiterKey);
     }

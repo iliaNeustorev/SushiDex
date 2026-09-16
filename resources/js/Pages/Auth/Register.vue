@@ -76,6 +76,7 @@ const form = useForm<RegisterReqDTO>({
 });
 
 function send(): void {
+    form.phone = form.phone != null ? form.phone.replace(/\D/g, '').replace(/^8/, '7') : null
     form.post(RegisterRoutes.store().url);
 }
 </script>

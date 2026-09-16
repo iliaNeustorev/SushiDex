@@ -1,3 +1,6 @@
+export type AddPhoneReqDTO = {
+phone: string;
+};
 export type CartSaveReqDTO = {
 product_id: number;
 count: number;

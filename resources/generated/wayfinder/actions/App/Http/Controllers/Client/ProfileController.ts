@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

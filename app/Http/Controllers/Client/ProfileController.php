@@ -17,11 +17,14 @@ class ProfileController extends Controller
      */
     public function index(Request $request)
     {
-        $client = $request->user()->load(['phone', 'pendingPhones']);
+        $client = $request->user()->load([
+            'phone',
+            'pendingPhones' => fn($query) => $query->orderByDesc('id')
+        ]);
 
         return Inertia::render('Profile/Index', [
-            'client' => fn () => UserProfileResource::from($client),
-            'orders' => fn () => OrderPublicResource::collect(Order::withCount('items')->byUserId($client->id)->orderByDesc('id')->get()),
+            'client' => fn() => UserProfileResource::from($client),
+            'orders' => fn() => OrderPublicResource::collect(Order::withCount('items')->byUserId($client->id)->orderByDesc('id')->get()),
         ]);
     }
 

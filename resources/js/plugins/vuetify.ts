@@ -4,12 +4,13 @@ import {ru} from 'vuetify/locale'
 import {VDateInput} from 'vuetify/labs/VDateInput'
 
 import {aliases, mdi} from 'vuetify/iconsets/mdi-svg'
-import {mdiCastEducation, mdiNewspaper, mdiCamera, mdiPhoneCheckOutline} from '@mdi/js'
+import {mdiCastEducation, mdiNewspaper, mdiCamera, mdiPhoneCheckOutline, mdiDeleteOutline} from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
 aliases['newspaper'] = mdiNewspaper
 aliases['mdiCamera'] = mdiCamera
 aliases['phoneCheckOutline'] = mdiPhoneCheckOutline
+aliases['deleteOutline'] = mdiDeleteOutline
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

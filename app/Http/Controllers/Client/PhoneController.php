@@ -9,8 +9,11 @@ use App\Exceptions\Phone\SmsSendingFailed;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PendingPhone\ConfirmCodeRequest;
 use App\Http\Requests\PendingPhone\SendCodeRequest;
+use App\Http\Requests\PendingPhone\StoreRequest;
+use App\Models\PendingPhone;
 use App\Services\Phone\PhoneService;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +22,14 @@ class PhoneController extends Controller
 
     public function __construct(private readonly PhoneService $phoneService)
     {
+    }
+
+    public function store(StoreRequest $request)
+    {
+        $client = $request->user();
+        $phone = $request->getData()->phone;
+        $client->pendingPhones()->create(['phone' => $phone]);
+        return redirect()->back();
     }
 
     public function sendCode(SendCodeRequest $request)
@@ -68,6 +79,16 @@ class PhoneController extends Controller
             ]);
         }
 
+        return redirect()->back();
+    }
+
+    public function destroy(Request $request, PendingPhone $pendingPhone)
+    {
+        $client = $request->user();
+        if ($pendingPhone->user_id !== $client->id) {
+            abort(403);
+        }
+        $pendingPhone->delete();
         return redirect()->back();
     }
 }
