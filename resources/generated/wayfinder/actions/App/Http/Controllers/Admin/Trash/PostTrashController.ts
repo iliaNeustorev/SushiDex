@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
 /**
-* @see \App\Http\Controllers\PostTrashController::index
-* @see app/Http/Controllers/PostTrashController.php:13
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::index
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:14
 * @route '/admin/post-trash'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,8 +15,8 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\PostTrashController::index
-* @see app/Http/Controllers/PostTrashController.php:13
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::index
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:14
 * @route '/admin/post-trash'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -24,8 +24,8 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \App\Http\Controllers\PostTrashController::index
-* @see app/Http/Controllers/PostTrashController.php:13
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::index
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:14
 * @route '/admin/post-trash'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,8 +34,8 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\PostTrashController::index
-* @see app/Http/Controllers/PostTrashController.php:13
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::index
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:14
 * @route '/admin/post-trash'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,8 +44,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\PostTrashController::update
-* @see app/Http/Controllers/PostTrashController.php:23
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::update
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:24
 * @route '/admin/post-trash/{post_trash}'
 */
 export const update = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -59,8 +59,8 @@ update.definition = {
 } satisfies RouteDefinition<["put","patch"]>
 
 /**
-* @see \App\Http\Controllers\PostTrashController::update
-* @see app/Http/Controllers/PostTrashController.php:23
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::update
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:24
 * @route '/admin/post-trash/{post_trash}'
 */
 update.url = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -86,8 +86,8 @@ update.url = (args: { post_trash: string | number } | [post_trash: string | numb
 }
 
 /**
-* @see \App\Http\Controllers\PostTrashController::update
-* @see app/Http/Controllers/PostTrashController.php:23
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::update
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:24
 * @route '/admin/post-trash/{post_trash}'
 */
 update.put = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -96,8 +96,8 @@ update.put = (args: { post_trash: string | number } | [post_trash: string | numb
 })
 
 /**
-* @see \App\Http\Controllers\PostTrashController::update
-* @see app/Http/Controllers/PostTrashController.php:23
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::update
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:24
 * @route '/admin/post-trash/{post_trash}'
 */
 update.patch = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -106,8 +106,8 @@ update.patch = (args: { post_trash: string | number } | [post_trash: string | nu
 })
 
 /**
-* @see \App\Http\Controllers\PostTrashController::destroy
-* @see app/Http/Controllers/PostTrashController.php:35
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::destroy
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:36
 * @route '/admin/post-trash/{post_trash}'
 */
 export const destroy = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -121,8 +121,8 @@ destroy.definition = {
 } satisfies RouteDefinition<["delete"]>
 
 /**
-* @see \App\Http\Controllers\PostTrashController::destroy
-* @see app/Http/Controllers/PostTrashController.php:35
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::destroy
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:36
 * @route '/admin/post-trash/{post_trash}'
 */
 destroy.url = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -148,8 +148,8 @@ destroy.url = (args: { post_trash: string | number } | [post_trash: string | num
 }
 
 /**
-* @see \App\Http\Controllers\PostTrashController::destroy
-* @see app/Http/Controllers/PostTrashController.php:35
+* @see \App\Http\Controllers\Admin\Trash\PostTrashController::destroy
+* @see app/Http/Controllers/Admin/Trash/PostTrashController.php:36
 * @route '/admin/post-trash/{post_trash}'
 */
 destroy.delete = (args: { post_trash: string | number } | [post_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

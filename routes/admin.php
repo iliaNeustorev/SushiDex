@@ -6,8 +6,8 @@ use App\Http\Controllers\Admin\ImagesController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\Trash\PostTrashController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\PostTrashController;
 
 Route::middleware(['can:author'])->group(function () {
     Route::resource('posts', PostController::class)->except('show');

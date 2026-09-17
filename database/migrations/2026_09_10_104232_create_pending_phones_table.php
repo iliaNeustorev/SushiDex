@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->constrained();
             $table->string('phone', 11);
-            $table->text('code_hash')->nullable();
+            $table->string('code_hash', 255)->nullable();
             $table->timestamp('code_expires_at')->nullable();
             $table->unique(['phone', 'user_id']);
             $table->timestamps();

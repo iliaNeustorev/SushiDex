@@ -2,7 +2,6 @@ import PostController from './PostController'
 import GeneralController from './GeneralController'
 import Client from './Client'
 import Admin from './Admin'
-import PostTrashController from './PostTrashController'
 import Auth from './Auth'
 
 const Controllers = {
@@ -10,7 +9,6 @@ const Controllers = {
     GeneralController: Object.assign(GeneralController, GeneralController),
     Client: Object.assign(Client, Client),
     Admin: Object.assign(Admin, Admin),
-    PostTrashController: Object.assign(PostTrashController, PostTrashController),
     Auth: Object.assign(Auth, Auth),
 }
 

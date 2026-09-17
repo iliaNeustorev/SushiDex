@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Trash;
 
+use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Support\Facades\Gate;
 
