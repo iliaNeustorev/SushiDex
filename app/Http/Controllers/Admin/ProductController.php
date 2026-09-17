@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Categories\Type;
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\Product\Admin\ProductsQuery;
 use App\Http\Requests\Product\SaveRequest;
@@ -42,7 +43,7 @@ class ProductController extends Controller
         };
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,
-            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
             'query' => $query,
         ]);
     }
@@ -55,7 +56,7 @@ class ProductController extends Controller
         Gate::authorize('create', Product::class);
 
         return Inertia::render('Admin/Products/Create', [
-            'categories' => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'categories' => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
         ]);
     }
 
@@ -81,7 +82,7 @@ class ProductController extends Controller
 
         return Inertia::render('Admin/Products/Edit', [
             'product' => fn() => ProductCrudResource::from($product),
-            'categories' => fn() => CategoryCrudResource::collect(Category::type()->orderBy('title')->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
             'images' => fn() => ImageCrudResource::collect($product->images),
         ]);
     }

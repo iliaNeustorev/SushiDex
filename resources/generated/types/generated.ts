@@ -54,6 +54,10 @@ id: number;
 path: string;
 created_at: string;
 };
+export type ImagePublicResource = {
+id: number;
+path: string;
+};
 export type ImagesUploadReqDTO = {
 item: string;
 id: number;
@@ -150,7 +154,26 @@ updated_at: string;
 count_paid: number | null;
 active: boolean;
 };
+export type ProductPublicResource = {
+id: number;
+title: string;
+description: string | null;
+content: string | null;
+price: string;
+old_price: string | null;
+count_paid: number | null;
+active: boolean;
+images: Array<ImagePublicResource>;
+};
 export enum ProductStatus { IN_CART = 1, ORDERED = 2 };
+export type ProductsClientQuery = {
+filter?: ProductsClientQueryFilters;
+url?: string;
+page?: number;
+};
+export type ProductsClientQueryFilters = {
+title?: string;
+};
 export type ProductsQuery = {
 filter?: ProductsQueryFilters;
 sort?: string;

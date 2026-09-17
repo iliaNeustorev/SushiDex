@@ -85,7 +85,7 @@ class CategoryController extends Controller
         return Inertia::render('Admin/Categories/Edit', [
             'category' => fn() => CategoryCrudResource::from($category),
             'images' => fn() => ImageCrudResource::collect($category->images),
-            'categories' => fn() => CategoryCrudResource::collect(Category::whereNot('id', $category->id)->type($category->type)->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::whereNot('id', $category->id)->byType($category->type)->get()),
         ]);
     }
 

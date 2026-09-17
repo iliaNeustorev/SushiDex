@@ -54,6 +54,14 @@
                         label="Старая цена"
                         class="mb-1"
                     />
+                    <VCheckbox
+                        v-model="form.active"
+                        :error-messages="form.errors.active"
+                        color="#df5f45"
+                        density="compact"
+                        hide-details
+                        label="Активен"
+                    />
                 </VCardText>
                 <VCardActions>
                     <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>

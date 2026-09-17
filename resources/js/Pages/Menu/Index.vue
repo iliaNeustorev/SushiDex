@@ -6,245 +6,293 @@
                 <header class="page-intro">
                     <p class="eyebrow dark"><span></span> Меню SushiDex</p>
                     <h1>Выберите свой вкус</h1>
-                    <p>Роллы, суши и тёплые блюда готовим только после заказа. Здесь пока тестовое меню без корзины и
-                        фильтрации.</p>
+                    <p>Роллы, суши и тёплые блюда готовим только после заказа. Выберите то, что хочется попробовать сегодня.</p>
                 </header>
                 <nav class="category-list" aria-label="Категории меню">
-                    <span v-for="category in categories" :key="category.title"
-                          :class="{ active: category.active }">{{ category.title }} <small>{{ category.count }}</small></span>
+                    <button
+                        v-for="category in categories"
+                        :key="category.url"
+                        type="button"
+                        class="category-tab"
+                        :class="{ active: category.url === selectedCategoryUrl }"
+                        :aria-current="category.url === selectedCategoryUrl ? 'page' : undefined"
+                        @click="selectCategory(category.url)"
+                    >
+                        {{ category.title }}
+                    </button>
                 </nav>
                 <section class="catalog-section">
                     <div class="catalog-heading">
-                        <div><p>Категория 01</p>
-                            <h2>Роллы</h2></div>
-                        <span>8 позиций</span></div>
-                    <div class="product-grid">
-                        <article v-for="product in products" :key="product.name" class="product-card">
-                            <div class="product-art" :style="{ background: product.background }"><span>{{
-                                    product.symbol
-                                }}</span><small v-if="product.badge">{{ product.badge }}</small></div>
+                        <div>
+                            <p class="catalog-kicker">Каталог</p>
+                            <h2>{{ activeCategory?.title ?? 'Меню' }}</h2>
+                        </div>
+                        <span class="catalog-count">{{ formatItemsCount(countProducts) }}</span>
+                    </div>
+                    <div class="menu-search">
+                        <VTextField
+                            :model-value="queryLocal.filter.title"
+                            @update:model-value="onTitleUpd"
+                            label="Поиск продукта"
+                            variant="outlined"
+                            density="comfortable"
+                            color="#df5f45"
+                            base-color="#bcae9f"
+                            hide-details
+                            clearable
+                        />
+                    </div>
+                    <div v-if="products.data.length > 0" class="product-grid">
+                        <article v-for="product in products.data" :key="product.id" class="product-card">
+                            <div class="product-art">
+                                <VCarousel
+                                    v-if="product.images.length"
+                                    height="100%"
+                                    :transition-duration="600"
+                                    hide-delimiters
+                                >
+                                    <VCarouselItem
+                                        v-for="image in product.images"
+                                        :key="image.id"
+                                        :src="`/storage/${image.path}`"
+                                        cover
+                                    />
+                                </VCarousel>
+                                <div v-else class="product-art-empty" aria-hidden="true">よ</div>
+                            </div>
                             <div class="product-copy">
-                                <div class="product-title"><h3>{{ product.name }}</h3><strong>{{
-                                        product.price
-                                    }}</strong></div>
+                                <div class="product-title">
+                                    <h3>{{ product.title }}</h3>
+                                    <strong>{{ product.price }} ₽</strong>
+                                </div>
                                 <p>{{ product.description }}</p>
-                                <div class="product-meta"><span>{{ product.weight }}</span>
-                                    <button type="button" aria-label="Добавить товар">＋</button>
+                                <div class="product-meta">
+                                    <span>{{ product.content }}</span>
+                                    <button type="button" :aria-label="`Добавить ${product.title}`">＋</button>
                                 </div>
                             </div>
                         </article>
                     </div>
+                    <div v-else class="empty-state">
+                        <span class="empty-state-mark" aria-hidden="true">よ</span>
+                        <h3>Ничего не найдено</h3>
+                        <p>Попробуйте другое название или выберите категорию.</p>
+                    </div>
                 </section>
+                <div v-if="products.lastPage > 1" class="menu-pagination">
+                    <VPagination
+                        v-model="queryLocal.page"
+                        color="#171716"
+                        active-color="#df5f45"
+                        :length="products.lastPage"
+                        next-icon="$menuRight"
+                        prev-icon="$menuLeft"
+                    />
+                </div>
             </div>
         </main>
     </MainLayout>
 </template>
 <script setup lang="ts">
-import {Head} from '@inertiajs/vue3';
+import {Head, router} from '@inertiajs/vue3';
 import MainLayout from '~vue/Layouts/MainLayout.vue';
+import type {CategoryPublicResource, ProductPublicResource, ProductsClientQuery} from "~types/generated.ts";
+import type {TypedPagination} from "~vue/shared/pagination.ts";
+import {computed, reactive, watch} from "vue";
+import {formatItemsCount} from "~vue/shared/formatters.ts";
+import type {RequiredKeys} from "~vue/shared/objects.ts";
+import {debounce, merge} from "lodash-es";
+import MenuRoutes from "~routes/GeneralController.ts";
 
-const categories = [{title: 'Роллы', count: '08', active: true}, {
-    title: 'Суши',
-    count: '06',
-    active: false
-}, {title: 'Сеты', count: '05', active: false}, {title: 'Горячее', count: '07', active: false}, {
-    title: 'Напитки',
-    count: '09',
-    active: false
-}];
-const products = [
-    {
-        name: 'Филадельфия Classic',
-        description: 'Лосось, сливочный сыр, огурец, японский рис',
-        price: '590 ₽',
-        weight: '260 г',
-        symbol: '鮭',
-        badge: 'Хит',
-        background: '#e89472'
-    },
-    {
-        name: 'Тунец Tataki',
-        description: 'Опалённый тунец, авокадо, кунжут и соус понзу',
-        price: '640 ₽',
-        weight: '245 г',
-        symbol: '鮪',
-        badge: '',
-        background: '#c95c62'
-    },
-    {
-        name: 'Green Maki',
-        description: 'Авокадо, огурец, чука и нежный ореховый соус',
-        price: '390 ₽',
-        weight: '220 г',
-        symbol: '緑',
-        badge: 'Veg',
-        background: '#879866'
-    },
-    {
-        name: 'Креветка Tempura',
-        description: 'Хрустящая креветка, манго, тобико и спайси-соус',
-        price: '620 ₽',
-        weight: '275 г',
-        symbol: '海',
-        badge: 'New',
-        background: '#d7a65d'
-    },
-    {
-        name: 'Угорь Unagi',
-        description: 'Копчёный угорь, авокадо, кунжут и соус унаги',
-        price: '680 ₽',
-        weight: '250 г',
-        symbol: '鰻',
-        badge: '',
-        background: '#8b6954'
-    },
-    {
-        name: 'Краб & Манго',
-        description: 'Снежный краб, спелое манго, огурец и икра масаго',
-        price: '560 ₽',
-        weight: '240 г',
-        symbol: '蟹',
-        badge: '',
-        background: '#cf795d'
-    },
-];
+const {query = {}, categories, products, selectedCategoryUrl} = defineProps<{
+    categories: CategoryPublicResource[],
+    products: TypedPagination<ProductPublicResource>,
+    selectedCategoryUrl: string | null,
+    query: ProductsClientQuery
+}>()
+const activeCategory = computed(() => categories.find(v => v.url === selectedCategoryUrl))
+const countProducts = computed(() => products.total)
+
+const queryDefaults: RequiredKeys<ProductsClientQuery, 'filter'> = {
+    filter: {}
+}
+const queryLocal = reactive(merge({}, queryDefaults, {page: products.page}, query));
+
+const onTitleUpd = debounce((v: string | null) => {
+    queryLocal.page = 1;
+    queryLocal.filter.title = v || undefined;
+}, 900);
+
+watch(queryLocal, applyReload);
+
+function applyReload() {
+    router.visit(MenuRoutes.menu({
+        query: queryLocal
+    }), {
+        preserveScroll: true
+    });
+}
+
+function selectCategory(categoryUrl: string) {
+    if (queryLocal.url === categoryUrl || (!queryLocal.url && selectedCategoryUrl === categoryUrl)) {
+        return;
+    }
+
+    queryLocal.page = 1;
+    queryLocal.url = categoryUrl;
+}
 </script>
 <style scoped>
 .category-list {
     display: flex;
-    gap: 10px;
-    margin-bottom: 68px;
+    gap: 12px;
+    margin-bottom: 64px;
     overflow-x: auto;
-    padding-bottom: 8px
+    padding-bottom: 12px;
+    scrollbar-width: thin;
 }
 
-.category-list span {
+.category-tab {
     min-width: max-content;
-    padding: 13px 19px;
+    padding: 13px 21px;
     border: 1px solid #d9cec2;
+    background: transparent;
     color: #756b62;
+    font-family: inherit;
     font-size: 13px;
-    font-weight: 700
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color .2s, background-color .2s, color .2s;
 }
 
-.category-list span.active {
+.category-tab:hover {
+    border-color: #171716;
+    color: #171716;
+}
+
+.category-tab:focus-visible {
+    outline: 2px solid #df5f45;
+    outline-offset: 3px;
+}
+
+.category-tab.active {
     border-color: #171716;
     background: #171716;
-    color: #fff
-}
-
-.category-list small {
-    margin-left: 8px;
-    color: #a99c91;
-    font-size: 9px
+    color: #fff;
 }
 
 .catalog-heading {
     display: flex;
     align-items: end;
     justify-content: space-between;
+    gap: 20px;
     padding-bottom: 22px;
-    border-bottom: 1px solid #d9cec2
+    border-bottom: 1px solid #d9cec2;
 }
 
-.catalog-heading p {
+.catalog-kicker {
     margin: 0 0 8px;
     color: #b16a56;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .16em;
-    text-transform: uppercase
+    text-transform: uppercase;
 }
 
 .catalog-heading h2 {
     margin: 0;
     font-family: 'Prata', serif;
-    font-size: 38px;
-    font-weight: 400
+    font-size: clamp(30px, 4vw, 42px);
+    font-weight: 400;
+    line-height: 1.2;
 }
 
-.catalog-heading > span {
+.catalog-count {
     color: #8b8076;
-    font-size: 12px
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.menu-search {
+    width: min(100%, 420px);
+    margin: 28px 0 6px;
+}
+
+.menu-search :deep(.v-field) {
+    background: #fffaf4;
+    border-radius: 0;
+    font-family: 'Manrope', sans-serif;
+}
+
+.menu-search :deep(.v-label) {
+    color: #756b62;
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
-    margin-top: 28px
+    margin-top: 28px;
 }
 
 .product-card {
     display: grid;
-    grid-template-columns:210px 1fr;
+    grid-template-columns: minmax(190px, 42%) minmax(0, 1fr);
     min-height: 240px;
     overflow: hidden;
-    border: 1px solid #e0d6cb;
+    border: 1px solid #e7ded3;
     background: #fffaf4;
-    transition: transform .25s, box-shadow .25s
+    transition: transform .25s, box-shadow .25s;
 }
 
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(51, 38, 27, .08)
+    box-shadow: 0 20px 45px rgba(51, 38, 27, .09);
 }
 
 .product-art {
     position: relative;
+    min-width: 0;
+    min-height: 240px;
+    overflow: hidden;
+    background: #e6d9c9;
+}
+
+.product-art :deep(.v-carousel) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100% !important;
+}
+
+.product-art :deep(.v-carousel__controls) {
+    background: rgba(23, 23, 22, .34);
+}
+
+.product-art-empty {
     display: grid;
+    position: absolute;
+    inset: 0;
+    height: 100%;
     place-items: center;
-    overflow: hidden
-}
-
-.product-art::before, .product-art::after {
-    content: '';
-    position: absolute;
-    width: 130px;
-    height: 130px;
-    border: 1px solid rgba(255, 255, 255, .42);
-    border-radius: 50%
-}
-
-.product-art::after {
-    width: 94px;
-    height: 94px;
-    border-color: rgba(23, 23, 22, .13)
-}
-
-.product-art > span {
-    position: relative;
-    z-index: 1;
-    color: rgba(255, 255, 255, .9);
-    font-family: serif;
-    font-size: 58px
-}
-
-.product-art small {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    z-index: 2;
-    padding: 5px 8px;
-    background: #fffaf4;
-    color: #332d28;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .1em;
-    text-transform: uppercase
+    background: #d9a183;
+    color: rgba(255, 255, 255, .78);
+    font-family: 'Prata', serif;
+    font-size: 64px;
 }
 
 .product-copy {
     display: flex;
     flex-direction: column;
-    padding: 27px
+    min-width: 0;
+    padding: 25px;
 }
 
 .product-title {
     display: flex;
     align-items: start;
     justify-content: space-between;
-    gap: 12px
+    gap: 14px;
 }
 
 .product-title h3 {
@@ -252,57 +300,139 @@ const products = [
     font-family: 'Prata', serif;
     font-size: 19px;
     font-weight: 400;
-    line-height: 1.35
+    line-height: 1.35;
 }
 
 .product-title strong {
     color: #df5f45;
-    white-space: nowrap
+    font-size: 15px;
+    white-space: nowrap;
 }
 
 .product-copy > p {
-    margin: 15px 0;
+    margin: 15px 0 20px;
     color: #81766c;
-    font-size: 12px;
-    line-height: 1.65
+    font-size: 13px;
+    line-height: 1.65;
 }
 
 .product-meta {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     margin-top: auto;
     color: #9b8f84;
-    font-size: 11px
+    font-size: 11px;
 }
 
 .product-meta button {
     width: 38px;
     height: 38px;
+    flex: none;
     border: 0;
     background: #171716;
     color: #fff;
     font-size: 20px;
-    cursor: pointer
+    cursor: pointer;
+    transition: background-color .2s;
+}
+
+.product-meta button:hover {
+    background: #df5f45;
+}
+
+.product-meta button:focus-visible {
+    outline: 2px solid #df5f45;
+    outline-offset: 3px;
+}
+
+.empty-state {
+    display: grid;
+    justify-items: center;
+    min-height: 280px;
+    margin-top: 28px;
+    padding: 48px 24px;
+    border: 1px solid #e7ded3;
+    background: #fffaf4;
+    text-align: center;
+}
+
+.empty-state-mark {
+    color: #df5f45;
+    font-family: 'Prata', serif;
+    font-size: 42px;
+}
+
+.empty-state h3 {
+    margin: 12px 0 0;
+    font-family: 'Prata', serif;
+    font-size: 25px;
+    font-weight: 400;
+}
+
+.empty-state p {
+    margin: 8px 0 0;
+    color: #81766c;
+    font-size: 13px;
+}
+
+.menu-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 52px;
+}
+
+.menu-pagination :deep(.v-pagination__item .v-btn) {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
 }
 
 @media (max-width: 1000px) {
     .product-grid {
-        grid-template-columns:1fr
+        grid-template-columns: 1fr;
+    }
+
+    .product-card {
+        grid-template-columns: minmax(210px, 38%) minmax(0, 1fr);
     }
 }
 
 @media (max-width: 560px) {
     .category-list {
-        margin-bottom: 45px
+        gap: 8px;
+        margin-bottom: 44px;
+    }
+
+    .category-tab {
+        padding: 11px 15px;
+    }
+
+    .catalog-heading {
+        align-items: start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .menu-search {
+        width: 100%;
     }
 
     .product-card {
-        grid-template-columns:1fr
+        grid-template-columns: 1fr;
     }
 
     .product-art {
-        min-height: 190px
+        height: 220px;
+        min-height: 220px;
+    }
+
+    .product-copy {
+        padding: 22px;
+    }
+
+    .menu-pagination {
+        margin-top: 38px;
     }
 }
 </style>

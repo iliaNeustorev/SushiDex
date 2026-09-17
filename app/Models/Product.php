@@ -48,4 +48,9 @@ class Product extends Model
             ->withPivot(['id', 'count', 'price'])
             ->withTimestamps();
     }
+
+    public function scopeActive($query, bool $active = true)
+    {
+        return $query->where('active', $active);
+    }
 }

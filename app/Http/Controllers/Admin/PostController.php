@@ -66,7 +66,7 @@ class PostController extends Controller
             return TagCrudResource::collect($tagsBySearch);
         };
         $statuses = collect(Status::TEXTS);
-        $categories = CategoryCrudResource::collect(Category::type(Type::BLOG)->get());
+        $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
@@ -82,7 +82,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = CategoryCrudResource::collect(Category::type(Type::BLOG)->get());
+        $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
         $tags = TagCrudResource::collect(Tag::get());
 
         return Inertia::render('Admin/Posts/Create', compact('categories', 'tags'));
@@ -112,7 +112,7 @@ class PostController extends Controller
         $post->load('category:id,title', 'user', 'tags');
 
         return Inertia::render('Admin/Posts/Edit', [
-            'categories' => fn() => CategoryCrudResource::collect(Category::type(Type::BLOG)->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
             'post' => fn() => $post,
             'tags' => fn() => TagCrudResource::collect(Tag::get()),
             'images' => fn() => ImageCrudResource::collect($post->images),

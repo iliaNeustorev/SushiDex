@@ -28,7 +28,7 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function scopeType($query, Type $type = Type::PRODUCT): void
+    public function scopeByType($query, Type $type): void
     {
         $query->where('type', $type);
     }
