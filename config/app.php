@@ -138,5 +138,9 @@ return [
             'model' => \App\Models\Product::class,
             'catalog' => 'products',
         ],
+        'user' => [
+            'model' => \App\Models\User::class,
+            'catalog' => 'avatars',
+        ]
     ],
 ];

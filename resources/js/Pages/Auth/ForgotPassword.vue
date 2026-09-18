@@ -1,23 +1,10 @@
-<script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthLayout from '~vue/Layouts/AuthLayout.vue';
-import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
-import SessionRoutes from '~routes/Auth/SessionController';
-
-const form = useForm({
-    email: '',
-});
-
-function send(): void {
-    form.submit(ForgotPasswordRoutes.store());
-}
-</script>
-
 <template>
-    <Head title="Восстановление пароля — SushiDex" />
+    <Head title="Восстановление пароля — SushiDex"/>
     <AuthLayout>
         <template #title>Вернём доступ к аккаунту</template>
-        <template #description>Укажите почту, с которой регистрировались. Мы отправим безопасную ссылку для создания нового пароля.</template>
+        <template #description>Укажите почту, с которой регистрировались. Мы отправим безопасную ссылку для создания
+            нового пароля.
+        </template>
 
         <p class="auth-kicker">Восстановление доступа</p>
         <h2 class="auth-heading">Забыли пароль?</h2>
@@ -37,6 +24,23 @@ function send(): void {
             </VBtn>
         </form>
 
-        <p class="auth-switch">Вспомнили пароль?<Link :href="SessionRoutes.create().url">Вернуться ко входу</Link></p>
+        <p class="auth-switch">Вспомнили пароль?
+            <Link :href="SessionRoutes.create().url">Вернуться ко входу</Link>
+        </p>
     </AuthLayout>
 </template>
+
+<script setup lang="ts">
+import {Head, Link, useForm} from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
+import SessionRoutes from '~routes/Auth/SessionController';
+
+const form = useForm({
+    email: '',
+});
+
+function send(): void {
+    form.submit(ForgotPasswordRoutes.store());
+}
+</script>

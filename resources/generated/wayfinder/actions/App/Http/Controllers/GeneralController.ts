@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\GeneralController::menu
-* @see app/Http/Controllers/GeneralController.php:23
+* @see app/Http/Controllers/GeneralController.php:27
 * @route '/menu'
 */
 export const menu = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ menu.definition = {
 
 /**
 * @see \App\Http\Controllers\GeneralController::menu
-* @see app/Http/Controllers/GeneralController.php:23
+* @see app/Http/Controllers/GeneralController.php:27
 * @route '/menu'
 */
 menu.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ menu.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\GeneralController::menu
-* @see app/Http/Controllers/GeneralController.php:23
+* @see app/Http/Controllers/GeneralController.php:27
 * @route '/menu'
 */
 menu.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ menu.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\GeneralController::menu
-* @see app/Http/Controllers/GeneralController.php:23
+* @see app/Http/Controllers/GeneralController.php:27
 * @route '/menu'
 */
 menu.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ menu.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\GeneralController::index
-* @see app/Http/Controllers/GeneralController.php:18
+* @see app/Http/Controllers/GeneralController.php:20
 * @route '/'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\GeneralController::index
-* @see app/Http/Controllers/GeneralController.php:18
+* @see app/Http/Controllers/GeneralController.php:20
 * @route '/'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\GeneralController::index
-* @see app/Http/Controllers/GeneralController.php:18
+* @see app/Http/Controllers/GeneralController.php:20
 * @route '/'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\GeneralController::index
-* @see app/Http/Controllers/GeneralController.php:18
+* @see app/Http/Controllers/GeneralController.php:20
 * @route '/'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\Images\ImagePublicResource;
 use App\Http\Resources\Phone\Client\PendingPhoneProfileResource;
 use App\Http\Resources\Phone\Client\PhoneProfileResource;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
@@ -20,5 +21,7 @@ class UserProfileResource extends Data
         public ?PhoneProfileResource $phone,
         #[DataCollectionOf(PendingPhoneProfileResource::class)]
         public DataCollection $pendingPhones,
-    ) {}
+        public ?ImagePublicResource $image,
+    ) {
+    }
 }

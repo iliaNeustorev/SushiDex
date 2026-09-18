@@ -38,6 +38,10 @@ title: string;
 type: Type;
 parent_id: number | null;
 };
+export type ChangeAvatarReqDTO = {
+item: string;
+image: any;
+};
 export type ConfirmCodeReqDTO = {
 code: string;
 id: number;
@@ -56,7 +60,7 @@ created_at: string;
 };
 export type ImagePublicResource = {
 id: number;
-path: string;
+url: string;
 };
 export type ImagesUploadReqDTO = {
 item: string;
@@ -91,7 +95,6 @@ phone: string;
 created_at: string;
 };
 export type PhoneCrudResource = {
-user: UserPublicResource | null;
 phone: string;
 verified_at: string;
 };
@@ -162,7 +165,6 @@ content: string | null;
 price: string;
 old_price: string | null;
 count_paid: number | null;
-active: boolean;
 images: Array<ImagePublicResource>;
 };
 export enum ProductStatus { IN_CART = 1, ORDERED = 2 };
@@ -264,6 +266,7 @@ email: string | null;
 created_at: string;
 roles: Array<RolePublicResource>;
 address: string | null;
+image: ImagePublicResource | null;
 };
 export type UserChangeBlockDTO = {
 block: boolean;
@@ -292,6 +295,7 @@ email: string | null;
 address: string | null;
 phone: PhoneProfileResource | null;
 pendingPhones: Array<PendingPhoneProfileResource>;
+image: ImagePublicResource | null;
 };
 export type UserPublicResource = {
 id: number;

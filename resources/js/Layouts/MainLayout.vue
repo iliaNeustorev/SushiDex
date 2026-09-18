@@ -4,12 +4,12 @@
             <template #prepend>
                 <VAppBarNavIcon
                     v-if="$vuetify.display.smAndDown"
-                    aria-label="Открыть меню"
+                    title="Открыть меню"
                     @click="drawer = !drawer"
                 />
             </template>
 
-            <Link :href="GeneralRoutes.index().url" class="brand light" aria-label="SushiDex — на главную">
+            <Link :href="GeneralRoutes.index().url" class="brand light" title="SushiDex — на главную">
                 <span class="brand-mark">よ</span><span>SushiDex</span>
             </Link>
 
@@ -41,11 +41,9 @@
                             v-bind="menuProps"
                             class="avatar-button ms-3"
                             icon
-                            aria-label="Открыть меню пользователя"
+                            title="Открыть меню пользователя"
                         >
-                            <VAvatar color="#df5f45" size="36">
-                                {{ user.first_name.charAt(0).toUpperCase() }}
-                            </VAvatar>
+                            <Avatar :user="user" :size="36" :font-size="18"/>
                         </VBtn>
                     </template>
 
@@ -126,9 +124,10 @@ import Posts from "~routes/PostController.ts";
 import AdminDashboard from "~routes/Admin/DashboardController.ts";
 import GeneralRoutes from '~routes/GeneralController';
 import ProfileRoutes from '~routes/Client/ProfileController';
+import Avatar from "~vue/components/widgets/Avatar.vue";
 
-const {props} = usePage<{ user: UserAuthResource | null }>();
-const user = props.user
+const page = usePage<{ user: UserAuthResource | null }>();
+const user = computed(() => page.props.user)
 const drawer = shallowRef(false);
 const logoutForm = useForm({});
 const mainMenuBase = [
@@ -139,7 +138,7 @@ const mainMenuBase = [
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
     item.guard === null ||
-    (item.guard === 'admin' && props.user)
+    (item.guard === 'admin' && user.value)
 ))
 
 function logout() {

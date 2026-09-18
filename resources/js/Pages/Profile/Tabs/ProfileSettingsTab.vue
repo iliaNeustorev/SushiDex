@@ -84,13 +84,65 @@
             </div>
         </footer>
     </section>
+    <section class="tab-card mt-2">
+        <header class="tab-heading">
+            <div>
+                <span>Аватар</span>
+                <h2>Фото профиля</h2>
+            </div>
+            <p>Выберите фотографию, которая будет представлять ваш профиль.</p>
+        </header>
+        <div class="avatar-content">
+            <Avatar :user="client" :size="132" :font-size="68"/>
+            <div class="avatar-details">
+                <p class="avatar-caption">{{ client.image ? 'Текущая фотография' : 'Фотография пока не добавлена' }}</p>
+                <p class="avatar-description">Вы можете добавить или заменить изображение профиля.</p>
+                <VFileInput
+                    v-model="avatarForm.image"
+                    :error-messages="avatarForm.errors.image"
+                    class="avatar-file-input"
+                    accept="image/png,image/jpeg,image/bmp,image/webp"
+                    label="Файл аватара"
+                    placeholder="Выберите изображение"
+                    prepend-inner-icon="$mdiCamera"
+                    variant="outlined"
+                    density="comfortable"
+                    clearable
+                    :disabled="avatarForm.processing"
+                />
+                <div class="avatar-actions">
+                    <VBtn
+                        class="avatar-upload-button"
+                        type="button"
+                        :disabled="avatarForm.processing || isDeletingAvatar"
+                        :loading="avatarForm.processing"
+                        @click="sendAvatarForm"
+                    >
+                        {{ client.image ? 'Заменить фото' : 'Загрузить фото' }}
+                    </VBtn>
+                    <VBtn
+                        v-if="client.image"
+                        class="avatar-remove-button"
+                        type="button" variant="text"
+                        :disabled="avatarForm.processing || isDeletingAvatar"
+                        :loading="isDeletingAvatar"
+                        @click="deleteAvatar"
+                    >
+                        Удалить фото
+                    </VBtn>
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script setup lang="ts">
-import {useForm} from '@inertiajs/vue3';
-import type {ProfileSaveReqDTO, UserProfileResource} from '~types/generated';
+import {router, useForm} from '@inertiajs/vue3';
+import type {ChangeAvatarReqDTO, ProfileSaveReqDTO, UserProfileResource} from '~types/generated';
 import ProfileRoutes from '~routes/Client/ProfileController';
 import PhoneSettings from "~vue/Pages/Profile/Components/PhoneSettings.vue";
+import {ref} from "vue";
+import Avatar from "~vue/components/widgets/Avatar.vue";
 
 const {client} = defineProps<{
     client: UserProfileResource;
@@ -103,6 +155,12 @@ const form = useForm<ProfileSaveReqDTO>({
     address: client.address,
 });
 
+const avatarForm = useForm<ChangeAvatarReqDTO>({
+    item: 'user',
+    image: null
+})
+const isDeletingAvatar = ref<boolean>(false)
+
 function submit(): void {
     form.submit(ProfileRoutes.update(), {
         preserveScroll: true,
@@ -111,6 +169,22 @@ function submit(): void {
     });
 }
 
+function sendAvatarForm(): void {
+    avatarForm.submit(ProfileRoutes.changeAvatar(), {
+        preserveScroll: true,
+        only: ['client', 'user'],
+        onSuccess: () => avatarForm.reset()
+    });
+}
+
+function deleteAvatar(): void {
+    isDeletingAvatar.value = true
+    router.delete(ProfileRoutes.destroyAvatar(), {
+        preserveScroll: true,
+        only: ['client', 'user'],
+        onFinish: () => isDeletingAvatar.value = false
+    })
+}
 
 function reset(): void {
     form.reset();
@@ -286,6 +360,76 @@ function reset(): void {
     color: #fff;
 }
 
+/* Avatar */
+
+.avatar-content {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding-top: 28px;
+}
+
+.avatar-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.avatar-caption {
+    margin: 0 0 6px;
+    color: var(--profile-text);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.avatar-description {
+    margin: 0;
+    color: var(--profile-secondary);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.avatar-file-input {
+    max-width: 440px;
+    margin-top: 19px;
+}
+
+.avatar-file-input :deep(.v-field) {
+    border-radius: 0;
+    background: var(--profile-field);
+}
+
+.avatar-file-input :deep(.v-field--focused .v-field__outline) {
+    color: var(--profile-accent);
+}
+
+.avatar-file-input :deep(.v-field__prepend-inner) {
+    color: var(--profile-accent);
+}
+
+.avatar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.avatar-upload-button,
+.avatar-remove-button {
+    border-radius: 0;
+    font-size: 13px;
+    text-transform: none;
+}
+
+.avatar-upload-button {
+    background: var(--profile-accent);
+    color: #fff;
+}
+
+.avatar-remove-button {
+    color: var(--profile-action);
+}
+
 /* Responsive */
 
 @media (max-width: 620px) {
@@ -322,6 +466,22 @@ function reset(): void {
 
     .form-actions .save-button {
         flex: 1;
+    }
+
+    .avatar-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .avatar-details,
+    .avatar-file-input {
+        width: 100%;
+    }
+
+    .avatar-actions {
+        align-items: stretch;
+        flex-direction: column;
     }
 }
 </style>

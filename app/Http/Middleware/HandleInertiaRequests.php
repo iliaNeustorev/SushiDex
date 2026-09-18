@@ -39,8 +39,8 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
 
         return array_merge(parent::share($request), [
-            'user' => fn () => $user
-                ? UserAuthResource::from($user->load('roles'))
+            'user' => fn() => $user
+                ? UserAuthResource::from($user->load('roles', 'image'))
                 : null,
         ]);
     }

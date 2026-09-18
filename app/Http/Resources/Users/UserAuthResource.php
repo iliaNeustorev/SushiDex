@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\Images\ImagePublicResource;
 use App\Http\Resources\Role\RolePublicResource;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
@@ -18,7 +19,8 @@ class UserAuthResource extends Data
         public Carbon $created_at,
         #[DataCollectionOf(RolePublicResource::class)]
         public DataCollection $roles,
-        public ?string $address
+        public ?string $address,
+        public ?ImagePublicResource $image,
     ) {
     }
 }

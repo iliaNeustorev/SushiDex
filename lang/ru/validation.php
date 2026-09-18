@@ -158,6 +158,7 @@ return [
     'uuid' => 'Значение поля :attribute должно быть корректным UUID.',
     'attributes' => [
         'phone' => 'Телефон',
-        'code' => 'Код'
+        'code' => 'Код',
+        'image' => 'Картинка'
     ]
 ];

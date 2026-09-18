@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import {Head, Link, useForm} from '@inertiajs/vue3';
-import AuthLayout from '~vue/Layouts/AuthLayout.vue';
-import ResetPasswordRoutes from '~routes/Auth/NewPasswordController';
-import SessionRoutes from '~routes/Auth/SessionController';
-import type {ResetPasswordReqDTO} from "~types/generated";
-
-const {token} = defineProps<{
-    token: string;
-}>();
-
-const params = new URLSearchParams(window.location.search);
-const email = params.get('email');
-
-const form = useForm<ResetPasswordReqDTO>({
-    token,
-    email,
-    password: '',
-    password_confirmation: '',
-});
-
-function send(): void {
-    form.submit(ResetPasswordRoutes.store());
-}
-</script>
-
 <template>
     <Head title="Новый пароль — SushiDex"/>
     <AuthLayout>
@@ -71,3 +45,29 @@ function send(): void {
         </p>
     </AuthLayout>
 </template>
+
+<script setup lang="ts">
+import {Head, Link, useForm} from '@inertiajs/vue3';
+import AuthLayout from '~vue/Layouts/AuthLayout.vue';
+import ResetPasswordRoutes from '~routes/Auth/NewPasswordController';
+import SessionRoutes from '~routes/Auth/SessionController';
+import type {ResetPasswordReqDTO} from "~types/generated";
+
+const {token} = defineProps<{
+    token: string;
+}>();
+
+const params = new URLSearchParams(window.location.search);
+const email = params.get('email');
+
+const form = useForm<ResetPasswordReqDTO>({
+    token,
+    email,
+    password: '',
+    password_confirmation: '',
+});
+
+function send(): void {
+    form.submit(ResetPasswordRoutes.store());
+}
+</script>

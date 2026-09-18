@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\RequestDTO\Product\Client\ProductsClientQuery;
 use App\Http\Resources\Categories\CategoryPublicResource;
+use App\Http\Resources\Products\ProductPublicResource;
+use App\Models\Product;
 use App\Services\Product\ProductClientService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,7 +19,9 @@ class GeneralController extends Controller
 
     public function index()
     {
-        return Inertia::render('Home');
+        return Inertia::render('Home', [
+            'topProducts' => fn() => ProductPublicResource::collect(Product::with('images')->topSale()->get())
+        ]);
     }
 
     public function menu(Request $request)

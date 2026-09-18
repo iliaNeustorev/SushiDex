@@ -17,7 +17,6 @@ class ProductPublicResource extends Data
         public string $price,
         public ?string $old_price,
         public ?int $count_paid,
-        public bool $active,
         #[DataCollectionOf(ImagePublicResource::class)]
         public DataCollection $images,
     ) {

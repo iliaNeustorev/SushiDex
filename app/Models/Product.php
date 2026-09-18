@@ -53,4 +53,11 @@ class Product extends Model
     {
         return $query->where('active', $active);
     }
+
+    public function scopeTopSale($query, int $limit = 3)
+    {
+        return $query->whereNotNull('count_paid')
+            ->orderByDesc('count_paid')
+            ->limit($limit);
+    }
 }

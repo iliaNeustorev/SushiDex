@@ -30,11 +30,11 @@ class OrderService
                 throw ValidationException::withMessages(['cart' => 'Корзина пуста.']);
             }
 
-            if ($items->contains(fn (Cart $item) => ! $item->product)) {
+            if ($items->contains(fn(Cart $item) => !$item->product)) {
                 throw ValidationException::withMessages(['cart' => 'Один из товаров больше недоступен.']);
             }
 
-            $total = $items->sum(fn (Cart $item) => (float) $item->product->price * $item->count);
+            $total = $items->sum(fn(Cart $item) => $item->product->price * $item->count);
             $order = Order::create([
                 'user_id' => $user->id,
                 'total_price' => number_format($total, 2, '.', ''),
@@ -84,7 +84,6 @@ class OrderService
             $lockedOrder->update([
                 'status' => OrderStatus::PAID,
             ]);
-            $lockedOrder->refresh();
 
             DB::commit();
 

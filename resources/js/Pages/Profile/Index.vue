@@ -4,7 +4,7 @@
         <main class="inner-page profile-page">
             <div class="shell">
                 <header class="profile-header">
-                    <div class="profile-avatar">{{ avatarLetter }}</div>
+                    <Avatar :user="client" :size="132" :font-size="52"/>
                     <div>
                         <p class="eyebrow dark"><span></span> Личный кабинет</p>
                         <h1>{{ fullName }}</h1>
@@ -42,10 +42,7 @@
                             <ProfileOrdersTab :orders="orders"/>
                         </VTabsWindowItem>
                         <VTabsWindowItem value="settings">
-                            <ProfileSettingsTab
-                                :client="client"
-                                :full-name="fullName"
-                            />
+                            <ProfileSettingsTab :client="client"/>
                         </VTabsWindowItem>
                     </VTabsWindow>
                 </div>
@@ -63,6 +60,7 @@ import MainLayout from '~vue/Layouts/MainLayout.vue';
 import ProfileOrdersTab from './Tabs/ProfileOrdersTab.vue';
 import ProfileOverviewTab from './Tabs/ProfileOverviewTab.vue';
 import ProfileSettingsTab from './Tabs/ProfileSettingsTab.vue';
+import Avatar from "~vue/components/widgets/Avatar.vue";
 
 type ProfileTab = 'overview' | 'orders' | 'settings';
 
@@ -85,7 +83,6 @@ const fullName = computed(() =>
         .filter(Boolean)
         .join(' '),
 );
-const avatarLetter = computed(() => client.first_name.trim().charAt(0).toUpperCase() || '?');
 </script>
 
 <style scoped>

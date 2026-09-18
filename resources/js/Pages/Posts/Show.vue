@@ -1,3 +1,10 @@
+<template>
+    <MainLayout>
+        <h1>{{ post.title }}</h1>
+        <Link :href="Posts.index().url">Назад</Link>
+    </MainLayout>
+</template>
+
 <script setup lang="ts">
 import {Link} from '@inertiajs/vue3';
 import type {PostPublicResource} from '~types/generated';
@@ -8,10 +15,3 @@ defineProps<{
     post: PostPublicResource
 }>()
 </script>
-
-<template>
-    <MainLayout>
-        <h1>{{ post.title }}</h1>
-        <Link :href="Posts.index().url">Back</Link>
-    </MainLayout>
-</template>
