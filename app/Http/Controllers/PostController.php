@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Posts\Status;
 use App\Http\Resources\Posts\PostPublicResource;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Services\Post\PostClientService;
 use Inertia\Inertia;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
-    {
-        $user = $request->user();
-        $paginator = QueryBuilder::for(Post::class::byUserId($user?->id)->where('status', Status::PUBLISHED))
-            ->with(['user', 'category', 'tags'])
-            ->allowedFilters(['title'])
-            ->paginate(5);
 
+    public function __construct(private readonly PostClientService $postClientService)
+    {
+    }
+
+    public function index()
+    {
+        $paginator = $this->postClientService->getPostsWithPaginate();
         $posts = $paginator->items();
         $page = $paginator->currentPage();
         $lastPage = $paginator->lastPage();
-
+        if ($page > $lastPage) {
+            return redirect()->route('posts.index', ['page' => 1]);
+        }
         return Inertia::render('Posts/Index', [
             'posts' => Inertia::merge($posts),
             'lastPage' => $lastPage,

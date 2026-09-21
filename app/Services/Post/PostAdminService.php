@@ -2,9 +2,11 @@
 
 namespace App\Services\Post;
 
+use App\Helpers\Spattie\CustomSort\SortByFieldRelation;
 use App\Models\Post;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PostAdminService
@@ -28,7 +30,12 @@ class PostAdminService
                 AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
                 AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
             ])
-            ->allowedSorts(['id', 'title', 'created_at'])
+            ->allowedSorts([
+                'id',
+                'title',
+                'created_at',
+                AllowedSort::custom('category', new SortByFieldRelation('category'), 'title'),
+            ])
             ->paginate($query['batch'] ?? 10);
     }
 }

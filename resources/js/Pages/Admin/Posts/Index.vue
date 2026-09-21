@@ -79,6 +79,7 @@
 							{ key: 'title', title: 'Название' },
 							{ key: 'created_at', title: 'Дата создания' },
 							{ key: 'status', title: 'Статус', sortable: false, align: 'center' },
+							{ key: 'category', title: 'Категория'},
 							{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
 						]"
                         :sort-by="sortAdapter.sortBy.value"
@@ -91,6 +92,9 @@
                         </template>
                         <template #item.status="{ item }">
                             {{ statuses.find(s => s.value === item.status)?.title }}
+                        </template>
+                        <template #item.category="{item}">
+                            {{ item.category.title }}
                         </template>
                         <template #item.actions="{ item }">
                             <VContainer>

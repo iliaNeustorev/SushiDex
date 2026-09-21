@@ -38,12 +38,9 @@ import {Head, Link, router} from '@inertiajs/vue3';
 import type {PostPublicResource} from '~gen/types/generated';
 import Posts from '~routes/PostController';
 import MainLayout from '~vue/Layouts/MainLayout.vue';
+import {formatDate} from "~vue/shared/formatters.ts";
 
 const {posts, page, lastPage} = defineProps<{ posts: PostPublicResource[]; page: number; lastPage: number }>();
-
-function formatDate(date: string): string {
-    return new Intl.DateTimeFormat('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(date));
-}
 
 function excerpt(content: string | null): string {
     if (!content) return 'Новая история о японской кухне, свежих продуктах и культуре вкуса.';
@@ -52,7 +49,12 @@ function excerpt(content: string | null): string {
 }
 
 function nextPage(): void {
-    if (page < lastPage) router.visit(Posts.index({query: {page: page + 1}}), {only: ['posts', 'page']});
+    if (page < lastPage) router.visit(Posts.index({
+        query: {page: page + 1}
+    }), {
+        preserveScroll: true,
+        only: ['posts', 'page']
+    });
 }
 </script>
 <style scoped>

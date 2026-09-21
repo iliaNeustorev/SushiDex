@@ -73,4 +73,9 @@ class Post extends Model
     {
         return $query->when(isset($userId), fn($query) => $query->where('user_id', $userId));
     }
+
+    public function scopeIsPublished($query)
+    {
+        return $query->where('status', Status::PUBLISHED);
+    }
 }
