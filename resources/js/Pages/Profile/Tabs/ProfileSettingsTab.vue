@@ -1,138 +1,182 @@
 <template>
     <section class="tab-card">
-        <header class="tab-heading">
+        <header
+            class="tab-heading d-flex justify-space-between cursor-pointer"
+            @click="showBlockMain = !showBlockMain"
+        >
             <div>
                 <span>Личные данные</span>
                 <h2>Настройки профиля</h2>
             </div>
             <p>Обновите имя и адрес, которые используются при оформлении заказа.</p>
         </header>
-        <div class="form-grid">
-            <VTextField
-                v-model="form.last_name"
-                :error-messages="form.errors.last_name"
-                autocomplete="family-name"
-                label="Фамилия"
-                variant="outlined"
-            />
-            <VTextField
-                v-model="form.first_name"
-                :error-messages="form.errors.first_name"
-                autocomplete="given-name"
-                label="Имя"
-                variant="outlined"
-            />
-            <VTextField
-                v-model="form.middle_name"
-                :error-messages="form.errors.middle_name"
-                autocomplete="additional-name"
-                label="Отчество"
-                variant="outlined"
-            />
-            <VTextarea
-                v-model="form.address"
-                :error-messages="form.errors.address"
-                class="address-field"
-                autocomplete="street-address"
-                auto-grow
-                label="Адрес доставки"
-                max-rows="4"
-                rows="2"
-                variant="outlined"
-            />
-        </div>
+        <div v-show="showBlockMain">
+            <div class="form-grid d-grid">
+                <VTextField
+                    v-model="form.last_name"
+                    :error-messages="form.errors.last_name"
+                    autocomplete="family-name"
+                    bg-color="#fff"
+                    color="#df5f45"
+                    label="Фамилия"
+                    rounded="0"
+                    variant="outlined"
+                    class="mb-1"
+                />
+                <VTextField
+                    v-model="form.first_name"
+                    :error-messages="form.errors.first_name"
+                    autocomplete="given-name"
+                    bg-color="#fff"
+                    color="#df5f45"
+                    label="Имя"
+                    rounded="0"
+                    variant="outlined"
+                    class="mb-1"
+                />
+                <VTextField
+                    v-model="form.middle_name"
+                    :error-messages="form.errors.middle_name"
+                    autocomplete="additional-name"
+                    bg-color="#fff"
+                    color="#df5f45"
+                    label="Отчество"
+                    rounded="0"
+                    variant="outlined"
+                    class="mb-1"
+                />
+                <VTextarea
+                    v-model="form.address"
+                    :error-messages="form.errors.address"
+                    class="address-field mb-1"
+                    autocomplete="street-address"
+                    auto-grow
+                    bg-color="#fff"
+                    color="#df5f45"
+                    label="Адрес доставки"
+                    max-rows="4"
+                    rounded="0"
+                    rows="2"
+                    variant="outlined"
+                />
+            </div>
 
-        <div class="account-info">
-            <div>
-                <span>Электронная почта</span>
-                <strong>{{ client.email ?? 'Не указана' }}</strong>
+            <div class="account-info d-grid">
+                <div class="d-flex flex-column">
+                    <span>Электронная почта</span>
+                    <strong>{{ client.email ?? 'Не указана' }}</strong>
+                </div>
+                <div class="d-flex flex-column">
+                    <span>Подтверждённый телефон</span>
+                    <strong>{{ client.phone?.phone ?? 'Не указан' }}</strong>
+                </div>
+                <p class="ma-0">Почта и телефон подтверждаются отдельно и не изменяются этой формой.</p>
             </div>
-            <div>
-                <span>Подтверждённый телефон</span>
-                <strong>{{ client.phone?.phone ?? 'Не указан' }}</strong>
-            </div>
-            <p>Почта и телефон подтверждаются отдельно и не изменяются этой формой.</p>
-        </div>
-        <PhoneSettings :phones="client.pendingPhones"/>
-        <footer class="form-actions">
+            <PhoneSettings :phones="client.pendingPhones"/>
+            <footer class="form-actions d-flex justify-space-between">
                 <span v-if="form.recentlySuccessful" class="save-message" role="status">
                     Изменения сохранены
                 </span>
-            <span v-else-if="form.isDirty" class="dirty-message">
+                <span v-else-if="form.isDirty" class="dirty-message">
                     Есть несохранённые изменения
                 </span>
 
-            <div>
-                <VBtn
-                    :disabled="!form.isDirty || form.processing"
-                    class="reset-button"
-                    type="button"
-                    variant="text"
-                    @click="reset"
-                >
-                    Отменить
-                </VBtn>
-                <VBtn
-                    :disabled="!form.isDirty || form.processing"
-                    :loading="form.processing"
-                    class="save-button"
-                    type="submit"
-                    @click="submit"
-                >
-                    Сохранить изменения
-                </VBtn>
-            </div>
-        </footer>
+                <div class="d-flex align-center">
+                    <VBtn
+                        :disabled="!form.isDirty || form.processing"
+                        class="reset-button rounded-0 text-none"
+                        type="button"
+                        variant="text"
+                        @click="reset"
+                    >
+                        Отменить
+                    </VBtn>
+                    <VBtn
+                        :disabled="!form.isDirty || form.processing"
+                        :loading="form.processing"
+                        class="save-button rounded-0 text-none"
+                        min-width="176"
+                        type="submit"
+                        @click="submit"
+                    >
+                        Сохранить изменения
+                    </VBtn>
+                </div>
+            </footer>
+        </div>
     </section>
     <section class="tab-card mt-2">
-        <header class="tab-heading">
+        <header
+            class="tab-heading d-flex justify-space-between cursor-pointer"
+            @click="showBlockAvatar = !showBlockAvatar"
+        >
             <div>
                 <span>Аватар</span>
                 <h2>Фото профиля</h2>
             </div>
             <p>Выберите фотографию, которая будет представлять ваш профиль.</p>
         </header>
-        <div class="avatar-content">
-            <Avatar :user="client" :size="132" :font-size="68"/>
-            <div class="avatar-details">
-                <p class="avatar-caption">{{ client.image ? 'Текущая фотография' : 'Фотография пока не добавлена' }}</p>
-                <p class="avatar-description">Вы можете добавить или заменить изображение профиля.</p>
-                <VFileInput
-                    v-model="avatarForm.image"
-                    :error-messages="avatarForm.errors.image"
-                    class="avatar-file-input"
-                    accept="image/png,image/jpeg,image/bmp,image/webp"
-                    label="Файл аватара"
-                    placeholder="Выберите изображение"
-                    prepend-inner-icon="$mdiCamera"
-                    variant="outlined"
-                    density="comfortable"
-                    clearable
-                    :disabled="avatarForm.processing"
-                />
-                <div class="avatar-actions">
-                    <VBtn
-                        class="avatar-upload-button"
-                        type="button"
-                        :disabled="avatarForm.processing || isDeletingAvatar"
-                        :loading="avatarForm.processing"
-                        @click="sendAvatarForm"
-                    >
-                        {{ client.image ? 'Заменить фото' : 'Загрузить фото' }}
-                    </VBtn>
-                    <VBtn
-                        v-if="client.image"
-                        class="avatar-remove-button"
-                        type="button" variant="text"
-                        :disabled="avatarForm.processing || isDeletingAvatar"
-                        :loading="isDeletingAvatar"
-                        @click="deleteAvatar"
-                    >
-                        Удалить фото
-                    </VBtn>
+        <div v-show="showBlockAvatar">
+            <div class="avatar-content d-flex">
+                <Avatar :user="client" :size="132" :font-size="68"/>
+                <div class="avatar-details">
+                    <p class="avatar-caption">{{
+                            client.image ? 'Текущая фотография' : 'Фотография пока не добавлена'
+                        }}</p>
+                    <p class="avatar-description ma-0">Вы можете добавить или заменить изображение профиля.</p>
+                    <VFileInput
+                        v-model="avatarForm.image"
+                        :error-messages="avatarForm.errors.image"
+                        class="avatar-file-input"
+                        accept="image/png,image/jpeg,image/bmp,image/webp"
+                        bg-color="#fff"
+                        color="#df5f45"
+                        label="Файл аватара"
+                        placeholder="Выберите изображение"
+                        prepend-inner-icon="$mdiCamera"
+                        rounded="0"
+                        variant="outlined"
+                        density="comfortable"
+                        clearable
+                        :disabled="avatarForm.processing"
+                    />
+                    <div class="avatar-actions d-flex flex-wrap">
+                        <VBtn
+                            class="avatar-upload-button rounded-0 text-none"
+                            type="button"
+                            :disabled="avatarForm.processing || isDeletingAvatar"
+                            :loading="avatarForm.processing"
+                            @click="sendAvatarForm"
+                        >
+                            {{ client.image ? 'Заменить фото' : 'Загрузить фото' }}
+                        </VBtn>
+                        <VBtn
+                            v-if="client.image"
+                            class="avatar-remove-button rounded-0 text-none"
+                            type="button" variant="text"
+                            :disabled="avatarForm.processing || isDeletingAvatar"
+                            :loading="isDeletingAvatar"
+                            @click="deleteAvatar"
+                        >
+                            Удалить фото
+                        </VBtn>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
+    <section class="tab-card mt-2">
+        <header
+            class="tab-heading d-flex justify-space-between cursor-pointer"
+            @click="showBlockChangePassword = !showBlockChangePassword"
+        >
+            <div>
+                <span>Безопасность</span>
+                <h2>Смена пароля</h2>
+            </div>
+            <p>Используйте надёжный пароль, который не применяется в других сервисах.</p>
+        </header>
+        <ChangePassword v-show="showBlockChangePassword"/>
     </section>
 </template>
 
@@ -143,6 +187,7 @@ import ProfileRoutes from '~routes/Client/ProfileController';
 import PhoneSettings from "~vue/Pages/Profile/Components/PhoneSettings.vue";
 import {ref} from "vue";
 import Avatar from "~vue/components/widgets/Avatar.vue";
+import ChangePassword from "~vue/Pages/Profile/Components/ChangePassword.vue";
 
 const {client} = defineProps<{
     client: UserProfileResource;
@@ -159,7 +204,10 @@ const avatarForm = useForm<ChangeAvatarReqDTO>({
     item: 'user',
     image: null
 })
-const isDeletingAvatar = ref<boolean>(false)
+const isDeletingAvatar = ref(false)
+const showBlockMain = ref(false)
+const showBlockAvatar = ref(false)
+const showBlockChangePassword = ref(false)
 
 function submit(): void {
     form.submit(ProfileRoutes.update(), {
@@ -187,7 +235,7 @@ function deleteAvatar(): void {
 }
 
 function reset(): void {
-    form.reset();
+    form.resetAndClearErrors();
 }
 </script>
 
@@ -212,9 +260,7 @@ function reset(): void {
 /* Heading */
 
 .tab-heading {
-    display: flex;
     align-items: end;
-    justify-content: space-between;
     gap: 30px;
     padding-bottom: 22px;
     border-bottom: 1px solid var(--profile-border);
@@ -247,7 +293,6 @@ function reset(): void {
 /* Profile form */
 
 .form-grid {
-    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 5px 18px;
     padding-top: 27px;
@@ -257,19 +302,9 @@ function reset(): void {
     grid-column: 1 / -1;
 }
 
-.form-grid :deep(.v-field) {
-    border-radius: 0;
-    background: var(--profile-field);
-}
-
-.form-grid :deep(.v-field--focused .v-field__outline) {
-    color: var(--profile-accent);
-}
-
 /* Account information */
 
 .account-info {
-    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 11px;
     border-top: 1px solid var(--profile-border);
@@ -277,9 +312,7 @@ function reset(): void {
 }
 
 .account-info > div {
-    display: flex;
     min-width: 0;
-    flex-direction: column;
     gap: 7px;
     padding: 21px 0;
 }
@@ -303,7 +336,6 @@ function reset(): void {
 
 .account-info p {
     grid-column: 1 / -1;
-    margin: 0;
     padding: 14px 0;
     border-top: 1px solid var(--profile-border);
     color: var(--profile-caption);
@@ -314,17 +346,13 @@ function reset(): void {
 /* Form actions */
 
 .form-actions {
-    display: flex;
     min-height: 44px;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
     padding-top: 24px;
 }
 
 .form-actions > div {
-    display: flex;
-    align-items: center;
     gap: 10px;
     margin-left: auto;
 }
@@ -344,10 +372,8 @@ function reset(): void {
 
 .reset-button,
 .save-button {
-    border-radius: 0;
     font-size: 13px;
     letter-spacing: .04em;
-    text-transform: none;
 }
 
 .reset-button {
@@ -355,7 +381,6 @@ function reset(): void {
 }
 
 .save-button {
-    min-width: 176px;
     background: var(--profile-accent);
     color: #fff;
 }
@@ -363,7 +388,6 @@ function reset(): void {
 /* Avatar */
 
 .avatar-content {
-    display: flex;
     align-items: center;
     gap: 30px;
     padding-top: 28px;
@@ -382,7 +406,6 @@ function reset(): void {
 }
 
 .avatar-description {
-    margin: 0;
     color: var(--profile-secondary);
     font-size: 13px;
     line-height: 1.6;
@@ -393,22 +416,11 @@ function reset(): void {
     margin-top: 19px;
 }
 
-.avatar-file-input :deep(.v-field) {
-    border-radius: 0;
-    background: var(--profile-field);
-}
-
-.avatar-file-input :deep(.v-field--focused .v-field__outline) {
-    color: var(--profile-accent);
-}
-
 .avatar-file-input :deep(.v-field__prepend-inner) {
     color: var(--profile-accent);
 }
 
 .avatar-actions {
-    display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     margin-top: 2px;
@@ -416,9 +428,7 @@ function reset(): void {
 
 .avatar-upload-button,
 .avatar-remove-button {
-    border-radius: 0;
     font-size: 13px;
-    text-transform: none;
 }
 
 .avatar-upload-button {
@@ -429,6 +439,7 @@ function reset(): void {
 .avatar-remove-button {
     color: var(--profile-action);
 }
+
 
 /* Responsive */
 
@@ -483,5 +494,6 @@ function reset(): void {
         align-items: stretch;
         flex-direction: column;
     }
+
 }
 </style>

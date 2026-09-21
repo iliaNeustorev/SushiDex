@@ -159,6 +159,12 @@ return [
     'attributes' => [
         'phone' => 'Телефон',
         'code' => 'Код',
-        'image' => 'Картинка'
-    ]
+        'image' => 'Картинка',
+        'password' => 'Пароль',
+        'current_password' => 'Текущий пароль',
+        'first_name' => 'Имя',
+        'last_name' => 'Фамилия',
+        'middle_name' => 'Отчество',
+        'address' => 'Адрес доставки',
+    ],
 ];

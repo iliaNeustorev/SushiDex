@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Profile\ChangeAvatarRequest;
+use App\Http\Requests\User\Profile\ChangePasswordRequest;
 use App\Http\Requests\User\Profile\SaveRequest;
 use App\Http\Resources\Orders\Client\OrderPublicResource;
 use App\Http\Resources\Users\UserProfileResource;
 use App\Models\Order;
 use App\Services\Image\Service;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
@@ -80,5 +84,16 @@ class ProfileController extends Controller
         return $checkDelete
             ? redirect()->back()
             : redirect()->back()->withErrors(['image' => 'Произошла ошибка попробуйте позднее.']);
+    }
+
+    public function changePassword(ChangePasswordRequest $request): RedirectResponse
+    {
+        $data = $request->getData();
+        $request->user()->forceFill([
+            'password' => Hash::make($data->password),
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        return redirect()->back();
     }
 }

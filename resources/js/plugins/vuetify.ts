@@ -11,7 +11,9 @@ import {
     mdiPhoneCheckOutline,
     mdiDeleteOutline,
     mdiMenuRight,
-    mdiMenuLeft
+    mdiMenuLeft,
+    mdiEye,
+    mdiEyeOff
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -21,6 +23,8 @@ aliases['phoneCheckOutline'] = mdiPhoneCheckOutline
 aliases['deleteOutline'] = mdiDeleteOutline
 aliases['menuRight'] = mdiMenuRight
 aliases['menuLeft'] = mdiMenuLeft
+aliases['mdiEye'] = mdiEye
+aliases['mdiEyeOff'] = mdiEyeOff
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

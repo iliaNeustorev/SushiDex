@@ -42,6 +42,11 @@ export type ChangeAvatarReqDTO = {
 item: string;
 image: any;
 };
+export type ChangePasswordReqDTO = {
+current_password: string;
+password: string;
+password_confirmation: string;
+};
 export type ConfirmCodeReqDTO = {
 code: string;
 id: number;

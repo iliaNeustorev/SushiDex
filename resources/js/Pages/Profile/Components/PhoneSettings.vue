@@ -1,10 +1,10 @@
 <template>
-    <section class="phone-settings">
+    <section class="phone-settings d-flex justify-space-between">
         <div v-if="phones.length > 0" class="pending-phone-info">
             <span class="phone-settings__label">Неподтверждённые телефоны</span>
-            <div class="pending-phone-list">
-                <div v-for="pendingPhone in phones" :key="pendingPhone.id" class="pending-phone">
-                    <div class="pending-phone__main">
+            <div class="pending-phone-list d-flex flex-column">
+                <div v-for="pendingPhone in phones" :key="pendingPhone.id" class="pending-phone d-flex">
+                    <div class="pending-phone__main d-flex align-center">
                         <strong>{{ pendingPhone.phone }}</strong>
                         <VBtn
                             :disabled="sendCodeForm.processing"
@@ -40,7 +40,8 @@
             </div>
         </div>
         <VBtn
-            class="add-phone-button"
+            class="add-phone-button rounded-0 text-none"
+            min-width="176"
             type="button"
             @click="addPhoneDialog = true"
         >
@@ -52,8 +53,8 @@
         max-width="520"
         @update:model-value="updateConfirmDialog"
     >
-        <VCard class="phone-confirm-dialog" elevation="0">
-            <div class="phone-confirm-dialog__accent"></div>
+        <VCard class="phone-confirm-dialog position-relative overflow-hidden rounded-0" elevation="0">
+            <div class="phone-confirm-dialog__accent w-100"></div>
 
             <VCardText class="phone-confirm-dialog__content">
                 <span class="phone-confirm-dialog__eyebrow">Подтверждение телефона</span>
@@ -65,7 +66,7 @@
 
                 <VAlert
                     v-if="sendCodeForm.errors.id"
-                    class="phone-confirm-dialog__error"
+                    class="phone-confirm-dialog__error rounded-0"
                     density="compact"
                     type="error"
                     variant="tonal"
@@ -82,18 +83,19 @@
                     label="Код подтверждения"
                     maxlength="6"
                     placeholder="000000"
+                    rounded="0"
                     variant="outlined"
                 />
 
-                <div class="phone-confirm-dialog__hint">
+                <div class="phone-confirm-dialog__hint d-flex justify-space-between">
                     <span>Не получили сообщение?</span>
                     <span>Новый код можно запросить повторно</span>
                 </div>
             </VCardText>
 
-            <VCardActions class="phone-confirm-dialog__actions">
+            <VCardActions class="phone-confirm-dialog__actions d-grid">
                 <VBtn
-                    class="phone-dialog-close-button"
+                    class="phone-dialog-close-button rounded-0 text-none"
                     type="button"
                     variant="text"
                     @click="updateConfirmDialog(false)"
@@ -103,7 +105,7 @@
                 <VBtn
                     :loading="sendCodeForm.processing"
                     :disabled="sendCodeForm.processing"
-                    class="phone-dialog-resend-button"
+                    class="phone-dialog-resend-button rounded-0 text-none"
                     type="button"
                     variant="outlined"
                     @click="sendCode(sendCodeForm.id)"
@@ -113,7 +115,8 @@
                 <VBtn
                     :loading="confirmCodeForm.processing"
                     :disabled="confirmCodeForm.processing || confirmCodeForm.code.length !== 6"
-                    class="phone-dialog-confirm-button"
+                    class="phone-dialog-confirm-button rounded-0 text-none"
+                    min-width="122"
                     type="button"
                     @click="confirmCode"
                 >
@@ -127,8 +130,8 @@
         max-width="520"
         @update:model-value="updateAddPhoneDialog"
     >
-        <VCard class="phone-confirm-dialog" elevation="0">
-            <div class="phone-confirm-dialog__accent"></div>
+        <VCard class="phone-confirm-dialog position-relative overflow-hidden rounded-0" elevation="0">
+            <div class="phone-confirm-dialog__accent w-100"></div>
 
             <VCardText class="phone-confirm-dialog__content">
                 <span class="phone-confirm-dialog__eyebrow">Добавить новый телефон</span>
@@ -147,9 +150,9 @@
                 ></VTextField>
             </VCardText>
 
-            <VCardActions class="phone-confirm-dialog__actions">
+            <VCardActions class="phone-confirm-dialog__actions d-grid">
                 <VBtn
-                    class="phone-dialog-close-button"
+                    class="phone-dialog-close-button rounded-0 text-none"
                     type="button"
                     variant="text"
                     @click="updateAddPhoneDialog(false)"
@@ -159,7 +162,8 @@
                 <VBtn
                     :disabled="addPhoneForm.processing || addPhoneForm.phone === ''"
                     :loading="addPhoneForm.processing"
-                    class="phone-dialog-confirm-button"
+                    class="phone-dialog-confirm-button rounded-0 text-none"
+                    min-width="122"
                     type="button"
                     @click="sendNewPhone"
                 >
@@ -173,16 +177,16 @@
         max-width="520"
         @update:model-value="updatePhoneDeleteDialog"
     >
-        <VCard class="phone-confirm-dialog" elevation="0">
-            <div class="phone-confirm-dialog__accent"></div>
+        <VCard class="phone-confirm-dialog position-relative overflow-hidden rounded-0" elevation="0">
+            <div class="phone-confirm-dialog__accent w-100"></div>
 
             <VCardText class="phone-confirm-dialog__content">
                 <span class="phone-confirm-dialog__eyebrow">Вы действительно хотите удалить номер?</span>
             </VCardText>
 
-            <VCardActions class="phone-confirm-dialog__actions">
+            <VCardActions class="phone-confirm-dialog__actions d-grid">
                 <VBtn
-                    class="phone-dialog-close-button"
+                    class="phone-dialog-close-button rounded-0 text-none"
                     type="button"
                     variant="text"
                     @click="updatePhoneDeleteDialog(false)"
@@ -191,7 +195,8 @@
                 </VBtn>
                 <VBtn
                     :disabled="deletingPhoneId === null"
-                    class="phone-dialog-confirm-button"
+                    class="phone-dialog-confirm-button rounded-0 text-none"
+                    min-width="122"
                     type="button"
                     @click="confirmDeletePhone"
                 >
@@ -306,9 +311,7 @@ function confirmDeletePhone() {
 
 <style scoped>
 .phone-settings {
-    display: flex;
     align-items: end;
-    justify-content: space-between;
     gap: 24px;
     padding: 20px 0;
     border-bottom: 1px solid var(--profile-border);
@@ -328,14 +331,11 @@ function confirmDeletePhone() {
 }
 
 .pending-phone-list {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
     margin-top: 7px;
 }
 
 .pending-phone {
-    display: flex;
     align-items: center;
     gap: 16px;
     color: var(--profile-text);
@@ -343,9 +343,7 @@ function confirmDeletePhone() {
 }
 
 .pending-phone__main {
-    display: flex;
     flex: 0 0 auto;
-    align-items: center;
     gap: 4px;
 }
 
@@ -361,13 +359,10 @@ function confirmDeletePhone() {
 
 .add-phone-button {
     flex: 0 0 auto;
-    min-width: 176px;
-    border-radius: 0;
     background: var(--profile-accent);
     color: #fff;
     font-size: 13px;
     letter-spacing: .04em;
-    text-transform: none;
 }
 
 .phone-confirm-dialog {
@@ -386,21 +381,16 @@ function confirmDeletePhone() {
 
 .phone-confirm-dialog__error {
     margin-bottom: 18px;
-    border-radius: 0;
     font-size: 13px;
 }
 
 .phone-confirm-dialog {
-    position: relative;
-    overflow: hidden;
     border: 1px solid var(--profile-border);
-    border-radius: 0;
     background: var(--profile-surface);
     color: var(--profile-text);
 }
 
 .phone-confirm-dialog__accent {
-    width: 100%;
     height: 4px;
     background: var(--profile-accent);
 }
@@ -434,7 +424,6 @@ function confirmDeletePhone() {
 }
 
 .phone-confirm-dialog__code :deep(.v-field) {
-    border-radius: 0;
     background: var(--profile-field);
 }
 
@@ -451,8 +440,6 @@ function confirmDeletePhone() {
 }
 
 .phone-confirm-dialog__hint {
-    display: flex;
-    justify-content: space-between;
     gap: 20px;
     margin-top: -4px;
     color: var(--profile-muted);
@@ -461,7 +448,6 @@ function confirmDeletePhone() {
 }
 
 .phone-confirm-dialog__actions {
-    display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 9px;
     padding: 20px 38px 30px !important;
@@ -471,10 +457,8 @@ function confirmDeletePhone() {
 .phone-dialog-close-button,
 .phone-dialog-resend-button,
 .phone-dialog-confirm-button {
-    border-radius: 0;
     font-size: 12px;
     letter-spacing: .03em;
-    text-transform: none;
 }
 
 .phone-dialog-close-button {
@@ -487,7 +471,6 @@ function confirmDeletePhone() {
 }
 
 .phone-dialog-confirm-button {
-    min-width: 122px;
     background: var(--profile-accent);
     color: #fff;
 }

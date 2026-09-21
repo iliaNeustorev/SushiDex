@@ -20,4 +20,5 @@ Route::prefix('profile')->middleware('auth')->group(function () {
     });
     Route::post('/change-avatar', [ProfileController::class, 'changeAvatar'])->name('profile.change-avatar');
     Route::delete('/delete-avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.delete-avatar');
+    Route::put('/changePassword', [ProfileController::class, 'changePassword']);
 });
