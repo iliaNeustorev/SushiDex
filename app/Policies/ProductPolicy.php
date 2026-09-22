@@ -27,4 +27,14 @@ class ProductPolicy
     {
         return Gate::forUser($user)->allows('dev');
     }
+
+    public function restore(User $user, Product $product): bool
+    {
+        return Gate::forUser($user)->allows('dev');
+    }
+
+    public function forceDelete(User $user, Product $product): bool
+    {
+        return Gate::forUser($user)->allows('dev');
+    }
 }

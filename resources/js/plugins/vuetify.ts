@@ -13,7 +13,8 @@ import {
     mdiMenuRight,
     mdiMenuLeft,
     mdiEye,
-    mdiEyeOff
+    mdiEyeOff,
+    mdiDeleteRestore
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -25,6 +26,7 @@ aliases['menuRight'] = mdiMenuRight
 aliases['menuLeft'] = mdiMenuLeft
 aliases['mdiEye'] = mdiEye
 aliases['mdiEyeOff'] = mdiEyeOff
+aliases['mdiDeleteRestore'] = mdiDeleteRestore
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

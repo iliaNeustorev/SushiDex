@@ -4,9 +4,24 @@
             <VCard class="mt-3">
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Товары</span>
-                    <Link :href="ProductRoutes.create().url" class="text-decoration-none text-green-darken-3">Создать
-                        товар
+                    <Link :href="ProductRoutes.create().url" class="text-decoration-none text-green-darken-3">
+                        Создать товар
                     </Link>
+                    <VBadge
+                        :content="countDeletedProduct"
+                        :model-value="countDeletedProduct > 0"
+                        color="error"
+                    >
+                        <VBtn
+                            icon="$mdiDeleteRestore"
+                            color="warning"
+                            size="x-large"
+                            variant="tonal"
+                            title="Перейти в удалённые посты"
+                            :disabled="countDeletedProduct === 0"
+                            @click="moveToTrashPage"
+                        />
+                    </VBadge>
                 </VCardTitle>
                 <VDivider/>
                 <VCardText>
@@ -111,11 +126,13 @@ import type {TypedPagination} from '~vue/shared/pagination';
 import type {RequiredKeys} from '~vue/shared/objects';
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
+import ProductTrashRoutes from '~routes/Admin/Trash/ProductTrashController.ts';
 
 const {query = {}} = defineProps<{
     products: TypedPagination<ProductCrudResource>,
     categories: CategoryCrudResource[],
-    query: ProductsQuery
+    query: ProductsQuery,
+    countDeletedProduct: number
 }>();
 
 const queryDefaults: RequiredKeys<ProductsQuery, 'filter'> = {
@@ -163,4 +180,7 @@ function removeConfirmed() {
     }
 }
 
+function moveToTrashPage() {
+    router.visit(ProductTrashRoutes.index().url)
+}
 </script>

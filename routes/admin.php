@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\ImagesController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\Trash\CategoryTrashController;
 use App\Http\Controllers\Admin\Trash\PostTrashController;
+use App\Http\Controllers\Admin\Trash\ProductTrashController;
 use App\Http\Controllers\Admin\UserController;
 
 Route::middleware(['can:author'])->group(function () {
@@ -22,7 +24,9 @@ Route::middleware(['can:moderator'])->group(function () {
 Route::middleware(['can:dev'])->group(function () {
     Route::resource('tags', TagController::class)->only('index', 'create', 'store', 'edit', 'update', 'destroy');
     Route::resource('categories', CategoryController::class)->except(['show']);
-    Route::resource('post-trash', PostTrashController::class)->except('show', 'create', 'store', 'edit');
+    Route::resource('post-trash', PostTrashController::class)->except(['show', 'create', 'store', 'edit']);
+    Route::resource('product-trash', ProductTrashController::class)->except(['show', 'create', 'store', 'edit']);
+    Route::resource('category-trash', CategoryTrashController::class)->except(['show', 'create', 'store', 'edit']);
     Route::resource('products', ProductController::class)->except(['show']);
     Route::resource('users', UserController::class)->only(['index', 'update']);
     Route::put('users/{user}/change-block', [UserController::class, 'changeBlock'])->name('users.change-block');

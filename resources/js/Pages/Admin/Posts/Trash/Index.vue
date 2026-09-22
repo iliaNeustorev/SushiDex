@@ -3,26 +3,10 @@
         <AdminWrapper>
             <VCard class="mt-3">
                 <VCardTitle class="d-flex justify-space-between">
-                    <span>Посты</span>
-                    <Link :href="PostsRoutes.create().url" class="text-decoration-none text-green-darken-3">
-                        Новый пост
+                    <span>Удаленные посты</span>
+                    <Link :href="PostsRoutes.index().url" class="text-decoration-none text-green-darken-3">
+                        Назад
                     </Link>
-                    <VBadge
-                        :content="countDeletedPost"
-                        :model-value="countDeletedPost > 0"
-                        color="error"
-                    >
-                        <VBtn
-                            icon="$mdiDeleteRestore"
-                            color="warning"
-                            size="x-large"
-                            variant="tonal"
-                            title="Перейти в удалённые посты"
-                            :disabled="countDeletedPost === 0"
-                            @click="moveToTrashPage"
-                        />
-                    </VBadge>
-
                 </VCardTitle>
                 <VDivider/>
                 <VCardText>
@@ -32,16 +16,6 @@
                                 :model-value="queryLocal.filter.title"
                                 @update:model-value="onTitleUpd"
                                 label="Имя"
-                                variant="outlined"
-                                class="mb-2"
-                                clearable
-                            />
-                        </VCol>
-                        <VCol>
-                            <VSelect
-                                v-model="queryLocal.filter.status"
-                                :items="statuses"
-                                label="Статус"
                                 variant="outlined"
                                 class="mb-2"
                                 clearable
@@ -58,21 +32,6 @@
                                 class="mb-2"
                                 multiple="range"
                                 clearable
-                            />
-                        </VCol>
-                        <VCol cols="12">
-                            <VAutocomplete
-                                :items="tags"
-                                :model-value="tagsValue"
-                                @update:model-value="onTagsChange"
-                                v-model:search="tagSearch"
-                                color="blue-grey-lighten-2"
-                                item-title="url"
-                                item-value="id"
-                                label="Выбрать тег"
-                                chips
-                                closable-chips
-                                multiple
                             />
                         </VCol>
                     </VRow>
@@ -95,7 +54,7 @@
 							{ key: 'title', title: 'Название' },
 							{ key: 'created_at', title: 'Дата создания' },
 							{ key: 'status', title: 'Статус', sortable: false, align: 'center' },
-							{ key: 'category', title: 'Категория'},
+							{ key: 'category', title: 'Категория', sortable: false},
 							{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
 						]"
                         :sort-by="sortAdapter.sortBy.value"
@@ -116,16 +75,14 @@
                             <VContainer>
                                 <VRow class="align-center justify-center">
                                     <VCol cols="auto">
-                                        <VBtn density="compact" color="green-darken-1">
-                                            <Link :href="PostsRoutes.edit(item.id).url" class="text-decoration-none">
-                                                <span class="text-white">Редактировать</span>
-                                            </Link>
+                                        <VBtn density="compact" color="green-darken-1" @click="confirmRestore(item)">
+                                            Вернуть из корзины
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="confirmRemove(item)" density="compact"
+                                        <VBtn @click="confirmDelete(item)" density="compact"
                                               color="deep-orange-lighten-1">
-                                            <span class="text-white">Удалить</span>
+                                            <span class="text-white">Удалить навсегда</span>
                                         </VBtn>
                                     </VCol>
                                 </VRow>
@@ -134,13 +91,27 @@
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog :model-value="!!postForRemove" max-width="420">
-                <VCard v-if="postForRemove">
+            <VDialog :model-value="!!postForDelete" max-width="420">
+                <VCard v-if="postForDelete">
                     <VCardTitle>Удалить пост?</VCardTitle>
-                    <VCardText>«{{ postForRemove.title }}»</VCardText>
+                    <VCardText>«{{ postForDelete.title }}»</VCardText>
                     <VCardActions>
-                        <VBtn :disabled="deleteForm.processing" @click="postForRemove = null">Отмена</VBtn>
-                        <VBtn :loading="deleteForm.processing" color="error" @click="removeConfirmed">Удалить</VBtn>
+                        <VBtn :disabled="deleteForm.processing" @click="cancelDelete">Отмена</VBtn>
+                        <VBtn :loading="deleteForm.processing" color="error" @click="confirmedDelete()">
+                            Удалить
+                        </VBtn>
+                    </VCardActions>
+                </VCard>
+            </VDialog>
+            <VDialog :model-value="!!postForRestore" max-width="420">
+                <VCard v-if="postForRestore">
+                    <VCardTitle>Восстановить пост?</VCardTitle>
+                    <VCardText>«{{ postForRestore.title }}»</VCardText>
+                    <VCardActions>
+                        <VBtn :disabled="restoreForm.processing" @click="cancelRestore">Отмена</VBtn>
+                        <VBtn :loading="restoreForm.processing" color="error" @click="confirmedRestore()">
+                            ОК
+                        </VBtn>
                     </VCardActions>
                 </VCard>
             </VDialog>
@@ -149,27 +120,27 @@
 </template>
 
 <script setup lang="ts">
-import {Link, useForm, router} from '@inertiajs/vue3';
-import {reactive, ref, watch, computed} from 'vue';
+
+import PostsRoutes from "~routes/Admin/PostController.ts";
+import {Link, router} from "@inertiajs/vue3";
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
-import PostsRoutes from "~routes/Admin/PostController"
-import type {PostCrudResource, PostsQuery, PostStatus, TagCrudResource} from "~types/generated";
-import type {TypedPagination} from '~vue/shared/pagination';
-import {debounce, merge} from 'lodash-es';
-import type {RequiredKeys} from "~vue/shared/objects.ts";
-import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
-import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
+import type {TypedPagination} from "~vue/shared/pagination.ts";
+import type {PostStatus, PostsTrashQuery, PostTrashResource} from "~types/generated.ts";
+import type {RequiredKeys} from "~vue/shared/objects.ts";
+import {reactive, watch} from "vue";
+import {debounce, merge} from "lodash-es";
+import useSpatieSortAdapter from "~vue/composables/useSpatieSortAdapter.ts";
+import useSpatieDateRangeAdapter from "~vue/composables/useSpatieDateRangeAdapter.ts";
 import PostTrashRoutes from "~routes/Admin/Trash/PostTrashController.ts";
+import useTrashActions from "~vue/composables/useTrashActions.ts";
 
 const {query = {}} = defineProps<{
-    posts: TypedPagination<PostCrudResource>,
-    query: PostsQuery,
-    tags: TagCrudResource[],
-    countDeletedPost: number
+    posts: TypedPagination<PostTrashResource>,
+    query: PostsTrashQuery,
 }>()
 
-const queryDefaults: RequiredKeys<PostsQuery, 'filter'> = {
+const queryDefaults: RequiredKeys<PostsTrashQuery, 'filter'> = {
     filter: {}
 }
 const queryLocal = reactive(merge({}, queryDefaults, query));
@@ -178,7 +149,7 @@ const onTitleUpd = debounce((v: string | null) => queryLocal.filter.title = v ? 
 watch(queryLocal, applyReload);
 
 function applyReload() {
-    router.visit(PostsRoutes.index({
+    router.visit(PostTrashRoutes.index({
         query: queryLocal
     }));
 }
@@ -189,6 +160,7 @@ const statuses: Array<{ title: string, value: PostStatus }> = [
     {value: 10, title: 'На модерации'},
     {value: 15, title: 'Отклонённые'}
 ]
+
 const sortAdapter = useSpatieSortAdapter(() => queryLocal.sort, sort => queryLocal.sort = sort);
 const dateRangeAdapter = useSpatieDateRangeAdapter(
     [() => queryLocal.filter.date_from, () => queryLocal.filter.date_to,],
@@ -197,41 +169,19 @@ const dateRangeAdapter = useSpatieDateRangeAdapter(
         queryLocal.filter.date_to = date_to
     }
 )
-const postForRemove = ref<PostCrudResource | null>(null);
-const deleteForm = useForm({});
-
-function confirmRemove(post: PostCrudResource | null) {
-    postForRemove.value = post;
-}
-
-function removeConfirmed() {
-    if (postForRemove.value) {
-        deleteForm.submit(PostsRoutes.destroy(postForRemove.value), {
-            only: ['posts', 'countDeletedPost'],
-            onFinish() {
-                postForRemove.value = null;
-            }
-        });
-    }
-}
-
-function onTagsChange(value: number[]) {
-    queryLocal.filter.tags = value.length ? value.join(',') : undefined
-}
-
-const tagsValue = computed(() => queryLocal.filter.tags?.split(',').map(v => +v) ?? []);
-
-const tagSearch = ref('');
-const onTagSerach = debounce((v: string) => {
-    router.visit(
-        PostsRoutes.index({query: {...queryLocal, tagsearch: v ? v : undefined}}),
-        {preserveState: true, only: ['tags']}
-    );
-}, 300);
-
-watch(tagSearch, onTagSerach);
-
-function moveToTrashPage() {
-    router.visit(PostTrashRoutes.index().url)
-}
+const {
+    itemForRestore: postForRestore,
+    itemForDelete: postForDelete,
+    restoreForm,
+    deleteForm,
+    confirmRestore,
+    confirmDelete,
+    cancelRestore,
+    cancelDelete,
+    restore: confirmedRestore,
+    forceDelete: confirmedDelete,
+} = useTrashActions<PostTrashResource>({
+    restoreRoute: id => PostTrashRoutes.update(id),
+    forceDeleteRoute: id => PostTrashRoutes.destroy(id),
+});
 </script>

@@ -32,4 +32,18 @@ class ProductAdminService
             ->allowedSorts(['id', 'title', 'price', 'created_at'])
             ->paginate($query['batch'] ?? 10);
     }
+
+    public function getTrashedProductsWithPaginate(array $query): LengthAwarePaginator
+    {
+        return QueryBuilder::for(Product::onlyTrashed())
+            ->with('category')
+            ->allowedFilters([
+                'title',
+                AllowedFilter::callback('date_from', fn ($query, $value) => $query->where('created_at', '>=', $value)),
+                AllowedFilter::callback('date_to', fn ($query, $value) => $query->where('created_at', '<=', $value.' 23:59:59')),
+            ])
+            ->defaultSort('-id')
+            ->allowedSorts(['id', 'title', 'created_at'])
+            ->paginate($query['batch'] ?? 10);
+    }
 }

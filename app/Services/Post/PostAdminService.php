@@ -11,11 +11,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PostAdminService
 {
-    public function __construct()
-    {
-        //
-    }
-
     public function getPostsWithPaginate(array $query): LengthAwarePaginator
     {
         return QueryBuilder::for(Post::class)
@@ -25,17 +20,31 @@ class PostAdminService
                 AllowedFilter::exact('status'),
                 AllowedFilter::callback(
                     'tags',
-                    fn($query, $values) => $query->whereHas('tags', fn($q) => $q->whereIn('tag_id', (array)$values))
+                    fn ($query, $values) => $query->whereHas('tags', fn ($q) => $q->whereIn('tag_id', (array) $values))
                 ),
-                AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
+                AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
             ])
+            ->defaultSort('-id')
             ->allowedSorts([
                 'id',
                 'title',
                 'created_at',
                 AllowedSort::custom('category', new SortByFieldRelation('category'), 'title'),
             ])
+            ->paginate($query['batch'] ?? 10);
+    }
+
+    public function getTrashedPostsWithPaginate(array $query): LengthAwarePaginator
+    {
+        return QueryBuilder::for(Post::onlyTrashed())
+            ->with('category')
+            ->allowedFilters([
+                'title',
+                AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+            ])
+            ->allowedSorts('id', 'title', 'created_at')
             ->paginate($query['batch'] ?? 10);
     }
 }

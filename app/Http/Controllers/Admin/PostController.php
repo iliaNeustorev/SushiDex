@@ -24,12 +24,10 @@ use Inertia\Inertia;
 
 class PostController extends Controller
 {
-
     public function __construct(
         private readonly ImageService $imageService,
         private readonly PostAdminService $postAdminService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -40,10 +38,10 @@ class PostController extends Controller
         $posts = function () use ($filters) {
             $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
 
-            if (isset($query['page']) && $query['page'] > $postsPaginator->lastPage()) {
-                $query['page'] = $postsPaginator->lastPage();
+            if (isset($filters['page']) && $filters['page'] > $postsPaginator->lastPage()) {
+                $filters['page'] = $postsPaginator->lastPage();
 
-                return redirect()->route('admin.posts.index', $query);
+                return redirect()->route('admin.posts.index', $filters);
             }
 
             return GeneralPagination::fromPaginator($postsPaginator, PostCrudResource::class);
@@ -52,7 +50,7 @@ class PostController extends Controller
             $tagsBuilder = Tag::orderBy('url', 'ASC')->limit(5);
 
             if (isset($filters['tagSearch'])) {
-                $tagsBuilder->where('url', 'LIKE', '%' . $filters['tagSearch'] . '%');
+                $tagsBuilder->where('url', 'LIKE', '%'.$filters['tagSearch'].'%');
             }
 
             $tagsBySearch = $tagsBuilder->get();
@@ -70,10 +68,11 @@ class PostController extends Controller
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
-            'categories' => fn() => $categories,
+            'categories' => fn () => $categories,
             'statuses' => $statuses,
             'query' => $filters,
-            'tags' => fn() => $tags,
+            'tags' => fn () => $tags,
+            'countDeletedPost' => fn () => Post::onlyTrashed()->count(),
         ]);
     }
 
@@ -97,7 +96,7 @@ class PostController extends Controller
         $user = $request->user();
         $data = $request->getData()->toArray() + ['user_id' => $user->id, 'status' => Status::DRAFT];
         $newPost = Post::create($data);
-        if (!empty($data['tags'])) {
+        if (! empty($data['tags'])) {
             $newPost->tags()->attach($data['tags']);
         }
 
@@ -109,13 +108,14 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        Gate::authorize('update', $post);
         $post->load('category:id,title', 'user', 'tags');
 
         return Inertia::render('Admin/Posts/Edit', [
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
-            'post' => fn() => $post,
-            'tags' => fn() => TagCrudResource::collect(Tag::get()),
-            'images' => fn() => ImageCrudResource::collect($post->images),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'post' => fn () => $post,
+            'tags' => fn () => TagCrudResource::collect(Tag::get()),
+            'images' => fn () => ImageCrudResource::collect($post->images),
         ]);
     }
 
@@ -127,7 +127,7 @@ class PostController extends Controller
         Gate::authorize('update', $post);
         $data = $request->getData()->toArray();
         $post->update($data);
-        if (!empty($data['tags'])) {
+        if (! empty($data['tags'])) {
             $post->tags()->sync($data['tags']);
         }
 

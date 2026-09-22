@@ -21,9 +21,9 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function __construct(private readonly ProductAdminService $productAdminService)
-    {
-    }
+    public function __construct(
+        private readonly ProductAdminService $productAdminService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -39,12 +39,15 @@ class ProductController extends Controller
 
                 return redirect()->route('admin.products.index', $query);
             }
+
             return GeneralPagination::fromPaginator($productsPaginator, ProductCrudResource::class);
         };
+
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
             'query' => $query,
+            'countDeletedProduct' => fn () => Product::onlyTrashed()->count(),
         ]);
     }
 
@@ -81,9 +84,9 @@ class ProductController extends Controller
         $product->load('category', 'images');
 
         return Inertia::render('Admin/Products/Edit', [
-            'product' => fn() => ProductCrudResource::from($product),
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
-            'images' => fn() => ImageCrudResource::collect($product->images),
+            'product' => fn () => ProductCrudResource::from($product),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::PRODUCT)->orderBy('title')->get()),
+            'images' => fn () => ImageCrudResource::collect($product->images),
         ]);
     }
 
@@ -95,6 +98,7 @@ class ProductController extends Controller
         Gate::authorize('update', $product);
         $data = $request->getData()->toArray();
         $product->update($data);
+
         return redirect()->back()->with('notice', 'products.updated');
     }
 

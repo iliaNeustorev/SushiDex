@@ -24,6 +24,17 @@ title: string;
 type: Type;
 parent_id: number | null;
 };
+export type CategoriesTrashFiltersQuery = {
+title?: string;
+date_from?: string;
+date_to?: string;
+};
+export type CategoriesTrashQuery = {
+filter?: CategoriesTrashFiltersQuery;
+sort?: string;
+page?: number;
+batch?: number;
+};
 export type CategoryCrudResource = {
 id: number;
 url: string;
@@ -128,6 +139,14 @@ user: UserPublicResource;
 tags: Array<TagPublicResource>;
 };
 export enum PostStatus { DRAFT = 0, MODERATING = 5, PUBLISHED = 10, REJECTED = 15 };
+export type PostTrashResource = {
+id: number;
+url: string;
+title: string;
+created_at: string;
+status: PostStatus;
+category: CategoryCrudResource;
+};
 export type PostsQuery = {
 filter?: PostsQueryFilters;
 sort?: string;
@@ -148,6 +167,17 @@ title: string;
 content: string;
 category_id: number;
 tags: Array<any> | null;
+};
+export type PostsTrashQuery = {
+filter?: PostsTrashQueryFilters;
+sort?: string;
+page?: number;
+batch?: number;
+};
+export type PostsTrashQueryFilters = {
+title?: string;
+date_from?: string;
+date_to?: string;
 };
 export type ProductCrudResource = {
 id: number;
@@ -173,6 +203,13 @@ count_paid: number | null;
 images: Array<ImagePublicResource>;
 };
 export enum ProductStatus { IN_CART = 1, ORDERED = 2 };
+export type ProductTrashResource = {
+id: number;
+title: string;
+price: string;
+category: CategoryCrudResource;
+created_at: string;
+};
 export type ProductsClientQuery = {
 filter?: ProductsClientQueryFilters;
 url?: string;
@@ -201,6 +238,17 @@ price: string;
 old_price: string | null;
 category_id: number;
 active: boolean;
+};
+export type ProductsTrashFiltersQuery = {
+title?: string;
+date_from?: string;
+date_to?: string;
+};
+export type ProductsTrashQuery = {
+filter?: ProductsTrashFiltersQuery;
+sort?: string;
+page?: number;
+batch?: number;
 };
 export type ProfileSaveReqDTO = {
 first_name: string;

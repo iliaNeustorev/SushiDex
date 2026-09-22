@@ -9,6 +9,21 @@
                         class="text-decoration-none text-green-darken-3">
                         Новая категория
                     </Link>
+                    <VBadge
+                        :content="countDeletedCategory"
+                        :model-value="countDeletedCategory > 0"
+                        color="error"
+                    >
+                        <VBtn
+                            icon="$mdiDeleteRestore"
+                            color="warning"
+                            size="x-large"
+                            variant="tonal"
+                            title="Перейти в удалённые посты"
+                            :disabled="countDeletedCategory === 0"
+                            @click="moveToTrashPage"
+                        />
+                    </VBadge>
                 </VCardTitle>
                 <VDivider/>
                 <VCardText>
@@ -148,10 +163,12 @@ import type {TypedPagination} from '~vue/shared/pagination';
 import type {RequiredKeys} from '~vue/shared/objects';
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
+import CategoryTrashRoutes from "~routes/Admin/Trash/CategoryTrashController.ts";
 
 const {query = {}} = defineProps<{
     categories: TypedPagination<CategoryCrudResource>,
     query: CategoriesQuery,
+    countDeletedCategory: number
 }>();
 
 const types: Array<{ title: string, value: Type }> = [
@@ -200,4 +217,7 @@ function removeConfirmed() {
     }
 }
 
+function moveToTrashPage() {
+    router.visit(CategoryTrashRoutes.index().url)
+}
 </script>
