@@ -15,7 +15,7 @@ class CartOrderServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_cart_is_owned_by_user_and_replaces_quantity(): void
+    public function test_cart_item_is_created_and_its_quantity_is_replaced(): void
     {
         $user = User::factory()->create();
         $product = $this->product('10.25');
@@ -28,6 +28,22 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame($product->id, $user->products()->sole()->id);
         $this->assertSame($user->id, $product->users()->sole()->id);
         $this->assertSame(3, $item->count);
+    }
+
+    public function test_setting_cart_item_quantity_to_zero_removes_it(): void
+    {
+        $user = User::factory()->create();
+        $product = $this->product('10.25');
+        $service = app(CartService::class);
+
+        $service->put($user, $product, 2);
+        $service->put($user, $product, 0);
+
+        $this->assertDatabaseMissing('carts', [
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+        ]);
+        $this->assertSame(0, $user->products()->count());
     }
 
     public function test_checkout_calculates_total_snapshots_price_and_clears_cart(): void

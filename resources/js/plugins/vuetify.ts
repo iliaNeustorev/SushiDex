@@ -14,7 +14,9 @@ import {
     mdiMenuLeft,
     mdiEye,
     mdiEyeOff,
-    mdiDeleteRestore
+    mdiDeleteRestore,
+    mdiCartOutline,
+    mdiCart
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -27,6 +29,8 @@ aliases['menuLeft'] = mdiMenuLeft
 aliases['mdiEye'] = mdiEye
 aliases['mdiEyeOff'] = mdiEyeOff
 aliases['mdiDeleteRestore'] = mdiDeleteRestore
+aliases['mdiCartOutline'] = mdiCartOutline
+aliases['mdiCart'] = mdiCart
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

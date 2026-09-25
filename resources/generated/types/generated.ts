@@ -1,6 +1,23 @@
 export type AddPhoneReqDTO = {
 phone: string;
 };
+export type CartPublicDetailsResource = {
+id: number;
+title: string;
+price: string;
+description: string | null;
+content: string | null;
+category: CategoryPublicResource;
+previewImage: ImagePublicResource | null;
+old_price: string | null;
+count: number;
+};
+export type CartPublicResource = {
+id: number;
+count: number;
+price: string;
+title: string;
+};
 export type CartSaveReqDTO = {
 product_id: number;
 count: number;
@@ -102,7 +119,6 @@ items_count: number;
 export type OrderSaveReqDTO = {
 type: TypePaid;
 need_delivery: boolean;
-total_price: string;
 };
 export enum OrderStatus { NEW = 1, PAID = 2, PROCESSING = 3, COMPLETED = 4, CANCELLED = 5 };
 export type PendingPhoneProfileResource = {

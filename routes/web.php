@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Client\PhoneController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\GeneralController;
@@ -21,4 +22,10 @@ Route::prefix('profile')->middleware('auth')->group(function () {
     Route::post('/change-avatar', [ProfileController::class, 'changeAvatar'])->name('profile.change-avatar');
     Route::delete('/delete-avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.delete-avatar');
     Route::put('/changePassword', [ProfileController::class, 'changePassword']);
+});
+
+Route::prefix('cart')->middleware('auth')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index')->withoutMiddleware('auth');
+    Route::put('/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/delete', [CartController::class, 'destroy'])->name('cart.destroy');
 });

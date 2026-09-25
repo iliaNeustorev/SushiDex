@@ -15,7 +15,8 @@ class CartSaveReqDTO extends Data
         #[Rule(new SoftExists(Product::class))]
         public int $product_id,
 
-        #[Min(1), Max(100)]
+        #[Min(0), Max(100)]
         public int $count,
-    ) {}
+    ) {
+    }
 }

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::index
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:13
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:24
 * @route '/admin/product-trash'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::index
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:13
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:24
 * @route '/admin/product-trash'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::index
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:13
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:24
 * @route '/admin/product-trash'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::index
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:13
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:24
 * @route '/admin/product-trash'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::update
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:53
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:47
 * @route '/admin/product-trash/{product_trash}'
 */
 export const update = (args: { product_trash: string | number } | [product_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::update
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:53
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:47
 * @route '/admin/product-trash/{product_trash}'
 */
 update.url = (args: { product_trash: string | number } | [product_trash: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -87,7 +87,7 @@ update.url = (args: { product_trash: string | number } | [product_trash: string 
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::update
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:53
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:47
 * @route '/admin/product-trash/{product_trash}'
 */
 update.put = (args: { product_trash: string | number } | [product_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -97,7 +97,7 @@ update.put = (args: { product_trash: string | number } | [product_trash: string 
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\ProductTrashController::update
-* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:53
+* @see app/Http/Controllers/Admin/Trash/ProductTrashController.php:47
 * @route '/admin/product-trash/{product_trash}'
 */
 update.patch = (args: { product_trash: string | number } | [product_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({

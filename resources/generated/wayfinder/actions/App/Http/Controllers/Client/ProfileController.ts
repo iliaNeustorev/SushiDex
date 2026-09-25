@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:27
+* @see app/Http/Controllers/Client/ProfileController.php:30
 * @route '/profile'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:27
+* @see app/Http/Controllers/Client/ProfileController.php:30
 * @route '/profile'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:27
+* @see app/Http/Controllers/Client/ProfileController.php:30
 * @route '/profile'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:27
+* @see app/Http/Controllers/Client/ProfileController.php:30
 * @route '/profile'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:44
+* @see app/Http/Controllers/Client/ProfileController.php:47
 * @route '/profile'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:44
+* @see app/Http/Controllers/Client/ProfileController.php:47
 * @route '/profile'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:44
+* @see app/Http/Controllers/Client/ProfileController.php:47
 * @route '/profile'
 */
 update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -79,7 +79,7 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:57
+* @see app/Http/Controllers/Client/ProfileController.php:60
 * @route '/profile/change-avatar'
 */
 export const changeAvatar = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ changeAvatar.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:57
+* @see app/Http/Controllers/Client/ProfileController.php:60
 * @route '/profile/change-avatar'
 */
 changeAvatar.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ changeAvatar.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:57
+* @see app/Http/Controllers/Client/ProfileController.php:60
 * @route '/profile/change-avatar'
 */
 changeAvatar.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ changeAvatar.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:77
+* @see app/Http/Controllers/Client/ProfileController.php:80
 * @route '/profile/delete-avatar'
 */
 export const destroyAvatar = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -128,7 +128,7 @@ destroyAvatar.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:77
+* @see app/Http/Controllers/Client/ProfileController.php:80
 * @route '/profile/delete-avatar'
 */
 destroyAvatar.url = (options?: RouteQueryOptions) => {
@@ -137,7 +137,7 @@ destroyAvatar.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:77
+* @see app/Http/Controllers/Client/ProfileController.php:80
 * @route '/profile/delete-avatar'
 */
 destroyAvatar.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -147,7 +147,7 @@ destroyAvatar.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> 
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:86
+* @see app/Http/Controllers/Client/ProfileController.php:89
 * @route '/profile/changePassword'
 */
 export const changePassword = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -162,7 +162,7 @@ changePassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:86
+* @see app/Http/Controllers/Client/ProfileController.php:89
 * @route '/profile/changePassword'
 */
 changePassword.url = (options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ changePassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:86
+* @see app/Http/Controllers/Client/ProfileController.php:89
 * @route '/profile/changePassword'
 */
 changePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({

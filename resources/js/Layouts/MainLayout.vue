@@ -27,6 +27,27 @@
             <VSpacer/>
 
             <template #append>
+                <div class="cart-control mr-3">
+                    <VBadge
+                        color="warning"
+                        :content="cart.allCount"
+                        :model-value="cart.allCount > 0"
+                    >
+                        <VBtn
+                            :icon="cart.empty ? '$mdiCartOutline' : '$mdiCart'"
+                            :title="cartTitle"
+                            :aria-label="cartTitle"
+                            color="success"
+                            size="large"
+                            variant="outlined"
+                            @click="moveToCart"
+                            :disabled="cart.empty || isCartPage"
+                        />
+                    </VBadge>
+                    <span class="cart-total" aria-hidden="true">
+                        {{ cartTotal }}
+                    </span>
+                </div>
                 <a class="phone" href="tel:+74951234567">
                     <span>Ежедневно 11:00–23:00</span>+7 495 123-45-67
                 </a>
@@ -116,8 +137,8 @@
 </template>
 
 <script setup lang="ts">
-import {Link, useForm, usePage} from '@inertiajs/vue3';
-import {computed, shallowRef} from 'vue';
+import {Link, router, useForm, usePage} from '@inertiajs/vue3';
+import {computed, onMounted, shallowRef} from 'vue';
 import SessionRoutes from '~routes/Auth/SessionController.ts';
 import type {UserAuthResource} from "~types/generated";
 import Posts from "~routes/PostController.ts";
@@ -125,9 +146,39 @@ import AdminDashboard from "~routes/Admin/DashboardController.ts";
 import GeneralRoutes from '~routes/GeneralController';
 import ProfileRoutes from '~routes/Client/ProfileController';
 import Avatar from "~vue/components/widgets/Avatar.vue";
+import {useCartStore} from "~vue/stores/cart.ts";
+import {formatPrice} from "~vue/shared/formatters.ts";
+import CartRoutes from "~routes/CartController.ts";
+import type {CartPayload} from '~vue/types/cart';
+import storageHelper from "~vue/utils/storage";
 
-const page = usePage<{ user: UserAuthResource | null }>();
+const page = usePage<{ user: UserAuthResource | null, cart: CartPayload; }>();
 const user = computed(() => page.props.user)
+
+const cart = useCartStore();
+cart.setAuthenticated(user.value !== null);
+
+if (user.value) {
+    cart.setCart(page.props.cart);
+} else {
+    cart.setCart({
+        items: [],
+        total_price: 0,
+    });
+}
+
+onMounted(() => {
+    if (!user.value) {
+        cart.setCart(storageHelper.getCart());
+    }
+});
+
+const cartTotal = computed(() => formatPrice(cart.totalAmount.toString()));
+const cartTitle = computed(() => cart.empty
+    ? 'Корзина пуста'
+    : `В корзине ${cart.allCount} шт. на сумму ${cartTotal.value}`
+);
+
 const drawer = shallowRef(false);
 const logoutForm = useForm({});
 const mainMenuBase = [
@@ -141,10 +192,15 @@ const mainMenu = computed(() => mainMenuBase.filter(item =>
     (item.guard === 'admin' && user.value)
 ))
 
+const isCartPage = computed(() => page.component === 'Cart/Index');
+
 function logout() {
     logoutForm.submit(SessionRoutes.logout());
 }
 
+function moveToCart() {
+    router.visit(CartRoutes.index())
+}
 </script>
 
 <style src="~css/layouts/main-layout.css"></style>

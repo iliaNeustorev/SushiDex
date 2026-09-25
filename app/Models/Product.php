@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -59,5 +60,12 @@ class Product extends Model
         return $query->whereNotNull('count_paid')
             ->orderByDesc('count_paid')
             ->limit($limit);
+    }
+
+    public function previewImage(): MorphOne
+    {
+        return $this->images()
+            ->one()
+            ->oldestOfMany();
     }
 }

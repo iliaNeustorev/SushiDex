@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::index
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:23
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:24
 * @route '/admin/category-trash'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::index
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:23
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:24
 * @route '/admin/category-trash'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::index
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:23
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:24
 * @route '/admin/category-trash'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::index
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:23
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:24
 * @route '/admin/category-trash'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::update
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:42
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:44
 * @route '/admin/category-trash/{category_trash}'
 */
 export const update = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::update
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:42
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:44
 * @route '/admin/category-trash/{category_trash}'
 */
 update.url = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -87,7 +87,7 @@ update.url = (args: { category_trash: string | number } | [category_trash: strin
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::update
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:42
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:44
 * @route '/admin/category-trash/{category_trash}'
 */
 update.put = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -97,7 +97,7 @@ update.put = (args: { category_trash: string | number } | [category_trash: strin
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::update
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:42
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:44
 * @route '/admin/category-trash/{category_trash}'
 */
 update.patch = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -107,7 +107,7 @@ update.patch = (args: { category_trash: string | number } | [category_trash: str
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::destroy
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:50
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:58
 * @route '/admin/category-trash/{category_trash}'
 */
 export const destroy = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -122,7 +122,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::destroy
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:50
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:58
 * @route '/admin/category-trash/{category_trash}'
 */
 destroy.url = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -149,7 +149,7 @@ destroy.url = (args: { category_trash: string | number } | [category_trash: stri
 
 /**
 * @see \App\Http\Controllers\Admin\Trash\CategoryTrashController::destroy
-* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:50
+* @see app/Http/Controllers/Admin/Trash/CategoryTrashController.php:58
 * @route '/admin/category-trash/{category_trash}'
 */
 destroy.delete = (args: { category_trash: string | number } | [category_trash: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

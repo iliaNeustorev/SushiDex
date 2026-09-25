@@ -3,6 +3,7 @@ import createServer from '@inertiajs/vue3/server'
 import {renderToString} from '@vue/server-renderer'
 import {createSSRApp, h} from 'vue'
 import initVuetifyPlugin from "./plugins/vuetify";
+import {createPinia} from 'pinia';
 
 createServer(page =>
     createInertiaApp({
@@ -14,11 +15,13 @@ createServer(page =>
         },
         setup({App, props, plugin}) {
             const vuetify = initVuetifyPlugin()
+            const pinia = createPinia();
             return createSSRApp({
                 render: () => h(App, props),
             })
                 .use(plugin)
                 .use(vuetify)
+                .use(pinia);
         },
     }),
 )

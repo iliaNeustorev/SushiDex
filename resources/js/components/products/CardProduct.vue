@@ -22,16 +22,74 @@
         </div>
         <p>{{ product.description }}</p>
         <div class="product-meta">
-            <span>{{ product.content }}</span>
-            <button type="button" title="Добавить в корзину">＋</button>
+            <span class="product-content">{{ product.content }}</span>
+
+            <div class="product-cart-controls">
+                <button
+                    v-if="productCount > 0"
+                    :disabled="isProductUpdating"
+                    type="button"
+                    title="Удалить из корзины"
+                    @click="updateCount('remove', product.id)"
+                >
+                    −
+                </button>
+
+                <span
+                    v-if="productCount > 0"
+                    class="product-cart-count"
+                >
+                    {{ productCount }}
+                </span>
+
+                <button
+                    type="button"
+                    title="Добавить в корзину"
+                    :disabled="isProductUpdating || productCount === 100"
+                    @click="updateCount('add', product.id)"
+                >
+                    ＋
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import type {ProductPublicResource} from "~types/generated.ts";
+import {useCartStore} from "~vue/stores/cart.ts";
+import {computed} from 'vue';
 
 const {product} = defineProps<{ product: ProductPublicResource }>()
+const cartStore = useCartStore()
+
+const productCount = computed(() => {
+    return cartStore.productCount(product.id);
+});
+
+const isProductUpdating = computed(() => {
+    return cartStore.isProductUpdating(product.id);
+});
+
+type MethodCard = 'add' | 'remove'
+
+async function updateCount(method: MethodCard, id: number): Promise<void> {
+    let currentCount = productCount.value
+    if (method === 'add') {
+        currentCount += 1
+    }
+    if (method === 'remove') {
+        if (currentCount != 0) {
+            currentCount -= 1
+
+        }
+    }
+    try {
+        await cartStore.updateProductCount(id, currentCount, product)
+    } catch (e) {
+
+    }
+}
 </script>
 
 <style scoped>
@@ -79,18 +137,33 @@ const {product} = defineProps<{ product: ProductPublicResource }>()
 .product-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
     margin-top: auto;
     color: #9b8f84;
     font-size: 11px;
 }
 
-.product-meta button {
+.product-content {
+    min-width: 0;
+}
+
+.product-cart-controls {
+    display: flex;
+    align-items: center;
+    flex: none;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.product-cart-controls button {
+    display: inline-grid;
     width: 38px;
     height: 38px;
+    padding: 0;
+    place-items: center;
     flex: none;
     border: 0;
+    line-height: 1;
     background: #171716;
     color: #fff;
     font-size: 20px;
@@ -98,11 +171,20 @@ const {product} = defineProps<{ product: ProductPublicResource }>()
     transition: background-color .2s;
 }
 
-.product-meta button:hover {
+.product-cart-count {
+    min-width: 28px;
+    color: #4f4943;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+}
+
+.product-cart-controls button:hover {
     background: #df5f45;
 }
 
-.product-meta button:focus-visible {
+.product-cart-controls button:focus-visible {
     outline: 2px solid #df5f45;
     outline-offset: 3px;
 }
@@ -130,6 +212,10 @@ const {product} = defineProps<{ product: ProductPublicResource }>()
     color: #df5f45;
     font-size: 15px;
     white-space: nowrap;
+}
+
+.product-cart-controls button:disabled {
+    opacity: .5;
 }
 
 @media (max-width: 560px) {

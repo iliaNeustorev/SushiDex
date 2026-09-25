@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\PostController::index
-* @see app/Http/Controllers/Admin/PostController.php:37
+* @see app/Http/Controllers/Admin/PostController.php:35
 * @route '/admin/posts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::index
-* @see app/Http/Controllers/Admin/PostController.php:37
+* @see app/Http/Controllers/Admin/PostController.php:35
 * @route '/admin/posts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::index
-* @see app/Http/Controllers/Admin/PostController.php:37
+* @see app/Http/Controllers/Admin/PostController.php:35
 * @route '/admin/posts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::index
-* @see app/Http/Controllers/Admin/PostController.php:37
+* @see app/Http/Controllers/Admin/PostController.php:35
 * @route '/admin/posts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:83
+* @see app/Http/Controllers/Admin/PostController.php:82
 * @route '/admin/posts/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:83
+* @see app/Http/Controllers/Admin/PostController.php:82
 * @route '/admin/posts/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:83
+* @see app/Http/Controllers/Admin/PostController.php:82
 * @route '/admin/posts/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::create
-* @see app/Http/Controllers/Admin/PostController.php:83
+* @see app/Http/Controllers/Admin/PostController.php:82
 * @route '/admin/posts/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:94
+* @see app/Http/Controllers/Admin/PostController.php:93
 * @route '/admin/posts'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:94
+* @see app/Http/Controllers/Admin/PostController.php:93
 * @route '/admin/posts'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::store
-* @see app/Http/Controllers/Admin/PostController.php:94
+* @see app/Http/Controllers/Admin/PostController.php:93
 * @route '/admin/posts'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:110
+* @see app/Http/Controllers/Admin/PostController.php:109
 * @route '/admin/posts/{post}/edit'
 */
 export const edit = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:110
+* @see app/Http/Controllers/Admin/PostController.php:109
 * @route '/admin/posts/{post}/edit'
 */
 edit.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:110
+* @see app/Http/Controllers/Admin/PostController.php:109
 * @route '/admin/posts/{post}/edit'
 */
 edit.get = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Admin\PostController::edit
-* @see app/Http/Controllers/Admin/PostController.php:110
+* @see app/Http/Controllers/Admin/PostController.php:109
 * @route '/admin/posts/{post}/edit'
 */
 edit.head = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({

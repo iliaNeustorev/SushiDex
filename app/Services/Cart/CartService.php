@@ -5,23 +5,29 @@ namespace App\Services\Cart;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class CartService
 {
-    public function put(User $user, Product $product, int $count): Cart
+    public function put(User $user, Product $product, int $count): ?Cart
     {
         DB::beginTransaction();
-
         try {
             $item = Cart::query()
                 ->whereBelongsTo($user)
                 ->whereBelongsTo($product)
                 ->lockForUpdate()
                 ->first();
+            if ($count === 0) {
+                $item?->delete();
 
+                DB::commit();
+
+                return null;
+            }
             if ($item) {
                 $item->update(['count' => $count]);
             } else {
@@ -45,9 +51,11 @@ class CartService
         }
     }
 
-    public function remove(User $user, Cart $item): void
+    public function calculateTotalPrice(Collection $products): float
     {
-        abort_unless($item->user_id === $user->id, 403);
-        $item->delete();
+        $totalPrice = $products->reduce(function (float $carry, Product $product) {
+            return $carry + ((float)$product->price * $product->pivot->count);
+        }, 0.0);
+        return round($totalPrice, 2);
     }
 }
