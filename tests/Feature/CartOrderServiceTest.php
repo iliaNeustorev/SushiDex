@@ -46,6 +46,46 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame(0, $user->products()->count());
     }
 
+    public function test_temporary_cart_is_merged_with_user_cart(): void
+    {
+        $user = User::factory()->create();
+        $existingProduct = $this->product('10.25');
+        $newProduct = $this->product('20.50');
+        $productWithGreaterSavedCount = $this->product('5.00');
+        $existingProduct->update(['active' => true]);
+        $newProduct->update(['active' => true]);
+        $productWithGreaterSavedCount->update(['active' => true]);
+        $service = app(CartService::class);
+        $service->put($user, $existingProduct, 2);
+        $service->put($user, $productWithGreaterSavedCount, 4);
+
+        $result = $service->syncTemp($user, [
+            ['product_id' => $existingProduct->id, 'count' => 3],
+            ['product_id' => $newProduct->id, 'count' => 2],
+            ['product_id' => $productWithGreaterSavedCount->id, 'count' => 1],
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(3, $user->products()->count());
+        $this->assertDatabaseHas('carts', [
+            'user_id' => $user->id,
+            'product_id' => $existingProduct->id,
+            'count' => 3,
+        ]);
+        $this->assertDatabaseHas('carts', [
+            'user_id' => $user->id,
+            'product_id' => $newProduct->id,
+            'count' => 2,
+        ]);
+        $this->assertDatabaseHas('carts', [
+            'user_id' => $user->id,
+            'product_id' => $productWithGreaterSavedCount->id,
+            'count' => 4,
+        ]);
+        $this->assertCount(3, $result['items']);
+        $this->assertSame(91.75, $result['total_price']);
+    }
+
     public function test_checkout_calculates_total_snapshots_price_and_clears_cart(): void
     {
         $user = User::factory()->create();
@@ -67,7 +107,10 @@ class CartOrderServiceTest extends TestCase
 
     private function product(string $price): Product
     {
-        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+        $category = Category::firstOrCreate(
+            ['url' => 'sushi-rolls'],
+            ['title' => 'Sushi rolls'],
+        );
 
         return Product::create([
             'title' => 'California roll',

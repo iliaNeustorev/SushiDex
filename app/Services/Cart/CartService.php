@@ -2,6 +2,7 @@
 
 namespace App\Services\Cart;
 
+use App\Http\Resources\Carts\CartPublicResource;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\User;
@@ -54,8 +55,57 @@ class CartService
     public function calculateTotalPrice(Collection $products): float
     {
         $totalPrice = $products->reduce(function (float $carry, Product $product) {
-            return $carry + ((float)$product->price * $product->pivot->count);
+            return $carry + ((float) $product->price * $product->pivot->count);
         }, 0.0);
+
         return round($totalPrice, 2);
+    }
+
+    public function syncTemp(User $client, array $tempCart): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $productsActual = Product::active()
+                ->whereIn('id', array_column($tempCart, 'product_id'))
+                ->get();
+            $tempCartByProductId = collect($tempCart)->keyBy('product_id');
+            $cartItems = Cart::whereBelongsTo($client)
+                ->whereIn('product_id', $productsActual->modelKeys())
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('product_id');
+
+            foreach ($productsActual as $product) {
+                $tempCount = $tempCartByProductId->get($product->id)['count'];
+                $cartItem = $cartItems->get($product->id);
+
+                if ($cartItem) {
+                    $cartItem->update([
+                        'count' => max($cartItem->count, $tempCount),
+                    ]);
+                } else {
+                    Cart::create([
+                        'user_id' => $client->id,
+                        'product_id' => $product->id,
+                        'count' => $tempCount,
+                    ]);
+                }
+            }
+
+            $cart = $client->products()->get();
+            DB::commit();
+
+            return [
+                'success' => true,
+                'items' => CartPublicResource::collect($cart),
+                'total_price' => $this->calculateTotalPrice($cart),
+            ];
+        } catch (Throwable $exception) {
+            report($exception);
+            DB::rollBack();
+
+            return ['success' => false];
+        }
     }
 }

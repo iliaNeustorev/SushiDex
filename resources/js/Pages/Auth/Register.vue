@@ -66,6 +66,7 @@ import AuthLayout from '~vue/Layouts/AuthLayout.vue';
 import RegisterRoutes from '~routes/Auth/RegisterController';
 import SessionRoutes from '~routes/Auth/SessionController';
 import type {RegisterReqDTO} from "~types/generated";
+import {useCartStore} from "~vue/stores/cart.ts";
 
 const form = useForm<RegisterReqDTO>({
     first_name: '',
@@ -74,9 +75,12 @@ const form = useForm<RegisterReqDTO>({
     password_confirmation: '',
     phone: null,
 });
+const cartStore = useCartStore()
 
 function send(): void {
     form.phone = form.phone != null ? form.phone.replace(/\D/g, '').replace(/^8/, '7') : null
-    form.post(RegisterRoutes.store().url);
+    form.post(RegisterRoutes.store().url, {
+        onSuccess: () => cartStore.syncTemp()
+    });
 }
 </script>

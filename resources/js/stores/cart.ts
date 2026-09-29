@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import type {ProductPublicResource} from '~types/generated.ts';
+import type {CartSaveReqDTO, ProductPublicResource} from '~types/generated.ts';
 import type {
     CartPayload,
     CartStoreItem,
@@ -127,6 +127,26 @@ export const useCartStore = defineStore('cart', {
             this.items = [];
             this.totalAmount = 0;
             storageHelper.removeCart();
-        }
+        },
+        async syncTemp(): Promise<void> {
+            let fullTempCart = storageHelper.getCart().items;
+            if (fullTempCart.length === 0) {
+                return;
+            }
+            let tempCart: CartSaveReqDTO[] = fullTempCart.map((item) => ({
+                product_id: item.id,
+                count: item.count,
+            }))
+            try {
+                const response = await axios.put<{ cart: CartPayload }>(
+                    CartRoutes.syncWithTemp().url, {tempCart},
+                );
+                this.setCart(response.data.cart);
+            } catch (e) {
+                // TODO: сделать сообщение что не удалось синхронизитровать корзину
+            } finally {
+                storageHelper.removeCart();
+            }
+        },
     },
 });

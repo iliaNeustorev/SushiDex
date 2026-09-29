@@ -22,6 +22,9 @@ export type CartSaveReqDTO = {
 product_id: number;
 count: number;
 };
+export type CartSyncTempReqDTO = {
+tempCart: Array<any>;
+};
 export type CategoriesQuery = {
 filter?: CategoriesQueryFilters;
 sort?: string;

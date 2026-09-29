@@ -56,14 +56,18 @@ import SessionRoutes from '~routes/Auth/SessionController';
 import RegisterRoutes from '~routes/Auth/RegisterController';
 import ForgotPasswordRoutes from '~routes/Auth/PasswordResetController';
 import type {LoginReqDTO} from "~types/generated";
+import {useCartStore} from "~vue/stores/cart.ts";
 
 const form = useForm<LoginReqDTO>({
     email: '',
     password: '',
     remember: true,
 });
+const cartStore = useCartStore()
 
 function send(): void {
-    form.submit(SessionRoutes.store());
+    form.submit(SessionRoutes.store(), {
+        onSuccess: () => cartStore.syncTemp()
+    });
 }
 </script>

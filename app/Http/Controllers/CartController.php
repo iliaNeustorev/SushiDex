@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Cart\SaveRequest;
+use App\Http\Requests\Cart\SyncTempRequest;
 use App\Http\Resources\Carts\CartPublicDetailsResource;
 use App\Http\Resources\Carts\CartPublicResource;
 use App\Models\Product;
@@ -15,8 +16,7 @@ class CartController extends Controller
 {
     public function __construct(
         private readonly CartService $cartService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -32,11 +32,12 @@ class CartController extends Controller
 
             $cartDetails = CartPublicDetailsResource::collect($products);
         }
+
         return Inertia::render(
             'Cart/Index',
             [
-                'cart' => fn() => $cart ?? ['items' => [], 'total_price' => 0],
-                'cartDetails' => fn() => $cartDetails ?? collect()
+                'cart' => fn () => $cart ?? ['items' => [], 'total_price' => 0],
+                'cartDetails' => fn () => $cartDetails ?? collect(),
             ]
         );
     }
@@ -53,7 +54,7 @@ class CartController extends Controller
             'cart' => [
                 'items' => CartPublicResource::collect($products),
                 'total_price' => $this->cartService->calculateTotalPrice($products),
-            ]
+            ],
         ]);
     }
 
@@ -63,5 +64,22 @@ class CartController extends Controller
         $client->products()->sync([]);
 
         return redirect()->back();
+    }
+
+    public function syncWithTemp(SyncTempRequest $request)
+    {
+        $cartTemp = $request->getData()->tempCart;
+        $client = $request->user();
+        $resultSync = $this->cartService->syncTemp($client, $cartTemp);
+        if ($resultSync['success']) {
+            return response()->json([
+                'cart' => [
+                    'items' => $resultSync['items'],
+                    'total_price' => $resultSync['total_price'],
+                ],
+            ]);
+        }
+
+        return response()->json([], 400);
     }
 }

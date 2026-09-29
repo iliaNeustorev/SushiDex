@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('posts', PostController::class)->only('index', 'show');
 Route::get('/menu', [GeneralController::class, 'menu'])->name('menu');
-Route::get('/', [GeneralController::class, 'index']);
+Route::get('/', [GeneralController::class, 'index'])->name('home');
 Route::prefix('profile')->middleware('auth')->group(function () {
     Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/', [ProfileController::class, 'update'])->name('profile.update');
@@ -28,4 +28,5 @@ Route::prefix('cart')->middleware('auth')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index')->withoutMiddleware('auth');
     Route::put('/update', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/delete', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::put('/sync-temp-cart', [CartController::class, 'syncWithTemp'])->name('cart.sync-temp-cart');
 });
