@@ -2,9 +2,11 @@
 
 namespace App\Services\Product;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Services\Image\Service as ImageService;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -14,8 +16,16 @@ class ProductAdminService
 
     public function delete(Product $product): void
     {
-        $product->delete();
-        $this->imageService->deleteAllImagesModel($product, ['catalogPath' => 'products']);
+        DB::transaction(function () use ($product) {
+            $this->imageService->deleteAllImagesModel($product, ['catalogPath' => 'products']);
+            Cart::whereBelongsTo($product)->delete();
+            $product->delete();
+        });
+    }
+
+    public function changeActive(Product $product, bool $active): void
+    {
+        $product->update(['active' => $active]);
     }
 
     public function getProductsWithPaginate(array $query): LengthAwarePaginator

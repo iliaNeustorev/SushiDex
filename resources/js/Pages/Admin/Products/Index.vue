@@ -60,7 +60,7 @@
                             {key: 'title', title: 'Название'},
                             {key: 'category.title', title: 'Категория', sortable: false},
                             {key: 'price', title: 'Цена'},
-                            {key:'active', title:'Активен'},
+                            {key: 'active', title: 'Активен', align: 'center'},
                             {key: 'created_at', title: 'Дата создания'},
                             {key: 'actions', title: 'Действия', sortable: false, align: 'center'}
                         ]"
@@ -70,7 +70,17 @@
                         @update:sort-by="sortAdapter.onSort"
                     >
                         <template #item.price="{ item }">{{ item.price }} ₽</template>
-                        <template #item.active="{ item }">{{ item.active ? 'Да' : 'Нет' }}</template>
+                        <template #item.active="{ item }">
+                            <div class="d-flex justify-center">
+                                <VCheckbox
+                                    v-model="item.active"
+                                    class="flex-grow-0"
+                                    color="red-darken-3"
+                                    hide-details
+                                    @update:model-value="sendChangeActive(item.id, item.active)"
+                                />
+                            </div>
+                        </template>
                         <template #item.created_at="{ item }">{{
                                 new Date(item.created_at).toLocaleString()
                             }}
@@ -121,7 +131,12 @@ import {debounce, merge} from 'lodash-es';
 import AdminLayout from '~vue/Layouts/AdminLayout.vue';
 import AdminWrapper from '~vue/Layouts/AdminWrapper.vue';
 import ProductRoutes from '~routes/Admin/ProductController';
-import type {CategoryCrudResource, ProductCrudResource, ProductsQuery} from '~types/generated';
+import type {
+    CategoryCrudResource,
+    ProductCrudResource,
+    ProductsChangeActiveDTO,
+    ProductsQuery,
+} from '~types/generated';
 import type {TypedPagination} from '~vue/shared/pagination';
 import type {RequiredKeys} from '~vue/shared/objects';
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
@@ -182,5 +197,18 @@ function removeConfirmed() {
 
 function moveToTrashPage() {
     router.visit(ProductTrashRoutes.index().url)
+}
+
+const changeActive = useForm<ProductsChangeActiveDTO>({
+    active: true
+});
+
+function sendChangeActive(id: number, active: boolean) {
+    changeActive.active = Boolean(active);
+    changeActive.submit(ProductRoutes.changeActive(id), {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['products'],
+    });
 }
 </script>

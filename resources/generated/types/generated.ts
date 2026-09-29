@@ -229,6 +229,9 @@ price: string;
 category: CategoryCrudResource;
 created_at: string;
 };
+export type ProductsChangeActiveDTO = {
+active: boolean;
+};
 export type ProductsClientQuery = {
 filter?: ProductsClientQueryFilters;
 url?: string;

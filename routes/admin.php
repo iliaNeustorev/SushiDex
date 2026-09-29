@@ -28,6 +28,7 @@ Route::middleware(['can:dev'])->group(function () {
     Route::resource('product-trash', ProductTrashController::class)->except(['show', 'create', 'store', 'edit']);
     Route::resource('category-trash', CategoryTrashController::class)->except(['show', 'create', 'store', 'edit']);
     Route::resource('products', ProductController::class)->except(['show']);
+    Route::patch('products/{product}/change-active', [ProductController::class, 'changeActive'])->name('products.change-active');
     Route::resource('users', UserController::class)->only(['index', 'update']);
     Route::put('users/{user}/change-block', [UserController::class, 'changeBlock'])->name('users.change-block');
 });

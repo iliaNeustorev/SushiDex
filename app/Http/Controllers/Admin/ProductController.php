@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Categories\Type;
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\Product\Admin\ProductsQuery;
+use App\Http\Requests\Product\ChangeActiveRequest;
 use App\Http\Requests\Product\SaveRequest;
 use App\Http\Resources\Categories\CategoryCrudResource;
 use App\Http\Resources\General\GeneralPagination;
@@ -111,5 +112,13 @@ class ProductController extends Controller
         $this->productAdminService->delete($product);
 
         return redirect()->route('admin.products.index')->with('notice', 'products.deleted');
+    }
+
+    public function changeActive(ChangeActiveRequest $request, Product $product): RedirectResponse
+    {
+        Gate::authorize('update', $product);
+        $this->productAdminService->changeActive($product, $request->getData()->active);
+
+        return redirect()->back();
     }
 }
