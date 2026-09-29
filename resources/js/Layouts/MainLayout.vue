@@ -64,15 +64,21 @@
                             icon
                             title="Открыть меню пользователя"
                         >
-                            <Avatar :user="user" :size="36" :font-size="18"/>
+                            <Avatar
+                                :user="user"
+                                :size="36"
+                                :font-size="18"
+                            />
                         </VBtn>
                     </template>
 
                     <VList class="user-menu-list" density="comfortable">
                         <div class="user-menu-header">
-                            <VAvatar color="#df5f45" size="42">
-                                {{ user.first_name.charAt(0).toUpperCase() }}
-                            </VAvatar>
+                            <Avatar
+                                :user="user"
+                                :size="42"
+                                :font-size="18"
+                            />
                             <div>
                                 <strong>{{ user.first_name }} {{ user.last_name }}</strong>
                                 <span>{{ user.email }}</span>
