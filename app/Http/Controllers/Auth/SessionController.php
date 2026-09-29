@@ -7,14 +7,12 @@ use App\Http\Requests\Auth\Login as LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class SessionController extends Controller
 {
-    /**
-     * @return Response
-     */
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Auth/Login');
     }
