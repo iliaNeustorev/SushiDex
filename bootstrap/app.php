@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
 
         then: function (): void {
-            Route::middleware(['web', 'auth'])
+            Route::middleware(['web', 'auth', 'can:is-blocked'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));

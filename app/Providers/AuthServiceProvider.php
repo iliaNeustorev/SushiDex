@@ -45,5 +45,9 @@ class AuthServiceProvider extends ServiceProvider
 
             return count(array_intersect($needRoles, $roles)) > 0;
         });
+
+        Gate::define('is-blocked', function ($user) {
+            return ! $user->block;
+        });
     }
 }

@@ -34,6 +34,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Post::class);
         $filters = PostsQuery::validateAndCreate($request->query())->toArray();
         $posts = function () use ($filters) {
             $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
@@ -81,6 +82,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Post::class);
         $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
         $tags = TagCrudResource::collect(Tag::get());
 

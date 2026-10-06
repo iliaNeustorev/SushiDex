@@ -14,6 +14,7 @@ use App\Services\Category\CategoryAdminService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
@@ -28,6 +29,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Category::class);
         $query = CategoriesQuery::validateAndCreate($request->query())->toArray();
         $categories = function () use ($query) {
             $categoriesPaginator = $this->categoryAdminService->getCategoriesWithPaginate($query);
@@ -47,6 +49,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Category::class);
         $types = collect(Type::TEXTS);
         $categories = CategoryCrudResource::collect(Category::get());
 
@@ -62,6 +65,7 @@ class CategoryController extends Controller
      */
     public function store(SaveRequest $request)
     {
+        Gate::authorize('create', Category::class);
         $data = $request->getData()->toArray();
         $category = Category::create($data);
 
@@ -73,6 +77,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        Gate::authorize('update', $category);
+
         return Inertia::render('Admin/Categories/Edit', [
             'category' => fn () => CategoryCrudResource::from($category),
             'images' => fn () => ImageCrudResource::collect($category->images),
@@ -85,6 +91,7 @@ class CategoryController extends Controller
      */
     public function update(SaveRequest $request, Category $category)
     {
+        Gate::authorize('update', $category);
         $data = $request->getData()->toArray();
         $category->update($data);
 
@@ -98,6 +105,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        Gate::authorize('delete', $category);
         $deleted = $this->categoryAdminService->delete($category);
         if (! $deleted) {
             return redirect()->route('admin.categories.index')->withErrors(['error', 'categories.deleted']);
