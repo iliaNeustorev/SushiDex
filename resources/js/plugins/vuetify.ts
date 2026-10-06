@@ -16,7 +16,14 @@ import {
     mdiEyeOff,
     mdiDeleteRestore,
     mdiCartOutline,
-    mdiCart
+    mdiCart,
+    mdiChevronUp,
+    mdiChevronDown,
+    mdiCashClock,
+    mdiMagnify,
+    mdiCheckCircleOutline,
+    mdiCloseCircleOutline,
+    mdiCogs
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -31,6 +38,13 @@ aliases['mdiEyeOff'] = mdiEyeOff
 aliases['mdiDeleteRestore'] = mdiDeleteRestore
 aliases['mdiCartOutline'] = mdiCartOutline
 aliases['mdiCart'] = mdiCart
+aliases['mdiUp'] = mdiChevronUp
+aliases['mdiDown'] = mdiChevronDown
+aliases['mdiCashClock'] = mdiCashClock
+aliases['mdiMagnify'] = mdiMagnify
+aliases['mdiCheckOutline'] = mdiCheckCircleOutline
+aliases['mdiCloseOutline'] = mdiCloseCircleOutline
+aliases['mdiCogs'] = mdiCogs
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

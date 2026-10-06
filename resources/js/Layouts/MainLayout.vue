@@ -23,6 +23,16 @@
                 >
                     {{ item.title }}
                 </VBtn>
+                <VBadge v-if="checkActualOrder" location="top right" color="success" dot>
+                    <VBtn
+                        :href="OrderController.index().url"
+                        class="ms-4 text-none"
+                        variant="text"
+                    >
+                        Текущие заказы
+                    </VBtn>
+                </VBadge>
+
             </template>
             <VSpacer/>
 
@@ -154,13 +164,14 @@ import ProfileRoutes from '~routes/Client/ProfileController';
 import Avatar from "~vue/components/widgets/Avatar.vue";
 import {useCartStore} from "~vue/stores/cart.ts";
 import {formatPrice} from "~vue/shared/formatters.ts";
-import CartRoutes from "~routes/CartController.ts";
+import CartRoutes from "~routes/Client/CartController.ts";
 import type {CartPayload} from '~vue/types/cart';
 import storageHelper from "~vue/utils/storage";
+import OrderController from "~routes/Client/OrderController.ts";
 
-const page = usePage<{ user: UserAuthResource | null, cart: CartPayload; }>();
+const page = usePage<{ user: UserAuthResource | null, cart: CartPayload; checkActualOrder: boolean }>();
 const user = computed(() => page.props.user)
-
+const checkActualOrder = computed(() => page.props.checkActualOrder)
 const cart = useCartStore();
 cart.setAuthenticated(user.value !== null);
 

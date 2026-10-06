@@ -69,6 +69,9 @@ title: string;
 type: Type;
 parent_id: number | null;
 };
+export type ChangeAddressReqDTO = {
+address: string;
+};
 export type ChangeAvatarReqDTO = {
 item: string;
 image: any;
@@ -108,6 +111,19 @@ email: string;
 password: string;
 remember: boolean;
 };
+export type OrderAdminPublicResource = {
+status_text: string;
+type_paid_text: string;
+id: number;
+total_price: string;
+status: OrderStatus;
+type_paid: TypePaid;
+need_delivery: boolean;
+created_at: string;
+products: Array<ProductOrderItemWithoutImageResource>;
+user: UserOrderResource;
+remittance: RemittancePublicResource | null;
+};
 export type OrderPublicResource = {
 status_text: string;
 type_paid_text: string;
@@ -118,12 +134,30 @@ type_paid: TypePaid;
 need_delivery: boolean;
 created_at: string;
 items_count: number;
+remittance: RemittancePublicResource | null;
 };
 export type OrderSaveReqDTO = {
 type: TypePaid;
 need_delivery: boolean;
 };
-export enum OrderStatus { NEW = 1, PAID = 2, PROCESSING = 3, COMPLETED = 4, CANCELLED = 5 };
+export enum OrderStatus { NEW = 1, PROCESSING = 2, COMPLETED = 3, CANCELLED = 4 };
+export type OrderUpdateReqDTO = {
+status: OrderStatus;
+};
+export type OrderUpdateSettingsReqDTO = {
+type?: TypePaid;
+need_delivery?: boolean;
+};
+export type OrdersActualQuery = {
+filter?: OrdersActualQueryFilters;
+actualPage?: number;
+actualBatch?: number;
+processingPage?: number;
+processingBatch?: number;
+};
+export type OrdersActualQueryFilters = {
+id?: number;
+};
 export type PendingPhoneProfileResource = {
 id: number;
 phone: string;
@@ -211,6 +245,21 @@ updated_at: string;
 count_paid: number | null;
 active: boolean;
 };
+export type ProductOrderItemResource = {
+calculateCountPrice: string;
+id: number;
+title: string;
+count: number;
+price: string;
+previewImage: ImagePublicResource | null;
+};
+export type ProductOrderItemWithoutImageResource = {
+calculateCountPrice: string;
+id: number;
+title: string;
+count: number;
+price: string;
+};
 export type ProductPublicResource = {
 id: number;
 title: string;
@@ -285,6 +334,13 @@ password: string;
 password_confirmation: string;
 phone: string | null;
 };
+export type RemittancePublicResource = {
+id: number;
+paid: boolean;
+amount: string;
+status: RemittanceStatus;
+};
+export enum RemittanceStatus { PAID = 1, AWAIT_PAID = 2, AWAIT_CONFIRM_PAID = 3 };
 export type ResetPasswordReqDTO = {
 token: string;
 email: string | null;
@@ -360,6 +416,15 @@ roles: Array<RoleCrudResource>;
 address: string | null;
 block: boolean;
 phone: PhoneCrudResource | null;
+};
+export type UserOrderResource = {
+id: number;
+first_name: string;
+last_name: string | null;
+middle_name: string | null;
+email: string | null;
+address: string | null;
+phone: PhoneProfileResource | null;
 };
 export type UserProfileResource = {
 id: number;

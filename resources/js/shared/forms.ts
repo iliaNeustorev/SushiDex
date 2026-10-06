@@ -1,4 +1,4 @@
-import type {PostsSaveReqDTO, ProductsSaveReqDTO} from "~types/generated";
+import type {OrderSaveReqDTO, OrderUpdateReqDTO, PostsSaveReqDTO, ProductsSaveReqDTO} from "~types/generated";
 
 export type PostForm =
     Omit<PostsSaveReqDTO, 'category_id'> & {
@@ -8,4 +8,14 @@ export type PostForm =
 export type ProductForm =
     Omit<ProductsSaveReqDTO, 'category_id'> & {
     category_id: ProductsSaveReqDTO['category_id'] | null
+}
+
+export type CreateOrderForm =
+    Omit<OrderSaveReqDTO, 'type'> & {
+    type: OrderSaveReqDTO['type'] | 0
+}
+
+export type UpdateAdminOrderForm =
+    Omit<OrderUpdateReqDTO, 'status'> & {
+    status: OrderUpdateReqDTO['status'] | null
 }

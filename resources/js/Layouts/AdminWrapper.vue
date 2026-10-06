@@ -58,6 +58,7 @@ import TagsRoutes from '~routes/Admin/TagController';
 import UsersRoutes from "~routes/Admin/UserController.ts";
 import {ref} from "vue";
 import SessionRoutes from "~routes/Auth/SessionController.ts";
+import OrderRoutes from "~routes/Admin/OrderController.ts";
 
 const mainMenuItems = [
     {url: Dashboard.index().url, title: 'Админ панель'},
@@ -65,7 +66,8 @@ const mainMenuItems = [
     {url: ProductRoutes.index().url, title: 'Продукты'},
     {url: CategoriesRoutes.index().url, title: 'Категории'},
     {url: TagsRoutes.index().url, title: 'Тэги'},
-    {url: UsersRoutes.index().url, title: 'Пользователи', icon: '', guard: 'admin'}
+    {url: UsersRoutes.index().url, title: 'Пользователи', icon: '', guard: 'admin'},
+    {url: OrderRoutes.actual().url, title: 'Монитор заказов', icon: '', guard: 'admin'}
 ] as const
 
 const page = usePage();

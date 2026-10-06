@@ -7,7 +7,7 @@ import type {
     GuestCartPayload,
 } from '~vue/types/cart';
 import axios from "axios";
-import CartRoutes from "~routes/CartController.ts";
+import CartRoutes from "~routes/Client/CartController.ts";
 import storageHelper from "~vue/utils/storage.ts";
 
 export const useCartStore = defineStore('cart', {
