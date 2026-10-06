@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImagesController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TagController;
@@ -19,6 +20,8 @@ Route::middleware(['can:author'])->group(function () {
 Route::middleware(['can:moderator'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::patch('/posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
+    Route::resource('orders', OrderController::class)->only(['index', 'update']);
+    Route::get('orders/actual', [OrderController::class, 'actual'])->name('orders.actual');
 });
 
 Route::middleware(['can:dev'])->group(function () {

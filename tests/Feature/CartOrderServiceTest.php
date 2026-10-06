@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\Orders\Status as OrderStatus;
+use App\Enums\Orders\TypePaid;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
@@ -86,13 +87,16 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame(91.75, $result['total_price']);
     }
 
-    public function test_checkout_calculates_total_snapshots_price_and_clears_cart(): void
+    public function test_create_calculates_total_snapshots_price_and_clears_cart(): void
     {
         $user = User::factory()->create();
         $product = $this->product('10.25');
         app(CartService::class)->put($user, $product, 2);
 
-        $order = app(OrderService::class)->checkout($user);
+        $order = app(OrderService::class)->create($user, [
+            'type' => TypePaid::IN_PICKUP_LOCATION->value,
+            'need_delivery' => false,
+        ]);
         $item = $order->items->sole();
 
         $this->assertSame('20.50', $order->total_price);
@@ -100,9 +104,9 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame(2, $item->count);
         $this->assertSame($product->id, $order->products()->sole()->id);
         $this->assertSame(0, $user->products()->count());
-
-        $paidOrder = app(OrderService::class)->markPaid($order);
-        $this->assertSame(OrderStatus::PAID, $paidOrder->status);
+        $this->assertSame(OrderStatus::NEW, $order->status);
+        $this->assertSame(TypePaid::IN_PICKUP_LOCATION, $order->type_paid);
+        $this->assertFalse($order->need_delivery);
     }
 
     private function product(string $price): Product

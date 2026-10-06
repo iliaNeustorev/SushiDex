@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Resources\Carts\CartPublicResource;
 use App\Http\Resources\Users\UserAuthResource;
-use App\Models\Cart;
+use App\Models\Order;
 use App\Services\Cart\CartService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -13,8 +13,7 @@ class HandleInertiaRequests extends Middleware
 {
     public function __construct(
         private readonly CartService $cartService,
-    ) {
-    }
+    ) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -45,12 +44,13 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+
         return array_merge(parent::share($request), [
-            'user' => fn() => $user
+            'user' => fn () => $user
                 ? UserAuthResource::from($user->load('roles', 'image'))
                 : null,
             'cart' => function () use ($user): array {
-                if (!$user) {
+                if (! $user) {
                     return [
                         'items' => [],
                         'total_price' => 0.0,
@@ -64,6 +64,7 @@ class HandleInertiaRequests extends Middleware
                     'total_price' => $this->cartService->calculateTotalPrice($products),
                 ];
             },
+            'checkActualOrder' => fn () => $user ? Order::actualOrder($user->id)->exists() : false,
         ]);
     }
 }

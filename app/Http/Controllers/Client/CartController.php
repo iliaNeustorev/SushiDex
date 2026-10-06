@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Cart\SaveRequest;
 use App\Http\Requests\Cart\SyncTempRequest;
 use App\Http\Resources\Carts\CartPublicDetailsResource;
 use App\Http\Resources\Carts\CartPublicResource;
 use App\Models\Product;
 use App\Services\Cart\CartService;
+use App\Services\Order\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,13 +17,15 @@ use Inertia\Inertia;
 class CartController extends Controller
 {
     public function __construct(
-        private readonly CartService $cartService
+        private readonly CartService $cartService,
+        private readonly OrderService $orderService,
     ) {}
 
     public function index(Request $request)
     {
-        if ($request->user()) {
-            $products = $request->user()
+        $client = $request->user();
+        if ($client) {
+            $products = $client
                 ->products()
                 ->with(['category', 'previewImage'])
                 ->get();
@@ -31,6 +35,7 @@ class CartController extends Controller
             ];
 
             $cartDetails = CartPublicDetailsResource::collect($products);
+            $typePaid = $this->orderService->getTypePaid($client);
         }
 
         return Inertia::render(
@@ -38,6 +43,7 @@ class CartController extends Controller
             [
                 'cart' => fn () => $cart ?? ['items' => [], 'total_price' => 0],
                 'cartDetails' => fn () => $cartDetails ?? collect(),
+                'typePaid' => fn () => $typePaid ?? collect(),
             ]
         );
     }

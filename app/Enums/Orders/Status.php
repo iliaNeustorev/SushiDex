@@ -8,17 +8,15 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 enum Status: int
 {
     case NEW = 1;
-    case PAID = 2;
-    case PROCESSING = 3;
-    case COMPLETED = 4;
-    case CANCELLED = 5;
+    case PROCESSING = 2;
+    case COMPLETED = 3;
+    case CANCELLED = 4;
 
     public const TEXTS = [
         1 => 'Новый',
-        2 => 'Оплачен',
-        3 => 'В обработке',
-        4 => 'Завершён',
-        5 => 'Отменён',
+        2 => 'В обработке',
+        3 => 'Завершён',
+        4 => 'Отменён',
     ];
 
     public function text(): string

@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Http\Resources\Orders\Client;
+namespace App\Http\Resources\Orders\Admin;
 
 use App\Enums\Orders\Status;
 use App\Enums\Orders\TypePaid;
+use App\Http\Resources\Products\ProductOrderItemWithoutImageResource;
 use App\Http\Resources\Remittances\RemittancePublicResource;
+use App\Http\Resources\Users\UserOrderResource;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\Computed;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
-class OrderPublicResource extends Data
+class OrderAdminPublicResource extends Data
 {
     #[Computed]
     public string $status_text;
@@ -24,7 +28,9 @@ class OrderPublicResource extends Data
         public TypePaid $type_paid,
         public bool $need_delivery,
         public Carbon $created_at,
-        public int $items_count,
+        #[DataCollectionOf(ProductOrderItemWithoutImageResource::class)]
+        public DataCollection $products,
+        public UserOrderResource $user,
         public ?RemittancePublicResource $remittance,
     ) {
         $this->status_text = $this->status->text();

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\Orders\Status;
+use App\Enums\Orders\TypePaid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -15,7 +17,10 @@ class Order extends Model
     protected $casts = [
         'status' => Status::class,
         'total_price' => 'decimal:2',
+        'type_paid' => TypePaid::class,
     ];
+
+    public const LIMIT_ACTUAL_ORDERS = 2;
 
     public function user(): BelongsTo
     {
@@ -34,8 +39,28 @@ class Order extends Model
             ->withTimestamps();
     }
 
-    public function scopeByUserId($query, int $userId): void
+    public function scopeByUserId($query, int $userId)
     {
-        $query->where('user_id', $userId);
+        return $query->where('user_id', $userId);
+    }
+
+    public function scopeActualOrder($query, int $userId)
+    {
+        return $query->byUserId($userId)->actualStatus();
+    }
+
+    public function scopeByStatus($query, array $statuses)
+    {
+        return $query->whereIn('status', $statuses);
+    }
+
+    public function scopeActualStatus($query)
+    {
+        return $query->byStatus([Status::NEW, Status::PROCESSING]);
+    }
+
+    public function remittance(): HasOne
+    {
+        return $this->hasOne(Remittance::class);
     }
 }
