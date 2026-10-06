@@ -5,6 +5,7 @@
             height="100%"
             :transition-duration="600"
             hide-delimiters
+            :show-arrows="product.images.length > 1 ? 'hover' : false"
         >
             <VCarouselItem
                 v-for="image in product.images"
