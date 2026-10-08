@@ -13,7 +13,7 @@
                                 size="large"
                                 title="Посмотреть заказы за все время"
                             >
-                                Все заказы
+                                Завершенные заказы
                             </VBtn>
                         </Link>
 
@@ -24,9 +24,10 @@
                             variant="outlined"
                             max-width="300"
                             type="number"
-                            hide-details
+                            hide-details="auto"
                             single-line
                             clearable
+                            :error-messages="errors ? errors['filter.id'] : ''"
                             @update:model-value="onIdUpdate"
                         />
                     </div>
@@ -222,6 +223,7 @@ const {actualOrders, processingOrders, query = {}, typePaid} = defineProps<{
     processingOrders: TypedPagination<OrderAdminPublicResource>;
     query: OrdersActualQuery;
     typePaid: Record<number, string>;
+    errors?: Record<string, string>;
 }>();
 
 const queryDefaults: RequiredKeys<OrdersActualQuery, 'filter'> = {

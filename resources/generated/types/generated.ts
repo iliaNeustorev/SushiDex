@@ -111,6 +111,20 @@ email: string;
 password: string;
 remember: boolean;
 };
+export type OrderAdminHistoryResource = {
+status_text: string;
+type_paid_text: string;
+id: number;
+total_price: string;
+status: OrderStatus;
+type_paid: TypePaid;
+need_delivery: boolean;
+created_at: string;
+completed_at: string | null;
+products: Array<ProductOrderItemWithoutImageResource>;
+user: UserOrderHistoryResource;
+remittance: RemittancePublicResource | null;
+};
 export type OrderAdminPublicResource = {
 status_text: string;
 type_paid_text: string;
@@ -157,6 +171,21 @@ processingBatch?: number;
 };
 export type OrdersActualQueryFilters = {
 id?: number;
+};
+export type OrdersCompletedQuery = {
+filter?: OrdersCompletedQueryFilters;
+sort?: string;
+page?: number;
+batch?: number;
+};
+export type OrdersCompletedQueryFilters = {
+id?: number;
+status?: OrderStatus;
+type_paid?: TypePaid;
+date_created_from?: string;
+date_created_to?: string;
+date_completed_from?: string;
+date_completed_to?: string;
 };
 export type PendingPhoneProfileResource = {
 id: number;
@@ -335,6 +364,7 @@ password_confirmation: string;
 phone: string | null;
 };
 export type RemittancePublicResource = {
+status_text: string;
 id: number;
 paid: boolean;
 amount: string;
@@ -416,6 +446,12 @@ roles: Array<RoleCrudResource>;
 address: string | null;
 block: boolean;
 phone: PhoneCrudResource | null;
+};
+export type UserOrderHistoryResource = {
+id: number;
+first_name: string;
+last_name: string | null;
+middle_name: string | null;
 };
 export type UserOrderResource = {
 id: number;

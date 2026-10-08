@@ -1,3 +1,10 @@
+import type {
+    UserCrudResource,
+    UserOrderHistoryResource,
+    UserOrderResource,
+    UserProfileResource,
+} from "~types/generated.ts";
+
 const dateFormatter = new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric',
     month: 'long',
@@ -43,4 +50,12 @@ export function formatItemsCount(count: number): string {
     }
 
     return `${count} позиций`;
+}
+
+export function formatUserName(
+    user: UserCrudResource | UserOrderHistoryResource | UserOrderResource | UserProfileResource,
+): string {
+    return [user.last_name, user.first_name, user.middle_name]
+        .filter(Boolean)
+        .join(' ');
 }

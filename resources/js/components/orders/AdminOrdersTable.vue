@@ -1,6 +1,18 @@
 <template>
     <VDataTableServer
-        :headers="headers"
+        :headers="[
+            {key: 'id', title: 'Номер заказа', sortable: false},
+            {key: 'total_price', title: 'Сумма', sortable: false},
+            {key: 'products', title: 'Список заказа', sortable: false},
+            {key: 'status_text', title: 'Текущий статус', sortable: false},
+            {key: 'type_paid_text', title: 'Тип оплаты', sortable: false},
+            {key: 'need_delivery', title: 'Доставка', sortable: false},
+            {key: 'address', title: 'Адрес доставки', sortable: false},
+            {key: 'user', title: 'ФИО заказчика', sortable: false},
+            {key: 'phone', title: 'Телефон заказчика', sortable: false},
+            {key: 'created_at', title: 'Дата создания', sortable: false},
+            {key: 'actions', title: 'Действия', sortable: false, align: 'center'},
+        ]"
         :items="orders.data"
         :items-length="orders.total"
         :items-per-page="itemsPerPage"
@@ -34,7 +46,7 @@
         </template>
 
         <template #item.user="{ item }">
-            {{ formatUserName(item) }}
+            {{ formatUserName(item.user) }}
         </template>
 
         <template #item.need_delivery="{ item }">
@@ -106,7 +118,12 @@
                         border
                     >
                         <VDataTableVirtual
-                            :headers="productHeaders"
+                            :headers="[
+                                {key: 'title', title: 'Название товара', sortable: false},
+                                {key: 'price', title: 'Цена за единицу', sortable: false},
+                                {key: 'count', title: 'Количество', sortable: false},
+                                {key: 'calculateCountPrice', title: 'Сумма', sortable: false},
+                            ]"
                             :items="item.products"
                             density="compact"
                             item-value="id"
@@ -130,7 +147,7 @@
 <script setup lang="ts">
 import {type OrderAdminPublicResource, TypePaid} from '~types/generated';
 import type {TypedPagination} from '~vue/shared/pagination';
-import {formatPrice} from '~vue/shared/formatters';
+import {formatPrice, formatUserName} from '~vue/shared/formatters';
 
 defineProps<{
     orders: TypedPagination<OrderAdminPublicResource>;
@@ -146,31 +163,4 @@ const emit = defineEmits<{
     cancel: [order: OrderAdminPublicResource];
     'setting-action': [order: OrderAdminPublicResource];
 }>();
-
-const headers = [
-    {key: 'id', title: 'Номер заказа', sortable: false},
-    {key: 'total_price', title: 'Сумма', sortable: false},
-    {key: 'products', title: 'Список заказа', sortable: false},
-    {key: 'status_text', title: 'Текущий статус', sortable: false},
-    {key: 'type_paid_text', title: 'Тип оплаты', sortable: false},
-    {key: 'need_delivery', title: 'Доставка', sortable: false},
-    {key: 'address', title: 'Адрес доставки', sortable: false},
-    {key: 'user', title: 'ФИО заказчика', sortable: false},
-    {key: 'phone', title: 'Телефон заказчика', sortable: false},
-    {key: 'created_at', title: 'Дата создания', sortable: false},
-    {key: 'actions', title: 'Действия', sortable: false, align: 'center' as const},
-];
-
-const productHeaders = [
-    {key: 'title', title: 'Название товара', sortable: false},
-    {key: 'price', title: 'Цена за единицу', sortable: false},
-    {key: 'count', title: 'Количество', sortable: false},
-    {key: 'calculateCountPrice', title: 'Сумма', sortable: false},
-];
-
-function formatUserName(order: OrderAdminPublicResource): string {
-    return [order.user.last_name, order.user.first_name, order.user.middle_name]
-        .filter(Boolean)
-        .join(' ');
-}
 </script>

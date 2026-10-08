@@ -132,7 +132,10 @@ class OrderService
                 break;
             case OrderStatus::COMPLETED:
                 if ($order->status === OrderStatus::PROCESSING) {
-                    $order->update(['status' => OrderStatus::COMPLETED]);
+                    $order->update([
+                        'status' => OrderStatus::COMPLETED,
+                        'completed_at' => now(),
+                    ]);
 
                     // TODO: отправить уведомление
                     return;
@@ -144,7 +147,10 @@ class OrderService
                     if ($order->type_paid === TypePaid::CARD_ONLINE && $order->remittance?->paid) {
                         // TODO: если оплата была картой онлайн то сделать возврат
                     }
-                    $order->update(['status' => OrderStatus::CANCELLED]);
+                    $order->update([
+                        'status' => OrderStatus::CANCELLED,
+                        'completed_at' => now(),
+                    ]);
 
                     // TODO: отправить уведомление
                     return;
@@ -247,5 +253,30 @@ class OrderService
     private function hasDeliveryAddress(User $user): bool
     {
         return is_string($user->address) && trim($user->address) !== '';
+    }
+
+    public function getCompletedWithPaginate(array $query): LengthAwarePaginator
+    {
+        return QueryBuilder::for(Order::completedStatus())
+            ->with('products', 'remittance', 'user')
+            ->allowedFilters([
+                AllowedFilter::exact('id'),
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('type_paid'),
+                AllowedFilter::callback('date_created_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_created_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+                AllowedFilter::callback('date_completed_from', fn ($q, $v) => $q->where('completed_at', '>=', $v)),
+                AllowedFilter::callback('date_completed_to', fn ($q, $v) => $q->where('completed_at', '<=', $v.' 23:59:59')),
+            ])
+            ->allowedSorts([
+                'id',
+                'created_at',
+                'completed_at',
+                'status',
+                'type_paid',
+                'total_price',
+            ])
+            ->defaultSort('-id')
+            ->paginate($query['batch'] ?? 10);
     }
 }

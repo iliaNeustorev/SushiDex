@@ -13,4 +13,11 @@ class OrdersActualQueryFilters extends Data
         #[Exists(Order::class, 'id')]
         public Optional|int $id,
     ) {}
+
+    public static function messages(): array
+    {
+        return [
+            'id.exists' => 'Неправильный номер заказа',
+        ];
+    }
 }

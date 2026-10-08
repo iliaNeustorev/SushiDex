@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
@@ -97,6 +98,24 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(ValidationException::class);
         $service->updateStatus($order->fresh(), OrderStatus::CANCELLED);
+    }
+
+    public function test_finishing_an_order_records_its_completion_time(): void
+    {
+        $service = app(OrderService::class);
+        $completedOrder = $this->order(User::factory()->create(), OrderStatus::PROCESSING);
+        $cancelledOrder = $this->order(User::factory()->create());
+        $completedAt = Carbon::parse('2026-10-08 12:30:00');
+
+        $this->travelTo($completedAt);
+
+        $service->updateStatus($completedOrder, OrderStatus::COMPLETED);
+        $service->updateStatus($cancelledOrder, OrderStatus::CANCELLED);
+
+        $this->assertTrue($completedOrder->fresh()->completed_at->equalTo($completedAt));
+        $this->assertTrue($cancelledOrder->fresh()->completed_at->equalTo($completedAt));
+
+        $this->travelBack();
     }
 
     public function test_unpaid_online_order_cannot_start_processing(): void

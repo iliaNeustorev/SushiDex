@@ -7,7 +7,7 @@
                 :href="item.url"
                 class="text-decoration-none text-sm-h6 pe-2 me-2"
                 :class="[
-                    page.url.startsWith(item.url) ? 'text-yellow-darken-3 font-weight-bold' : 'text-green-darken-3',
+                    isMenuItemActive(item.url) ? 'text-yellow-darken-3 font-weight-bold' : 'text-green-darken-3',
                     { 'border-e': index < mainMenuItems.length - 1 },
                 ]"
             >
@@ -67,7 +67,7 @@ const mainMenuItems = [
     {url: CategoriesRoutes.index().url, title: 'Категории'},
     {url: TagsRoutes.index().url, title: 'Тэги'},
     {url: UsersRoutes.index().url, title: 'Пользователи', icon: '', guard: 'admin'},
-    {url: OrderRoutes.actual().url, title: 'Монитор заказов', icon: '', guard: 'admin'}
+    {url: OrderRoutes.actual().url, title: 'Монитор заказов', icon: '', guard: 'admin'},
 ] as const
 
 const page = usePage();
@@ -81,5 +81,18 @@ function logout() {
             closeModalLogout.value = false
         }
     })
+}
+
+function isMenuItemActive(url: string): boolean {
+    const currentPath = page.url.split('?')[0];
+
+    if (url === OrderRoutes.actual().url) {
+        return [
+            OrderRoutes.actual().url,
+            OrderRoutes.index().url,
+        ].includes(currentPath);
+    }
+
+    return currentPath.startsWith(url);
 }
 </script>

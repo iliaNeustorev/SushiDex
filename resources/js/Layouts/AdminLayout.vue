@@ -8,17 +8,25 @@
                 </VToolbarTitle>
             </VContainer>
         </VAppBar>
-        <VNavigationDrawer permanent>
+        <VNavigationDrawer permanent width="300">
             <div class="d-flex flex-column fill-height">
                 <VList>
                     <VListSubheader>Админ панель</VListSubheader>
-                    <VListItem v-for="(item,index) in mainMenu" :key="item.to.url" color="primary" rounded="xl">
+                    <VListItem
+                        v-for="(item,index) in mainMenu"
+                        :key="item.to.url"
+                        color="primary"
+                        rounded="xl"
+                    >
                         <template #prepend>
                             <VIcon :icon="item.icon"/>
                         </template>
-                        <VListItemTitle>
-                            <Link :href="item.to.url" class="text-decoration-none text-h6"
-                                  :class="[page.url.startsWith(item.to.url) && index != 0 ? 'text-yellow-darken-3 font-weight-bold' : 'text-grey-darken-4']">
+                        <VListItemTitle class="text-wrap">
+                            <Link
+                                :href="item.to.url"
+                                class="d-block text-decoration-none text-h6 text-wrap"
+                                :class="[isMenuItemActive(item.to.url) && index !== 0 ? 'text-yellow-darken-3 font-weight-bold' : 'text-grey-darken-4']"
+                            >
                                 {{
                                     item.title
                                 }}
@@ -62,10 +70,23 @@ const mainMenuBase = [
     {to: CategoryRoutes.index(), title: 'Категории', icon: '', guard: 'admin'},
     {to: TagsRoutes.index(), title: 'Тэги', icon: '', guard: 'admin'},
     {to: UsersRoutes.index(), title: 'Пользователи', icon: '', guard: 'admin'},
-    {to: OrderRoutes.actual(), title: 'Монитор заказов', icon: '', guard: 'admin'}
+    {to: OrderRoutes.actual(), title: 'Монитор заказов', icon: '', guard: 'admin'},
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
     (item.guard === 'admin' && props.user)
-))
+));
+
+function isMenuItemActive(url: string): boolean {
+    const currentPath = page.url.split('?')[0];
+
+    if (url === OrderRoutes.actual().url) {
+        return [
+            OrderRoutes.actual().url,
+            OrderRoutes.index().url,
+        ].includes(currentPath);
+    }
+
+    return currentPath.startsWith(url);
+}
 </script>

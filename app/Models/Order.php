@@ -18,6 +18,7 @@ class Order extends Model
         'status' => Status::class,
         'total_price' => 'decimal:2',
         'type_paid' => TypePaid::class,
+        'completed_at' => 'datetime',
     ];
 
     public const LIMIT_ACTUAL_ORDERS = 2;
@@ -57,6 +58,11 @@ class Order extends Model
     public function scopeActualStatus($query)
     {
         return $query->byStatus([Status::NEW, Status::PROCESSING]);
+    }
+
+    public function scopeCompletedStatus($query)
+    {
+        return $query->byStatus([Status::CANCELLED, Status::COMPLETED]);
     }
 
     public function remittance(): HasOne
