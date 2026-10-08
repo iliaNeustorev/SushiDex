@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware(['web'])->group(base_path('routes/auth.php'));
         }
     )
+    ->withSchedule(function () {
+        Schedule::command('telescope:prune --hours=48')->daily();
+    })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('home'));
