@@ -14,9 +14,11 @@ use App\Http\Resources\Users\UserCrudResource;
 use App\Interfaces\SystemHelperInterface;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -28,44 +30,42 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $rolesForSelect = RoleCrudResource::collect(Role::get());
         $filters = UsersQuery::validateAndCreate($request->query())->toArray();
-        $users = function () use ($filters) {
-            $usersPaginator = QueryBuilder::for(User::class)
-                ->with(['roles', 'phone'])
-                ->allowedFilters([
-                    'address',
-                    AllowedFilter::partial('phone', 'phone.phone'),
-                    AllowedFilter::callback(
-                        'name',
-                        function ($q, $v) {
-                            $words = preg_split('/\s+/', trim($v));
 
-                            foreach ($words as $word) {
-                                $q->where(
-                                    fn ($query) => $query->whereAny(
-                                        ['first_name', 'middle_name', 'last_name'],
-                                        'ILIKE',
-                                        "%$word%"
-                                    )
-                                );
-                            }
+        $usersPaginator = QueryBuilder::for(User::class)
+            ->with(['roles', 'phone'])
+            ->allowedFilters([
+                'address',
+                AllowedFilter::partial('phone', 'phone.phone'),
+                AllowedFilter::callback(
+                    'name',
+                    function ($q, $v) {
+                        $words = preg_split('/\s+/', trim($v));
+
+                        foreach ($words as $word) {
+                            $q->where(
+                                fn ($query) => $query->whereAny(
+                                    ['first_name', 'middle_name', 'last_name'],
+                                    'ILIKE',
+                                    "%$word%"
+                                )
+                            );
                         }
-                    ),
-                ])
-                ->defaultSort('-id')
-                ->allowedSorts([
-                    'id',
-                    'created_at',
-                    'block',
-                    AllowedSort::custom('phone', new SortByFieldRelation('phone'), 'phone'),
-                ])
-                ->paginate($filters['batch'] ?? 10);
-
-            return GeneralPagination::fromPaginator($usersPaginator, UserCrudResource::class);
-        };
+                    }
+                ),
+            ])
+            ->defaultSort('-id')
+            ->allowedSorts([
+                'id',
+                'created_at',
+                'block',
+                AllowedSort::custom('phone', new SortByFieldRelation('phone'), 'phone'),
+            ])
+            ->paginate($filters['batch'] ?? 10);
+        $users = GeneralPagination::fromPaginator($usersPaginator, UserCrudResource::class);
 
         return Inertia::render('Admin/Users/Index', [
             'rolesForSelect' => fn () => $rolesForSelect,
@@ -77,7 +77,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ChangeRolesRequest $request, User $user)
+    public function update(ChangeRolesRequest $request, User $user): RedirectResponse
     {
         $data = $request->getData()->toArray();
         $user->roles()->sync($data['roleIds']);
@@ -86,7 +86,7 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    public function changeBlock(ChangeBlockRequest $request, User $user)
+    public function changeBlock(ChangeBlockRequest $request, User $user): RedirectResponse
     {
         $data = $request->getData()->toArray();
         $user->block = $data['block'];
@@ -95,7 +95,7 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    public function changeAddress(ChangeAddressRequest $request, User $user)
+    public function changeAddress(ChangeAddressRequest $request, User $user): RedirectResponse
     {
         Gate::authorize('update', $user);
         $address = $request->getData()->address;

@@ -16,35 +16,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class ProfileController extends Controller
 {
-    public function __construct(private readonly Service $imageService)
-    {
-    }
+    public function __construct(private readonly Service $imageService) {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $client = $request->user()->load([
+        $client = $request->user()->loadMissing([
             'phone',
-            'pendingPhones' => fn($query) => $query->orderByDesc('id'),
+            'pendingPhones' => fn ($query) => $query->orderByDesc('id'),
             'image',
         ]);
 
         return Inertia::render('Profile/Index', [
-            'client' => fn() => UserProfileResource::from($client),
-            'orders' => fn() => OrderPublicResource::collect(Order::withCount('items')->byUserId($client->id)->orderByDesc('id')->get()),
+            'client' => fn () => UserProfileResource::from($client),
+            'orders' => fn () => OrderPublicResource::collect(Order::withCount('items')->byUserId($client->id)->orderByDesc('id')->get()),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request)
+    public function update(SaveRequest $request): RedirectResponse
     {
         $data = $request->getData()->toArray();
         $user = $request->user();
@@ -57,7 +56,7 @@ class ProfileController extends Controller
      * @throws InvalidDataClass
      * @throws Exception
      */
-    public function changeAvatar(ChangeAvatarRequest $request)
+    public function changeAvatar(ChangeAvatarRequest $request): RedirectResponse
     {
         $client = $request->user()->loadMissing('image');
         $data = $request->getData();
@@ -69,6 +68,7 @@ class ProfileController extends Controller
             'catalogPath' => $catalogPath,
         ];
         $checkSave = $this->imageService->saveOneImage($client, $data);
+
         return $checkSave
             ? redirect()->back()
             : redirect()->back()->withErrors(['image' => 'Не удалось загрузить файл попробуйте позднее.']);
@@ -77,10 +77,11 @@ class ProfileController extends Controller
     /**
      * @throws Exception
      */
-    public function destroyAvatar(Request $request)
+    public function destroyAvatar(Request $request): RedirectResponse
     {
         $client = $request->user()->loadMissing('image');
         $checkDelete = $this->imageService->deleteOneImage($client);
+
         return $checkDelete
             ? redirect()->back()
             : redirect()->back()->withErrors(['image' => 'Произошла ошибка попробуйте позднее.']);

@@ -8,26 +8,26 @@ use App\Http\Requests\Tag\SaveRequest;
 use App\Http\Resources\General\GeneralPagination;
 use App\Http\Resources\Tags\TagCrudResource;
 use App\Models\Tag;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class TagController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $filters = TagsQuery::validateAndCreate($request->query())->toArray();
-        $tags = function () use ($filters) {
-            $tagsPaginator = QueryBuilder::for(Tag::class)
-                ->allowedFilters([
-                    'url',
-                    'title',
-                ])
-                ->allowedSorts(['id', 'title', 'url', 'created_at'])
-                ->paginate($filters['batch'] ?? 10);
 
-            return GeneralPagination::fromPaginator($tagsPaginator, TagCrudResource::class);
-        };
+        $tagsPaginator = QueryBuilder::for(Tag::class)
+            ->allowedFilters([
+                'url',
+                'title',
+            ])
+            ->allowedSorts(['id', 'title', 'url', 'created_at'])
+            ->paginate($filters['batch'] ?? 10);
+        $tags = GeneralPagination::fromPaginator($tagsPaginator, TagCrudResource::class);
 
         return Inertia::render('Admin/Tags/Index', [
             'tags' => $tags,
@@ -38,7 +38,7 @@ class TagController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Admin/Tags/Create');
     }
@@ -46,7 +46,7 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveRequest $request)
+    public function store(SaveRequest $request): RedirectResponse
     {
         $data = $request->getData()->toArray();
         Tag::create($data);
@@ -57,17 +57,17 @@ class TagController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tag $tag)
+    public function edit(Tag $tag): Response
     {
         return Inertia::render('Admin/Tags/Edit', [
-            'tag' => $tag
+            'tag' => $tag,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Tag $tag)
+    public function update(SaveRequest $request, Tag $tag): RedirectResponse
     {
         $data = $request->getData()->toArray();
         $tag->update($data);
@@ -78,7 +78,7 @@ class TagController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tag $tag)
+    public function destroy(Tag $tag): RedirectResponse
     {
         $tag->delete();
         $tag->posts()->detach();

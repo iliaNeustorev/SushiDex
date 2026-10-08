@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class CategoryController extends Controller
@@ -27,15 +28,13 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         Gate::authorize('viewAny', Category::class);
         $query = CategoriesQuery::validateAndCreate($request->query())->toArray();
-        $categories = function () use ($query) {
-            $categoriesPaginator = $this->categoryAdminService->getCategoriesWithPaginate($query);
 
-            return GeneralPagination::fromPaginator($categoriesPaginator, CategoryCrudResource::class);
-        };
+        $categoriesPaginator = $this->categoryAdminService->getCategoriesWithPaginate($query);
+        $categories = GeneralPagination::fromPaginator($categoriesPaginator, CategoryCrudResource::class);
 
         return Inertia::render('Admin/Categories/Index', [
             'categories' => fn () => $categories,
@@ -47,7 +46,7 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         Gate::authorize('create', Category::class);
         $types = collect(Type::TEXTS);
@@ -59,11 +58,10 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return RedirectResponse
      *
      * @throws InvalidDataClass
      */
-    public function store(SaveRequest $request)
+    public function store(SaveRequest $request): RedirectResponse
     {
         Gate::authorize('create', Category::class);
         $data = $request->getData()->toArray();
@@ -75,7 +73,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Category $category): Response
     {
         Gate::authorize('update', $category);
 
@@ -89,7 +87,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Category $category)
+    public function update(SaveRequest $request, Category $category): RedirectResponse
     {
         Gate::authorize('update', $category);
         $data = $request->getData()->toArray();
@@ -103,7 +101,7 @@ class CategoryController extends Controller
      *
      * @throws Exception
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category): RedirectResponse
     {
         Gate::authorize('delete', $category);
         $deleted = $this->categoryAdminService->delete($category);

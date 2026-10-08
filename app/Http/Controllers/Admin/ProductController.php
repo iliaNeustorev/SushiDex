@@ -29,20 +29,20 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         Gate::authorize('viewAny', Product::class);
         $query = ProductsQuery::validateAndCreate($request->query())->toArray();
-        $products = function () use ($query) {
-            $productsPaginator = $this->productAdminService->getProductsWithPaginate($query);
-            if (isset($query['page']) && $query['page'] > $productsPaginator->lastPage()) {
-                $query['page'] = $productsPaginator->lastPage();
 
-                return redirect()->route('admin.products.index', $query);
-            }
+        $productsPaginator = $this->productAdminService->getProductsWithPaginate($query);
 
-            return GeneralPagination::fromPaginator($productsPaginator, ProductCrudResource::class);
-        };
+        if (isset($query['page']) && $query['page'] > $productsPaginator->lastPage()) {
+            $query['page'] = $productsPaginator->lastPage();
+
+            return redirect()->route('admin.products.index', $query);
+        }
+
+        $products = GeneralPagination::fromPaginator($productsPaginator, ProductCrudResource::class);
 
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,

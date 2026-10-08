@@ -21,6 +21,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PostController extends Controller
 {
@@ -32,21 +33,21 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response|RedirectResponse
     {
         Gate::authorize('viewAny', Post::class);
         $filters = PostsQuery::validateAndCreate($request->query())->toArray();
-        $posts = function () use ($filters) {
-            $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
 
-            if (isset($filters['page']) && $filters['page'] > $postsPaginator->lastPage()) {
-                $filters['page'] = $postsPaginator->lastPage();
+        $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
 
-                return redirect()->route('admin.posts.index', $filters);
-            }
+        if (isset($filters['page']) && $filters['page'] > $postsPaginator->lastPage()) {
+            $filters['page'] = $postsPaginator->lastPage();
 
-            return GeneralPagination::fromPaginator($postsPaginator, PostCrudResource::class);
-        };
+            return redirect()->route('admin.posts.index', $filters);
+        }
+
+        $posts = GeneralPagination::fromPaginator($postsPaginator, PostCrudResource::class);
+
         $tags = function () use ($filters) {
             $tagsBuilder = Tag::orderBy('url', 'ASC')->limit(5);
 
@@ -65,11 +66,10 @@ class PostController extends Controller
             return TagCrudResource::collect($tagsBySearch);
         };
         $statuses = collect(Status::TEXTS);
-        $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
-            'categories' => fn () => $categories,
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
             'statuses' => $statuses,
             'query' => $filters,
             'tags' => fn () => $tags,
@@ -80,7 +80,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         Gate::authorize('create', Post::class);
         $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
@@ -92,7 +92,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveRequest $request)
+    public function store(SaveRequest $request): RedirectResponse
     {
         Gate::authorize('create', Post::class);
         $user = $request->user();
@@ -108,7 +108,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(Post $post): Response
     {
         Gate::authorize('update', $post);
         $post->load('category:id,title', 'user', 'tags');
@@ -124,7 +124,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Post $post)
+    public function update(SaveRequest $request, Post $post): RedirectResponse
     {
         Gate::authorize('update', $post);
         $data = $request->getData()->toArray();
@@ -139,7 +139,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post): RedirectResponse
     {
         Gate::authorize('delete', $post);
         $post->delete();
@@ -148,10 +148,7 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('notice', 'posts.deleted');
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    public function publish(Post $post)
+    public function publish(Post $post): RedirectResponse
     {
         if ($post->status !== Status::DRAFT) {
             abort(400);
