@@ -43,14 +43,19 @@ class RemittanceController extends Controller
                     $remittance->update([
                         'paid' => true,
                         'payment_system_status' => NotificationEventType::PAYMENT_SUCCEEDED,
-                        'paid_at' => Carbon::now(),
+                        'payed_at' => Carbon::now(),
                         'status' => Status::PAID
                     ]);
+                    Log::info($requestBody);
+                    return response('', 200);
                 }
+            } else {
+                throw new \Exception('Не найдена оплата id ' . $payment->getId());
             }
-            throw new \Exception('Не найдена оплата id ' . $payment->getId());
         } catch (\Exception $e) {
             Log::error($requestBody);
+            report($e);
+            return response('', 500);
         }
     }
 }
