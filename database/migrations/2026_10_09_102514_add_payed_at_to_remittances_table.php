@@ -10,8 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->timestamp('completed_at')->nullable();
+        Schema::table('remittances', function (Blueprint $table) {
+            $table->timestamp('payed_at')->nullable();
+            $table->decimal('payment_system_amount')->nullable();
         });
     }
 
@@ -20,8 +21,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('completed_at');
+        Schema::table('remittances', function (Blueprint $table) {
+            $table->dropColumn(['payed_at', 'payment_system_amount']);
         });
     }
 };

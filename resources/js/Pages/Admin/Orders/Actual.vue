@@ -170,7 +170,7 @@
                             :item-value="id => id"
                             label="Тип оплаты"
                             variant="solo-filled"
-                            :disabled="orderForSetting.remittance?.paid || orderForSetting.remittance?.status === RemittanceStatus.AWAIT_CONFIRM_PAID"
+                            :disabled="orderForSetting.remittance?.paid"
                         />
                     </VContainer>
                     <VCardActions>
@@ -206,7 +206,6 @@ import {
     type OrdersActualQuery,
     OrderStatus,
     type OrderUpdateSettingsReqDTO,
-    RemittanceStatus,
     TypePaid,
 } from '~types/generated';
 import OrderRoutes from '~routes/Admin/OrderController';

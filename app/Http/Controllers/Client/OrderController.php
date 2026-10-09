@@ -16,7 +16,8 @@ class OrderController extends Controller
 {
     public function __construct(
         private readonly OrderService $orderService
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -26,7 +27,7 @@ class OrderController extends Controller
         $client = $request->user();
 
         return Inertia::render('Order/Index', [
-            'orders' => fn () => OrderPublicResource::collect(
+            'orders' => fn() => OrderPublicResource::collect(
                 Order::with('remittance')->withCount('items')->actualOrder($client->id)->get()
             ),
         ]);

@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
 
         then: function (): void {
@@ -26,18 +26,20 @@ return Application::configure(basePath: dirname(__DIR__))
         Schedule::command('telescope:prune --hours=48')->daily();
     })
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn () => route('login'));
-        $middleware->redirectUsersTo(fn () => route('home'));
+        $middleware->redirectGuestsTo(fn() => route('login'));
+        $middleware->redirectUsersTo(fn() => route('home'));
         $middleware->web(append: [
             HandleInertiaRequests::class,
+        ])->validateCsrfTokens(except: [
+            'remittances/callbacks'
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             $status = $response->getStatusCode();
 
-            if (! in_array($status, [403, 404, 500], true)
-                || ($request->expectsJson() && ! $request->header('X-Inertia'))
+            if (!in_array($status, [403, 404, 500], true)
+                || ($request->expectsJson() && !$request->header('X-Inertia'))
                 || ($status === 500 && config('app.debug'))) {
                 return $response;
             }

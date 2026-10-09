@@ -9,12 +9,12 @@ enum Status: int
 {
     case PAID = 1;
     case AWAIT_PAID = 2;
-    case AWAIT_CONFIRM_PAID = 3;
+    case REFUND = 3;
 
     public const TEXTS = [
         1 => 'Оплачен',
         2 => 'Ожидает оплаты',
-        3 => 'Ожидает подтверждения оплаты',
+        3 => 'Возврат',
     ];
 
     public function text(): string

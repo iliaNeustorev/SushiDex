@@ -11,6 +11,9 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
+// EVENT
+Route::post('/remittances/callbacks', [RemittanceController::class, 'callback']);
+// MAIN
 Route::resource('posts', PostController::class)->only('index', 'show');
 Route::get('/menu', [GeneralController::class, 'menu'])->name('menu');
 Route::get('/', [GeneralController::class, 'index'])->name('home');

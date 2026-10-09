@@ -370,7 +370,7 @@ paid: boolean;
 amount: string;
 status: RemittanceStatus;
 };
-export enum RemittanceStatus { PAID = 1, AWAIT_PAID = 2, AWAIT_CONFIRM_PAID = 3 };
+export enum RemittanceStatus { PAID = 1, AWAIT_PAID = 2, REFUND = 3 };
 export type ResetPasswordReqDTO = {
 token: string;
 email: string | null;

@@ -1,11 +1,14 @@
 <template>
     <template
-        v-if="order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status === RemittanceStatus.AWAIT_PAID">
+        v-if="order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status !== RemittanceStatus.PAID">
         <VBtn
             v-if="type === 'icon'"
+            :loading="checkSend"
             icon="$mdiCashClock" :size="size" class="ml-2 text-green-darken-3"
-            title="Оплатить" @click="sendRemittance"></VBtn>
+            title="Оплатить" @click="sendRemittance">
+        </VBtn>
         <VBtn
+            :loading="checkSend"
             prepend-icon="$mdiCashClock"
             v-else
             color="green-darken-3"
@@ -20,6 +23,7 @@
 import {type OrderPublicResource, RemittanceStatus, TypePaid} from "~types/generated.ts";
 import {router} from "@inertiajs/vue3";
 import RemittanceController from "~routes/Client/RemittanceController.ts";
+import {shallowRef} from "vue";
 
 const {order, size = 'small', type = 'icon'} = defineProps<{
     order: OrderPublicResource,
@@ -27,11 +31,14 @@ const {order, size = 'small', type = 'icon'} = defineProps<{
     type?: 'icon' | 'default'
 }>(
 )
+const checkSend = shallowRef<boolean>(false)
 
 function sendRemittance() {
+    checkSend.value = true;
     router.visit(RemittanceController.store(order), {
-        preserveScroll: true,
-        preserveState: true
+        onFinish: () => {
+            checkSend.value = false
+        }
     })
 }
 </script>

@@ -65,8 +65,13 @@ class Order extends Model
         return $query->byStatus([Status::CANCELLED, Status::COMPLETED]);
     }
 
+    public function remittances(): HasMany
+    {
+        return $this->hasMany(Remittance::class);
+    }
+
     public function remittance(): HasOne
     {
-        return $this->hasOne(Remittance::class);
+        return $this->hasOne(Remittance::class)->latestOfMany();
     }
 }

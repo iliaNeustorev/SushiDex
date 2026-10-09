@@ -6,7 +6,7 @@
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Заказ № {{ order.id }}</span>
                     <span
-                        :class="[order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status === RemittanceStatus.AWAIT_PAID ? 'text-orange-darken-3' : 'text-grey-darken-3']">{{
+                        :class="[order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status !== RemittanceStatus.PAID ? 'text-orange-darken-3' : 'text-grey-darken-3']">{{
                             order.status_text
                         }}</span>
                 </VCardTitle>

@@ -14,6 +14,7 @@ class Remittance extends Model
         'status' => Status::class,
         'paid' => 'boolean',
         'amount' => 'decimal:2',
+        'payed_at' => 'datetime',
     ];
 
     public function order(): BelongsTo

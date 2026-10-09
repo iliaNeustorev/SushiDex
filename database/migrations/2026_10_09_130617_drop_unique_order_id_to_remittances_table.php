@@ -10,9 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->timestamp('completed_at')->nullable();
-        });
+        if (Schema::hasIndex('remittances', ['order_id'], 'unique')) {
+            Schema::table('remittances', function (Blueprint $table) {
+                $table->dropUnique(['order_id']);
+            });
+        }
     }
 
     /**
@@ -20,8 +22,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('completed_at');
+        Schema::table('remittances', function (Blueprint $table) {
+            $table->unique('order_id');
         });
     }
 };
