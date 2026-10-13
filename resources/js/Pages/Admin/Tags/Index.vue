@@ -2,8 +2,7 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard class="mt-3">
-                <VCardTitle class="d-flex justify-space-between">
-                    <span>Тэги</span>
+                <VCardTitle class="d-flex justify-space-between align-center">
                     <Link :href="TagsRoutes.create().url" class="text-decoration-none text-green-darken-3">
                         Новый тэг
                     </Link>

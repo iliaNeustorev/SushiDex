@@ -2,13 +2,13 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard class="mt-3">
-                <VCardTitle class="d-flex justify-space-between">
-                    <span>Категории</span>
+                <VCardTitle class="d-flex justify-space-between align-center">
                     <Link
                         :href="CategoriesRoutes.create().url"
                         class="text-decoration-none text-green-darken-3">
                         Новая категория
                     </Link>
+                    <VSpacer />
                     <VBadge
                         :content="countDeletedCategory"
                         :model-value="countDeletedCategory > 0"

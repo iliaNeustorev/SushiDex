@@ -2,11 +2,11 @@
     <AdminLayout>
         <AdminWrapper>
             <VCard class="mt-3">
-                <VCardTitle class="d-flex justify-space-between">
-                    <span>Товары</span>
+                <VCardTitle class="d-flex justify-space-between align-center">
                     <Link :href="ProductRoutes.create().url" class="text-decoration-none text-green-darken-3">
                         Создать товар
                     </Link>
+                    <VSpacer />
                     <VBadge
                         :content="countDeletedProduct"
                         :model-value="countDeletedProduct > 0"
