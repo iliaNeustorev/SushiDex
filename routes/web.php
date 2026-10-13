@@ -9,10 +9,12 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\RemittanceController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PostController;
+use App\Http\Middleware\EnsurePaymentWebhookIp;
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
 
 // EVENT
-Route::post('/remittances/callbacks', [RemittanceController::class, 'callback']);
+Route::post('/remittances/callbacks', [RemittanceController::class, 'callback'])->withoutMiddleware(HandleInertiaRequests::class)->middleware(EnsurePaymentWebhookIp::class);
 // MAIN
 Route::resource('posts', PostController::class)->only('index', 'show');
 Route::get('/menu', [GeneralController::class, 'menu'])->name('menu');

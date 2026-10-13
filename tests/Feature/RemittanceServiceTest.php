@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
 use App\Enums\Remittances\Status as RemittanceStatus;
+use App\Interfaces\PaymentProviderInterface;
 use App\Models\Order;
 use App\Models\Remittance;
 use App\Models\User;
@@ -23,11 +24,17 @@ class RemittanceServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $order = $this->order($user, TypePaid::CARD_ONLINE);
-        $service = Mockery::mock(RemittanceService::class)->makePartial();
-        $service->shouldReceive('getPaymentUrl')
+        $provider = Mockery::mock(PaymentProviderInterface::class);
+        $provider->shouldReceive('store')
             ->once()
-            ->with(Mockery::type(Remittance::class))
-            ->andReturn('https://payments.example/confirmation');
+            ->with(Mockery::type(Remittance::class), $order)
+            ->andReturn([
+                'url' => 'https://payments.example/confirmation',
+                'external_id' => 'payment-1',
+                'external_status' => 'pending',
+                'external_amount' => '10.25',
+            ]);
+        $service = new RemittanceService($provider);
 
         $this->actingAs($user);
 
@@ -35,6 +42,9 @@ class RemittanceServiceTest extends TestCase
         $this->assertDatabaseHas('remittances', [
             'order_id' => $order->id,
             'amount' => '10.25',
+            'payment_system_id' => 'payment-1',
+            'payment_system_status' => 'pending',
+            'payment_system_amount' => '10.25',
         ]);
     }
 
@@ -45,7 +55,7 @@ class RemittanceServiceTest extends TestCase
 
         $this->expectException(AuthorizationException::class);
 
-        app(RemittanceService::class)->store($order);
+        $this->service()->store($order);
     }
 
     public function test_non_online_order_cannot_be_paid_online(): void
@@ -56,7 +66,7 @@ class RemittanceServiceTest extends TestCase
 
         $this->expectException(ValidationException::class);
 
-        app(RemittanceService::class)->store($order);
+        $this->service()->store($order);
     }
 
     public function test_paid_remittance_cannot_request_another_payment_url(): void
@@ -72,22 +82,33 @@ class RemittanceServiceTest extends TestCase
 
         $this->expectException(ValidationException::class);
 
-        app(RemittanceService::class)->store($order);
+        $this->service()->store($order);
     }
 
-    public function test_unconfigured_payment_gateway_fails_with_validation_error(): void
+    public function test_payment_provider_error_becomes_validation_error(): void
     {
-        $remittance = new Remittance;
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $provider = Mockery::mock(PaymentProviderInterface::class);
+        $provider->shouldReceive('store')
+            ->once()
+            ->andThrow(new \Exception('Provider error'));
+        $this->actingAs($user);
 
         try {
-            app(RemittanceService::class)->getPaymentUrl($remittance);
-            $this->fail('The payment gateway returned an URL without configuration.');
+            (new RemittanceService($provider))->store($order);
+            $this->fail('The payment provider error was not converted to a validation error.');
         } catch (ValidationException $exception) {
             $this->assertSame(
-                ['Онлайн-оплата временно недоступна.'],
+                ['Во время оплаты произошла ошибка. Попробуйте еще раз'],
                 $exception->errors()['payment'],
             );
         }
+    }
+
+    private function service(): RemittanceService
+    {
+        return new RemittanceService(Mockery::mock(PaymentProviderInterface::class));
     }
 
     private function order(User $user, TypePaid $type): Order

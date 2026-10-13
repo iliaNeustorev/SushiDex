@@ -2,21 +2,24 @@
 
 namespace App\Services\Remittance;
 
+use App\DTO\Remittances\RemittanceWebhookDTO;
 use App\Enums\Orders\TypePaid;
 use App\Enums\Remittances\Status;
 use App\Interfaces\PaymentProviderInterface;
 use App\Models\Order;
+use App\Models\Remittance;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class RemittanceService
 {
-
     public function __construct(
         private PaymentProviderInterface $paymentProvider
-    ) {
-    }
+    ) {}
 
     public function store(Order $order): string
     {
@@ -57,7 +60,7 @@ class RemittanceService
 
         try {
             $result = $this->paymentProvider->store($remittance, $order);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
             throw ValidationException::withMessages([
                 'payment' => 'Во время оплаты произошла ошибка. Попробуйте еще раз',
@@ -69,10 +72,51 @@ class RemittanceService
                 'payment_system_id' => $result['external_id'],
                 'payment_system_amount' => $result['external_amount'],
             ]);
+
             return $result['url'];
         }
         throw ValidationException::withMessages([
             'payment' => 'Во время оплаты произошла ошибка. Попробуйте еще раз',
         ]);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function handleWebhook(array $payload): void
+    {
+        $resultHandle = $this->paymentProvider->handleWebhook($payload);
+
+        DB::transaction(function () use ($resultHandle) {
+            $remittance = Remittance::where('payment_system_id', $resultHandle->paymentSystemId)->lockForUpdate()->first();
+            if ($remittance) {
+                if (
+                    $resultHandle->status === RemittanceWebhookDTO::STATUS_SUCCEEDED
+                    && ! $remittance->paid
+                    && $remittance->status !== Status::PAID
+                ) {
+                    $remittance->update([
+                        'paid' => true,
+                        'payment_system_status' => RemittanceWebhookDTO::STATUS_SUCCEEDED,
+                        'payed_at' => Carbon::now(),
+                        'status' => Status::PAID,
+                    ]);
+                }
+                if ($resultHandle->status === RemittanceWebhookDTO::STATUS_WAITING && ! $remittance->paid && $remittance->status !== Status::PAID) {
+                    $remittance->update([
+                        'payment_system_status' => RemittanceWebhookDTO::STATUS_WAITING,
+                    ]);
+                }
+                if ($resultHandle->status === RemittanceWebhookDTO::STATUS_CANCELED && ! $remittance->paid && $remittance->status !== Status::PAID) {
+                    $remittance->update([
+                        'payment_system_status' => RemittanceWebhookDTO::STATUS_CANCELED,
+                    ]);
+                }
+            } else {
+                throw new Exception('Не найдена оплата id '.$resultHandle->paymentSystemId);
+            }
+        });
+
+        Log::info($payload);
     }
 }
