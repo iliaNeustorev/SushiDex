@@ -2,51 +2,79 @@
 
 namespace App\Integrations\PaymentProvider;
 
-use AllowDynamicProperties;
 use App\Models\Order;
+use App\Models\Refund;
 use App\Models\Remittance;
+use RuntimeException;
 use YooKassa\Client;
 
-#[AllowDynamicProperties]
 class YKassa
 {
-
-    /**
-     * @throws \Exception
-     */
     public function __construct(
-        public Client $client,
-    ) {
-        $this->key = config('ykassa.key');
-        $this->shopId = config('ykassa.shop_id');
-        if (is_null($this->key) || is_null($this->shopId)) {
-            throw new \Exception('YKassa key and shopId cannot be null');
+        private Client $client,
+    ) {}
+
+    public function getClient(): Client
+    {
+        $key = config('ykassa.key');
+        $shopId = config('ykassa.shop_id');
+
+        if (! is_string($key) || $key === '' || ! is_string($shopId) || $shopId === '') {
+            throw new RuntimeException('YKassa key and shopId cannot be empty');
         }
+
+        return $this->client->setAuth($shopId, $key);
     }
 
     public function store(Remittance $remittance, Order $order): array
     {
-        $this->client->setAuth($this->shopId, $this->key);
-        $payment = $this->client->createPayment(
-            array(
-                'amount' => array(
+        $client = $this->getClient();
+        $payment = $client->createPayment(
+            [
+                'amount' => [
                     'value' => $remittance->amount,
                     'currency' => $remittance->currency,
-                ),
-                'confirmation' => array(
+                ],
+                'confirmation' => [
                     'type' => 'redirect',
                     'return_url' => url('orders'),
-                ),
+                ],
                 'capture' => true,
                 'description' => "Заказ №{$order->id}",
-            ),
-            'Remittance-' . $remittance->id
+            ],
+            'Remittance-'.$remittance->id
         );
+
         return [
             'url' => $payment?->confirmation?->confirmation_url,
-            'external_id' => $payment?->id,
-            'external_status' => $payment?->status,
-            'external_amount' => $payment?->amount?->value,
+            'id' => $payment?->id,
+            'status' => $payment?->status,
+            'amount' => $payment?->amount?->value,
+        ];
+    }
+
+    public function createRefund(Remittance $remittance, Refund $refund): array
+    {
+        $client = $this->getClient();
+        $refund = $client->createRefund(
+            [
+                'amount' => [
+                    'value' => $remittance->amount,
+                    'currency' => $remittance->currency,
+                ],
+                'payment_id' => $remittance->payment_system_id,
+                'metadata' => [
+                    'reason' => $refund->reason,
+                ],
+            ],
+            'refund-'.$refund->id,
+        );
+
+        return [
+            'id' => $refund?->id,
+            'status' => $refund?->status,
+            'amount' => $refund?->amount?->value,
+            'reason' => $refund?->metadata?->reason,
         ];
     }
 }

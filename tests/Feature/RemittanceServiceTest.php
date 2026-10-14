@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\DTO\Remittances\RemittancePaymentDTO;
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
 use App\Enums\Remittances\Status as RemittanceStatus;
@@ -28,12 +29,12 @@ class RemittanceServiceTest extends TestCase
         $provider->shouldReceive('store')
             ->once()
             ->with(Mockery::type(Remittance::class), $order)
-            ->andReturn([
-                'url' => 'https://payments.example/confirmation',
-                'external_id' => 'payment-1',
-                'external_status' => 'pending',
-                'external_amount' => '10.25',
-            ]);
+            ->andReturn(new RemittancePaymentDTO(
+                paymentId: 'payment-1',
+                status: 'pending',
+                amount: '10.25',
+                url: 'https://payments.example/confirmation',
+            ));
         $service = new RemittanceService($provider);
 
         $this->actingAs($user);
@@ -78,6 +79,34 @@ class RemittanceServiceTest extends TestCase
             'paid' => true,
             'status' => RemittanceStatus::PAID,
         ]);
+        $this->actingAs($user);
+
+        $this->expectException(ValidationException::class);
+
+        $this->service()->store($order);
+    }
+
+    public function test_refunded_remittance_cannot_request_another_payment_url(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $order->remittances()->create([
+            'amount' => $order->total_price,
+            'paid' => true,
+            'status' => RemittanceStatus::REFUND,
+        ]);
+        $this->actingAs($user);
+
+        $this->expectException(ValidationException::class);
+
+        $this->service()->store($order);
+    }
+
+    public function test_canceled_order_cannot_request_payment_url(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $order->update(['status' => OrderStatus::CANCELLED]);
         $this->actingAs($user);
 
         $this->expectException(ValidationException::class);

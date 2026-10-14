@@ -9,6 +9,8 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Services\Refund\RefundService;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +21,10 @@ use Throwable;
 
 class OrderService
 {
+    public function __construct(
+        private RefundService $refundService,
+    ) {}
+
     public function create(User $user, array $data): Order
     {
         DB::beginTransaction();
@@ -42,11 +48,11 @@ class OrderService
                 throw ValidationException::withMessages(['cart' => 'Корзина пуста.']);
             }
 
-            if ($items->contains(fn(Cart $item) => !$item->product)) {
+            if ($items->contains(fn (Cart $item) => ! $item->product)) {
                 throw ValidationException::withMessages(['cart' => 'Один из товаров больше недоступен.']);
             }
 
-            $total = $items->sum(fn(Cart $item) => $item->product->price * $item->count);
+            $total = $items->sum(fn (Cart $item) => $item->product->price * $item->count);
             $order = Order::create([
                 'user_id' => $user->id,
                 'total_price' => number_format($total, 2, '.', ''),
@@ -65,7 +71,7 @@ class OrderService
             }
 
             if ($order->type_paid === TypePaid::CARD_ONLINE) {
-                $order->remittance()->create([
+                $order->remittances()->create([
                     'amount' => $order->total_price,
                     'status' => RemittanceStatus::AWAIT_PAID,
                 ]);
@@ -118,7 +124,7 @@ class OrderService
                 if (in_array($order->status, [OrderStatus::NEW])) {
                     if ($order->type_paid === TypePaid::CARD_ONLINE) {
                         $order->loadMissing('remittance');
-                        if (!$order->remittance || $order->remittance->status === RemittanceStatus::AWAIT_PAID) {
+                        if (! $order->remittance || $order->remittance->status === RemittanceStatus::AWAIT_PAID) {
                             throw ValidationException::withMessages([
                                 'order' => 'Не удалось обновить статус заказа. Ожидается оплата заказа онлайн',
                             ]);
@@ -145,11 +151,18 @@ class OrderService
                 if (in_array($order->status, [OrderStatus::NEW, OrderStatus::PROCESSING])) {
                     $order->loadMissing('remittance');
                     if ($order->type_paid === TypePaid::CARD_ONLINE && $order->remittance?->paid) {
-                        // TODO: если оплата была картой онлайн то сделать возврат
+                        try {
+                            $this->refundService->store($order);
+                        } catch (Throwable $e) {
+                            report($e);
+                            throw ValidationException::withMessages([
+                                'order' => 'Не удалось обновить статус заказа. Не удалось выполнить возврат.',
+                            ]);
+                        }
                     }
                     $order->update([
                         'status' => OrderStatus::CANCELLED,
-                        'completed_at' => now(),
+                        'completed_at' => Carbon::now(),
                     ]);
 
                     // TODO: отправить уведомление
@@ -166,37 +179,55 @@ class OrderService
     {
         DB::beginTransaction();
         try {
-            $order->loadMissing('user');
+            $order = Order::whereKey($order->id)
+                ->with('user')
+                ->lockForUpdate()
+                ->firstOrFail();
+
             $needDelivery = $settings['need_delivery'] ?? $order->need_delivery;
             $type = $settings['type'] ?? $order->type_paid->value;
 
             if ($needDelivery) {
-                if (!$this->hasDeliveryAddress($order->user)) {
+                if (! $this->hasDeliveryAddress($order->user)) {
                     throw ValidationException::withMessages([
                         'need_delivery' => 'Не удалось включить доставку. Не указан адрес в профиле.',
                     ]);
                 }
             }
-            if (!$this->hasDeliveryAddress($order->user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
+            if (! $this->hasDeliveryAddress($order->user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
                 throw ValidationException::withMessages([
                     'type' => 'Нельзя выбрать данный тип. Не указан адрес в профиле.',
                 ]);
             }
             if (isset($settings['type']) && $type === TypePaid::CARD_ONLINE->value && $order->type_paid !== TypePaid::CARD_ONLINE) {
-                $order->remittance()->firstOrCreate([], [
+                $order->remittances()->create([
                     'amount' => $order->total_price,
                     'status' => RemittanceStatus::AWAIT_PAID,
                 ]);
             }
             if (isset($settings['type']) && $type !== TypePaid::CARD_ONLINE->value && $order->type_paid === TypePaid::CARD_ONLINE) {
-                $order->loadMissing('remittance');
-                if (isset($order->remittance) && ($order->remittance->paid || $order->remittance->status === RemittanceStatus::REFUND)) {
+                $remittances = $order->remittances()
+                    ->lockForUpdate()
+                    ->get();
+
+                if ($remittances->contains('paid', true)) {
                     throw ValidationException::withMessages([
                         'type' => 'Не удалось обновить тип оплаты. Заказ уже оплачен или оформлен возврат.',
                     ]);
-                } else {
-                    $order->remittance()->delete();
                 }
+
+                if ($remittances->contains(
+                    fn ($remittance) => $remittance->payment_system_id !== null
+                        && $remittance->payment_system_status !== 'canceled',
+                )) {
+                    throw ValidationException::withMessages([
+                        'type' => 'Не удалось обновить тип оплаты. Есть активная платёжная форма.',
+                    ]);
+                }
+
+                $order->remittances()
+                    ->whereNull('payment_system_id')
+                    ->delete();
             }
 
             $order->update([
@@ -224,8 +255,8 @@ class OrderService
     public function getTypePaid(User $user): Collection
     {
         $collect = collect(TypePaid::TEXTS);
-        if (!$this->hasDeliveryAddress($user)) {
-            $collect = $collect->filter(fn($type, $key) => in_array($key, [TypePaid::CARD_ONLINE->value, TypePaid::IN_PICKUP_LOCATION->value]));
+        if (! $this->hasDeliveryAddress($user)) {
+            $collect = $collect->filter(fn ($type, $key) => in_array($key, [TypePaid::CARD_ONLINE->value, TypePaid::IN_PICKUP_LOCATION->value]));
         }
 
         return $collect;
@@ -233,7 +264,7 @@ class OrderService
 
     private function validateDeliverySettings(User $user, array $data): void
     {
-        if (($data['need_delivery'] ?? false) && !$this->hasDeliveryAddress($user)) {
+        if (($data['need_delivery'] ?? false) && ! $this->hasDeliveryAddress($user)) {
             throw ValidationException::withMessages([
                 'need_delivery' => 'Не удалось включить доставку. Не указан адрес в профиле.',
             ]);
@@ -243,7 +274,7 @@ class OrderService
             ? $data['type']->value
             : $data['type'];
 
-        if (!$this->hasDeliveryAddress($user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
+        if (! $this->hasDeliveryAddress($user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
             throw ValidationException::withMessages([
                 'type' => 'Нельзя выбрать данный тип. Не указан адрес в профиле.',
             ]);
@@ -263,10 +294,10 @@ class OrderService
                 AllowedFilter::exact('id'),
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('type_paid'),
-                AllowedFilter::callback('date_created_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_created_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
-                AllowedFilter::callback('date_completed_from', fn($q, $v) => $q->where('completed_at', '>=', $v)),
-                AllowedFilter::callback('date_completed_to', fn($q, $v) => $q->where('completed_at', '<=', $v . ' 23:59:59')),
+                AllowedFilter::callback('date_created_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_created_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+                AllowedFilter::callback('date_completed_from', fn ($q, $v) => $q->where('completed_at', '>=', $v)),
+                AllowedFilter::callback('date_completed_to', fn ($q, $v) => $q->where('completed_at', '<=', $v.' 23:59:59')),
             ])
             ->allowedSorts([
                 'id',

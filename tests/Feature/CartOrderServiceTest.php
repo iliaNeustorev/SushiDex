@@ -4,17 +4,29 @@ namespace Tests\Feature;
 
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
+use App\Interfaces\PaymentProviderInterface;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class CartOrderServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->instance(
+            PaymentProviderInterface::class,
+            Mockery::mock(PaymentProviderInterface::class),
+        );
+    }
 
     public function test_cart_item_is_created_and_its_quantity_is_replaced(): void
     {

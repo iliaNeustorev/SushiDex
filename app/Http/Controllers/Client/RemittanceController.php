@@ -11,7 +11,7 @@ use Log;
 class RemittanceController extends Controller
 {
     public function __construct(
-        private readonly RemittanceService $remittanceService
+        private readonly RemittanceService $remittanceService,
     ) {}
 
     public function store(Order $order)

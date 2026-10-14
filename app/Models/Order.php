@@ -72,6 +72,9 @@ class Order extends Model
 
     public function remittance(): HasOne
     {
-        return $this->hasOne(Remittance::class)->latestOfMany();
+        return $this->hasOne(Remittance::class)->ofMany(
+            ['id' => 'max'],
+            fn ($query) => $query->where('paid', true),
+        );
     }
 }

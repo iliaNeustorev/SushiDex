@@ -3,17 +3,20 @@
 namespace App\Services\Remittance;
 
 use App\DTO\Remittances\RemittanceWebhookDTO;
+use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
+use App\Enums\Refunds\Status as RefundStatus;
 use App\Enums\Remittances\Status;
 use App\Interfaces\PaymentProviderInterface;
 use App\Models\Order;
+use App\Models\Refund;
 use App\Models\Remittance;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class RemittanceService
 {
@@ -25,20 +28,26 @@ class RemittanceService
     {
         Gate::authorize('view', $order);
 
-        if ($order->type_paid !== TypePaid::CARD_ONLINE) {
-            throw ValidationException::withMessages([
-                'payment' => 'Онлайн-оплата недоступна для выбранного типа оплаты.',
-            ]);
-        }
-
         $remittance = DB::transaction(function () use ($order) {
             $lockedOrder = Order::whereKey($order->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            if ($lockedOrder->type_paid !== TypePaid::CARD_ONLINE) {
+                throw ValidationException::withMessages([
+                    'payment' => 'Онлайн-оплата недоступна для выбранного типа оплаты.',
+                ]);
+            }
+
+            if ($lockedOrder->status !== OrderStatus::NEW) {
+                throw ValidationException::withMessages([
+                    'payment' => 'Оплата доступна только для нового заказа.',
+                ]);
+            }
+
             if (
                 $lockedOrder->remittances()
-                    ->where('status', Status::PAID)
+                    ->where('paid', true)
                     ->exists()
             ) {
                 throw ValidationException::withMessages([
@@ -46,34 +55,30 @@ class RemittanceService
                 ]);
             }
 
-            $activeRemittance = $lockedOrder->remittances()
-                ->where('status', Status::AWAIT_PAID)
-                ->latest()
-                ->first();
+            $activeRemittance = $lockedOrder->remittances()->create([
+                'amount' => $lockedOrder->total_price,
+                'status' => Status::AWAIT_PAID,
+            ]);
 
-            return $activeRemittance
-                ?? $lockedOrder->remittances()->create([
-                    'amount' => $lockedOrder->total_price,
-                    'status' => Status::AWAIT_PAID,
-                ]);
+            return $activeRemittance->refresh();
         });
 
         try {
-            $result = $this->paymentProvider->store($remittance, $order);
-        } catch (Exception $e) {
+            $newPayment = $this->paymentProvider->store($remittance, $order);
+        } catch (Throwable $e) {
             report($e);
             throw ValidationException::withMessages([
                 'payment' => 'Во время оплаты произошла ошибка. Попробуйте еще раз',
             ]);
         }
-        if (isset($result['external_status'], $result['external_id'], $result['url'], $result['external_amount'])) {
+        if (isset($newPayment->status, $newPayment->paymentId, $newPayment->url, $newPayment->amount)) {
             $remittance->update([
-                'payment_system_status' => $result['external_status'],
-                'payment_system_id' => $result['external_id'],
-                'payment_system_amount' => $result['external_amount'],
+                'payment_system_status' => $newPayment->status,
+                'payment_system_id' => $newPayment->paymentId,
+                'payment_system_amount' => $newPayment->amount,
             ]);
 
-            return $result['url'];
+            return $newPayment->url;
         }
         throw ValidationException::withMessages([
             'payment' => 'Во время оплаты произошла ошибка. Попробуйте еще раз',
@@ -81,42 +86,77 @@ class RemittanceService
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handleWebhook(array $payload): void
     {
         $resultHandle = $this->paymentProvider->handleWebhook($payload);
+        if ($resultHandle->status === RemittanceWebhookDTO::STATUS_REFUND) {
+            $this->handleRefundWebhook($resultHandle);
+        } else {
+            $this->handleRemittanceWebhook($resultHandle);
+        }
+        Log::info($payload);
+    }
 
-        DB::transaction(function () use ($resultHandle) {
-            $remittance = Remittance::where('payment_system_id', $resultHandle->paymentSystemId)->lockForUpdate()->first();
+    private function handleRefundWebhook(RemittanceWebhookDTO $payloadWebhook): void
+    {
+        DB::transaction(function () use ($payloadWebhook) {
+            $refund = Refund::with('remittance.order')
+                ->where('external_system_id', $payloadWebhook->refundSystemId)
+                ->lockForUpdate()
+                ->firstOrFail();
+            $remittance = $refund->remittance()
+                ->where('payment_system_id', $payloadWebhook->paymentSystemId)
+                ->lockForUpdate()
+                ->firstOrFail();
+            if ($refund->status === RefundStatus::SUCCEED && $remittance->status === Status::REFUND) {
+                return;
+            }
+
+            $refund->update([
+                'external_system_status' => $payloadWebhook->externalStatus,
+                'refunded_at' => Carbon::now(),
+                'status' => RefundStatus::SUCCEED,
+            ]);
+            $remittance->update([
+                'status' => Status::REFUND,
+            ]);
+        });
+    }
+
+    private function handleRemittanceWebhook(RemittanceWebhookDTO $payloadWebhook): void
+    {
+        DB::transaction(function () use ($payloadWebhook) {
+            $remittance = Remittance::where('payment_system_id', $payloadWebhook->paymentSystemId)
+                ->lockForUpdate()
+                ->first();
             if ($remittance) {
                 if (
-                    $resultHandle->status === RemittanceWebhookDTO::STATUS_SUCCEEDED
+                    $payloadWebhook->status === RemittanceWebhookDTO::STATUS_SUCCEEDED
                     && ! $remittance->paid
                     && $remittance->status !== Status::PAID
                 ) {
                     $remittance->update([
                         'paid' => true,
-                        'payment_system_status' => RemittanceWebhookDTO::STATUS_SUCCEEDED,
+                        'payment_system_status' => $payloadWebhook->externalStatus,
                         'payed_at' => Carbon::now(),
                         'status' => Status::PAID,
                     ]);
                 }
-                if ($resultHandle->status === RemittanceWebhookDTO::STATUS_WAITING && ! $remittance->paid && $remittance->status !== Status::PAID) {
+                if ($payloadWebhook->status === RemittanceWebhookDTO::STATUS_WAITING && ! $remittance->paid && $remittance->status !== Status::PAID) {
                     $remittance->update([
-                        'payment_system_status' => RemittanceWebhookDTO::STATUS_WAITING,
+                        'payment_system_status' => $payloadWebhook->externalStatus,
                     ]);
                 }
-                if ($resultHandle->status === RemittanceWebhookDTO::STATUS_CANCELED && ! $remittance->paid && $remittance->status !== Status::PAID) {
+                if ($payloadWebhook->status === RemittanceWebhookDTO::STATUS_CANCELED && ! $remittance->paid && $remittance->status !== Status::PAID) {
                     $remittance->update([
-                        'payment_system_status' => RemittanceWebhookDTO::STATUS_CANCELED,
+                        'payment_system_status' => $payloadWebhook->externalStatus,
                     ]);
                 }
             } else {
-                throw new Exception('Не найдена оплата id '.$resultHandle->paymentSystemId);
+                throw new Exception('Не найдена оплата id '.$payloadWebhook->paymentSystemId);
             }
         });
-
-        Log::info($payload);
     }
 }

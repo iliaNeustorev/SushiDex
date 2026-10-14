@@ -2,23 +2,40 @@
 
 namespace Tests\Feature;
 
+use App\DTO\Remittances\RemittanceRefundDTO;
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
+use App\Enums\Refunds\Status as RefundStatus;
 use App\Enums\Remittances\Status as RemittanceStatus;
+use App\Interfaces\PaymentProviderInterface;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Refund;
+use App\Models\Remittance;
 use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
+use App\Services\Refund\RefundService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use Mockery;
 use Tests\TestCase;
 
 class OrderServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->instance(
+            PaymentProviderInterface::class,
+            Mockery::mock(PaymentProviderInterface::class),
+        );
+    }
 
     public function test_online_order_creates_pending_remittance(): void
     {
@@ -136,6 +153,39 @@ class OrderServiceTest extends TestCase
         $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
     }
 
+    public function test_canceling_paid_online_order_completes_refund(): void
+    {
+        $order = $this->order(User::factory()->create(), type: TypePaid::CARD_ONLINE);
+        $remittance = $this->paidRemittance($order);
+        $provider = $this->refundProvider('succeeded');
+        $service = new OrderService(new RefundService($provider));
+
+        $service->updateStatus($order, OrderStatus::CANCELLED);
+
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
+        $this->assertSame(RemittanceStatus::REFUND, $remittance->fresh()->status);
+        $this->assertSame(RefundStatus::SUCCEED, $remittance->refund()->firstOrFail()->status);
+    }
+
+    public function test_canceling_paid_online_order_fails_when_refund_is_rejected(): void
+    {
+        $order = $this->order(User::factory()->create(), type: TypePaid::CARD_ONLINE);
+        $remittance = $this->paidRemittance($order);
+        $provider = $this->refundProvider('canceled');
+        $service = new OrderService(new RefundService($provider));
+
+        try {
+            $service->updateStatus($order, OrderStatus::CANCELLED);
+            $this->fail('The order was canceled after the refund was rejected.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('order', $exception->errors());
+        }
+
+        $this->assertSame(OrderStatus::NEW, $order->fresh()->status);
+        $this->assertSame(RemittanceStatus::PAID, $remittance->fresh()->status);
+        $this->assertSame(RefundStatus::CANCELED, $remittance->refund()->firstOrFail()->status);
+    }
+
     public function test_settings_can_be_partially_updated_and_manage_remittance(): void
     {
         $service = app(OrderService::class);
@@ -145,6 +195,11 @@ class OrderServiceTest extends TestCase
 
         $this->assertSame(TypePaid::CARD_ONLINE, $order->fresh()->type_paid);
         $this->assertDatabaseHas('remittances', ['order_id' => $order->id]);
+        $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+        ]);
+        $this->assertSame(2, $order->remittances()->count());
 
         $service->updateSettings($order->fresh(), ['need_delivery' => true]);
         $this->assertTrue($order->fresh()->need_delivery);
@@ -162,12 +217,39 @@ class OrderServiceTest extends TestCase
             'paid' => true,
             'status' => RemittanceStatus::PAID,
         ]);
+        $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+        ]);
 
         $this->expectException(ValidationException::class);
 
         app(OrderService::class)->updateSettings($order, [
             'type' => TypePaid::IN_PICKUP_LOCATION->value,
         ]);
+    }
+
+    public function test_payment_type_cannot_be_changed_while_payment_form_is_active(): void
+    {
+        $order = $this->order(User::factory()->create(), type: TypePaid::CARD_ONLINE);
+        $remittance = $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+            'payment_system_id' => '22d6d597-000f-5000-9000-145f6df21d70',
+            'payment_system_status' => 'pending',
+        ]);
+
+        try {
+            app(OrderService::class)->updateSettings($order, [
+                'type' => TypePaid::IN_PICKUP_LOCATION->value,
+            ]);
+            $this->fail('The payment type was changed while a payment form was active.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('type', $exception->errors());
+        }
+
+        $this->assertSame(TypePaid::CARD_ONLINE, $order->fresh()->type_paid);
+        $this->assertDatabaseHas('remittances', ['id' => $remittance->id]);
     }
 
     public function test_payment_types_are_filtered_when_address_is_missing(): void
@@ -210,5 +292,33 @@ class OrderServiceTest extends TestCase
             'category_id' => $category->id,
             'active' => true,
         ]);
+    }
+
+    private function paidRemittance(Order $order): Remittance
+    {
+        return $order->remittances()->create([
+            'amount' => $order->total_price,
+            'currency' => 'RUB',
+            'paid' => true,
+            'status' => RemittanceStatus::PAID,
+            'payment_system_id' => '22d6d597-000f-5000-9000-145f6df21d6f',
+            'payment_system_status' => 'succeeded',
+        ]);
+    }
+
+    private function refundProvider(string $status): PaymentProviderInterface
+    {
+        $provider = Mockery::mock(PaymentProviderInterface::class);
+        $provider->shouldReceive('refund')
+            ->once()
+            ->with(Mockery::type(Remittance::class), Mockery::type(Refund::class))
+            ->andReturn(new RemittanceRefundDTO(
+                refundId: '216749f7-0016-50be-b000-078d43a63ae4',
+                status: $status,
+                reason: 'Возврат средств за заказ',
+                amount: '10.25',
+            ));
+
+        return $provider;
     }
 }

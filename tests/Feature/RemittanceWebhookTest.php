@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\DTO\Remittances\RemittanceWebhookDTO;
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
+use App\Enums\Refunds\Status as RefundStatus;
 use App\Enums\Remittances\Status as RemittanceStatus;
 use App\Integrations\PaymentProvider\YKassa;
 use App\Integrations\PaymentProvider\YKassaAdapter;
@@ -13,7 +14,6 @@ use App\Models\Remittance;
 use App\Models\User;
 use App\Services\Remittance\RemittanceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -46,7 +46,7 @@ class RemittanceWebhookTest extends TestCase
 
         $this->assertTrue($remittance->paid);
         $this->assertSame(RemittanceStatus::PAID, $remittance->status);
-        $this->assertSame(RemittanceWebhookDTO::STATUS_SUCCEEDED, $remittance->payment_system_status);
+        $this->assertSame('succeeded', $remittance->payment_system_status);
         $this->assertNotNull($remittance->payed_at);
     }
 
@@ -82,13 +82,45 @@ class RemittanceWebhookTest extends TestCase
         $this->assertNull($remittance->payed_at);
     }
 
-    public function test_refund_event_is_rejected_until_it_is_supported(): void
+    public function test_adapter_maps_refund_succeeded_event(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $result = $this->adapter()->handleWebhook($this->refundPayload());
 
-        $this->adapter()->handleWebhook(
-            $this->payload(NotificationEventType::REFUND_SUCCEEDED),
-        );
+        $this->assertSame(self::PAYMENT_SYSTEM_ID, $result->paymentSystemId);
+        $this->assertSame(self::REFUND_SYSTEM_ID, $result->refundSystemId);
+        $this->assertSame(RemittanceWebhookDTO::STATUS_REFUND, $result->status);
+        $this->assertSame('succeeded', $result->externalStatus);
+    }
+
+    public function test_refund_succeeded_webhook_updates_refund_and_remittance(): void
+    {
+        $remittance = $this->paidRemittanceWithRefund();
+        $refund = $remittance->refund;
+
+        $this->service()->handleWebhook($this->refundPayload());
+
+        $refund->refresh();
+        $remittance->refresh();
+
+        $this->assertSame(RefundStatus::SUCCEED, $refund->status);
+        $this->assertSame('succeeded', $refund->external_system_status);
+        $this->assertNotNull($refund->refunded_at);
+        $this->assertSame(RemittanceStatus::REFUND, $remittance->status);
+    }
+
+    public function test_repeated_refund_succeeded_webhook_is_idempotent(): void
+    {
+        $remittance = $this->paidRemittanceWithRefund();
+        $refund = $remittance->refund;
+
+        $this->travelTo('2026-10-13 10:00:00');
+        $this->service()->handleWebhook($this->refundPayload());
+        $updatedAt = $refund->fresh()->updated_at;
+
+        $this->travelTo('2026-10-13 11:00:00');
+        $this->service()->handleWebhook($this->refundPayload());
+
+        $this->assertTrue($updatedAt->equalTo($refund->fresh()->updated_at));
     }
 
     public static function paymentEventProvider(): array
@@ -114,7 +146,7 @@ class RemittanceWebhookTest extends TestCase
         return [
             'waiting for capture' => [
                 NotificationEventType::PAYMENT_WAITING_FOR_CAPTURE,
-                RemittanceWebhookDTO::STATUS_WAITING,
+                'waiting_for_capture',
             ],
             'canceled' => [
                 NotificationEventType::PAYMENT_CANCELED,
@@ -124,6 +156,8 @@ class RemittanceWebhookTest extends TestCase
     }
 
     private const PAYMENT_SYSTEM_ID = '22d6d597-000f-5000-9000-145f6df21d6f';
+
+    private const REFUND_SYSTEM_ID = '216749f7-0016-50be-b000-078d43a63ae4';
 
     private function adapter(): YKassaAdapter
     {
@@ -155,6 +189,21 @@ class RemittanceWebhookTest extends TestCase
         ]);
     }
 
+    private function paidRemittanceWithRefund(): Remittance
+    {
+        $remittance = $this->remittance();
+        $remittance->update([
+            'paid' => true,
+            'status' => RemittanceStatus::PAID,
+        ]);
+        $remittance->refund()->create([
+            'amount' => $remittance->amount,
+            'external_system_id' => self::REFUND_SYSTEM_ID,
+        ]);
+
+        return $remittance->load('refund');
+    }
+
     private function payload(string $event): array
     {
         return [
@@ -174,6 +223,24 @@ class RemittanceWebhookTest extends TestCase
                 ],
                 'created_at' => '2026-10-13T10:00:00.000Z',
                 'test' => true,
+            ],
+        ];
+    }
+
+    private function refundPayload(): array
+    {
+        return [
+            'type' => 'notification',
+            'event' => NotificationEventType::REFUND_SUCCEEDED,
+            'object' => [
+                'id' => self::REFUND_SYSTEM_ID,
+                'payment_id' => self::PAYMENT_SYSTEM_ID,
+                'status' => 'succeeded',
+                'amount' => [
+                    'value' => '10.25',
+                    'currency' => 'RUB',
+                ],
+                'created_at' => '2026-10-13T10:00:00.000Z',
             ],
         ];
     }
