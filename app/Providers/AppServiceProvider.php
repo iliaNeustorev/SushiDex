@@ -11,6 +11,7 @@ use App\Interfaces\SystemHelperInterface;
 use Illuminate\Support\ServiceProvider;
 use Tests\Mocks\MockSmsSendAdapter;
 use Tests\Mocks\MockSystemHelper;
+use Tests\Mocks\MockYkassaAdapter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,9 +23,12 @@ class AppServiceProvider extends ServiceProvider
         $smsAdapter = $this->app->environment('local', 'testing')
             ? MockSmsSendAdapter::class
             : SmsAeroAdapter::class;
+        $paymentAdapter = $this->app->environment('local', 'testing')
+            ? MockYkassaAdapter::class
+            : YKassaAdapter::class;
         $this->app->bind(SystemHelperInterface::class, SystemHelper::class);
         $this->app->bind(SmsSendInterface::class, $smsAdapter);
-        $this->app->bind(PaymentProviderInterface::class, YKassaAdapter::class);
+        $this->app->bind(PaymentProviderInterface::class, $paymentAdapter);
     }
 
     /**
