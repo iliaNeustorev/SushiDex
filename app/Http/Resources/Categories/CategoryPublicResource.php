@@ -12,6 +12,5 @@ class CategoryPublicResource extends Data
         public string $title,
         public Type $type,
         public ?int $parent_id
-    ) {
-    }
+    ) {}
 }

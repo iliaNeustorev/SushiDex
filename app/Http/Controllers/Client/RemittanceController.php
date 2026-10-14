@@ -5,20 +5,20 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\Remittance\RemittanceService;
-use Inertia\Inertia;
+use InvalidArgumentException;
 use Log;
 
 class RemittanceController extends Controller
 {
     public function __construct(
-        private readonly RemittanceService $remittanceService,
+        private readonly RemittanceService $remittanceService
     ) {}
 
     public function store(Order $order)
     {
         $confirmationUrl = $this->remittanceService->store($order);
 
-        return Inertia::location($confirmationUrl);
+        return response()->json(['url' => $confirmationUrl]);
     }
 
     public function callback()
@@ -27,6 +27,11 @@ class RemittanceController extends Controller
         $requestBody = json_decode($source, true);
         try {
             $this->remittanceService->handleWebhook($requestBody);
+
+            return response('', 200);
+        } catch (InvalidArgumentException $e) {
+            Log::error($requestBody);
+            report($e);
 
             return response('', 200);
         } catch (\Exception $e) {

@@ -10,12 +10,10 @@ use Spatie\LaravelData\Data;
 #[MergeValidationRules]
 class ChangeAvatarReqDTO extends Data
 {
-
     public function __construct(
         public string $item,
         public UploadedFile $image,
-    ) {
-    }
+    ) {}
 
     public static function rules(): array
     {

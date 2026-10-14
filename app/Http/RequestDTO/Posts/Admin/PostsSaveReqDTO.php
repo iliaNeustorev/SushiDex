@@ -42,6 +42,5 @@ class PostsSaveReqDTO extends Data
 
         #[Rule(new CheckModelIds(Tag::class))]
         public ?array $tags,
-    ) {
-    }
+    ) {}
 }

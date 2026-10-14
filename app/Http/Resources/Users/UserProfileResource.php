@@ -22,6 +22,5 @@ class UserProfileResource extends Data
         #[DataCollectionOf(PendingPhoneProfileResource::class)]
         public DataCollection $pendingPhones,
         public ?ImagePublicResource $image,
-    ) {
-    }
+    ) {}
 }

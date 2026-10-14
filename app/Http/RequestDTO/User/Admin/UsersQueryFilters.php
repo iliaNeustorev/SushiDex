@@ -20,6 +20,5 @@ class UsersQueryFilters extends Data
 
         #[DateFormat('Y-m-d')]
         public Optional|string $date_to,
-    ) {
-    }
+    ) {}
 }

@@ -14,8 +14,7 @@ class AddPhoneReqDTO extends Data
     public function __construct(
         #[Regex('/^7\d{10}$/'), Unique(Phone::class, 'phone')]
         public string $phone
-    ) {
-    }
+    ) {}
 
     public static function messages(): array
     {

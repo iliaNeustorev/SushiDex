@@ -1,7 +1,7 @@
 <template>
     <MainLayout>
         <VContainer>
-            <VTable striped="even">
+            <VTable v-if="orders.length > 0" striped="even">
                 <thead>
                 <tr>
                     <th class="text-center">
@@ -39,12 +39,25 @@
                     </td>
                     <td>{{ item.type_paid_text }}
                         <PaymentBtn :order="item"/>
+                        <VIcon v-if="item.remittance?.paid"
+                               color="green-darken-2"
+                               icon="$mdiCheck"
+                               size="large"
+                               title="Платеж успешно выполнен"
+                        ></VIcon>
                     </td>
                     <td>{{ item.need_delivery ? 'Да' : 'Нет' }}</td>
                     <td>{{ item.need_delivery ? user.address : '-' }}</td>
                 </tr>
                 </tbody>
             </VTable>
+            <VCard v-else class="mx-auto">
+                <VCardTitle class="text-center">В данный момент нет активных заказов
+                    <Link class="text-decoration-none text-green-darken-3" :href="GeneralRoutes.menu().url">
+                        (Заказать)
+                    </Link>
+                </VCardTitle>
+            </VCard>
         </VContainer>
     </MainLayout>
 </template>
@@ -57,6 +70,7 @@ import {formatPrice} from "~vue/shared/formatters.ts";
 import {Link} from "@inertiajs/vue3";
 import OrderController from "~routes/Client/OrderController.ts";
 import PaymentBtn from "~vue/components/orders/PaymentBtn.vue";
+import GeneralRoutes from "~routes/GeneralController.ts";
 
 const {orders, user} = defineProps<{ orders: OrderPublicResource[], user: UserAuthResource }>()
 </script>

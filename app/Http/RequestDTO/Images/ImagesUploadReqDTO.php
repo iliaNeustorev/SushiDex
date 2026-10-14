@@ -18,8 +18,7 @@ class ImagesUploadReqDTO extends Data
 
         #[Min(1), Max(5), LiteralTypeScriptType('File[]')]
         public array $images,
-    ) {
-    }
+    ) {}
 
     public static function rules(): array
     {

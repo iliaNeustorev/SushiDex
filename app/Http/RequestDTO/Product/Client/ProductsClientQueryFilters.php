@@ -12,6 +12,5 @@ class ProductsClientQueryFilters extends Data
     public function __construct(
         #[Min(1), Max(255)]
         public Optional|string $title,
-    ) {
-    }
+    ) {}
 }

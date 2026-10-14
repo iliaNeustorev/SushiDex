@@ -16,6 +16,5 @@ class ResetPasswordReqDTO extends Data
         #[Password(8), Confirmed]
         public string $password,
         public string $password_confirmation,
-    ) {
-    }
+    ) {}
 }

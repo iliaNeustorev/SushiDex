@@ -9,7 +9,7 @@ use Spatie\LaravelData\WithData;
 
 class StoreRequest extends FormRequest
 {
-    use withData;
+    use WithData;
 
     public function dataClass(): string
     {
@@ -19,7 +19,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => [Rule::unique('pending_phones', 'phone')->where('user_id', $this->user()->id)]
+            'phone' => [Rule::unique('pending_phones', 'phone')->where('user_id', $this->user()->id)],
         ];
     }
 

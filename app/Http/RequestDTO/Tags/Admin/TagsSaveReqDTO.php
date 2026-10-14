@@ -31,6 +31,5 @@ class TagsSaveReqDTO extends Data
             Max((1024))
         ]
         public ?string $description,
-    ) {
-    }
+    ) {}
 }

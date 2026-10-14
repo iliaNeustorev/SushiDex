@@ -19,16 +19,14 @@ use Illuminate\Validation\ValidationException;
 
 class PhoneController extends Controller
 {
-
-    public function __construct(private readonly PhoneService $phoneService)
-    {
-    }
+    public function __construct(private readonly PhoneService $phoneService) {}
 
     public function store(StoreRequest $request)
     {
         $client = $request->user();
         $phone = $request->getData()->phone;
         $client->pendingPhones()->create(['phone' => $phone]);
+
         return redirect()->back();
     }
 
@@ -49,6 +47,7 @@ class PhoneController extends Controller
                 'id' => 'Не получилось отправить код попробуйте позднее',
             ]);
         }
+
         return redirect()->back();
     }
 
@@ -89,6 +88,7 @@ class PhoneController extends Controller
             abort(403);
         }
         $pendingPhone->delete();
+
         return redirect()->back();
     }
 }

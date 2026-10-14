@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 final class PhoneNormalizer
 {
-
     public static function normalize(string|int|null $value): ?string
     {
         if (is_null($value) || $value === '') {

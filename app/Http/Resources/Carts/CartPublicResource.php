@@ -12,14 +12,13 @@ class CartPublicResource extends Data
         public int $count,
         public string $price,
         public string $title,
-    ) {
-    }
+    ) {}
 
     public static function fromProduct(Product $product): self
     {
         return self::from([
             ...$product->attributesToArray(),
-            'count' => (int)$product->pivot->count,
+            'count' => (int) $product->pivot->count,
         ]);
     }
 }

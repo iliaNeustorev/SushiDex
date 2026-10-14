@@ -21,6 +21,5 @@ class ProductsClientQuery extends Data
 
         #[Min(1)]
         public Optional|int $page,
-    ) {
-    }
+    ) {}
 }

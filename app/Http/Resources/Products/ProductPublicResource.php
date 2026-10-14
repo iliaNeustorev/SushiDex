@@ -19,6 +19,5 @@ class ProductPublicResource extends Data
         public ?int $count_paid,
         #[DataCollectionOf(ImagePublicResource::class)]
         public DataCollection $images,
-    ) {
-    }
+    ) {}
 }

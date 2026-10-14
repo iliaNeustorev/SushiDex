@@ -21,6 +21,5 @@ class UserAuthResource extends Data
         public DataCollection $roles,
         public ?string $address,
         public ?ImagePublicResource $image,
-    ) {
-    }
+    ) {}
 }

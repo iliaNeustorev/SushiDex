@@ -8,7 +8,7 @@ use Spatie\LaravelData\WithData;
 
 class ChangeAvatarRequest extends FormRequest
 {
-    use withData;
+    use WithData;
 
     public function dataClass(): string
     {

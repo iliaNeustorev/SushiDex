@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ImagesController extends Controller
 {
-
-    public function __construct(private readonly ImageService $imageService)
-    {
-    }
+    public function __construct(private readonly ImageService $imageService) {}
 
     /**
      * Store a newly created resource in storage.

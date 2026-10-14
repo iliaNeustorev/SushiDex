@@ -15,7 +15,6 @@ use Spatie\LaravelData\Support\Validation\References\RouteParameterReference;
 
 class CategoriesSaveReqDTO extends Data
 {
-
     public function __construct(
         #[
             Min(3),
@@ -39,6 +38,5 @@ class CategoriesSaveReqDTO extends Data
             NotIn(new RouteParameterReference('category', 'id', true))
         ]
         public ?int $parent_id,
-    ) {
-    }
+    ) {}
 }

@@ -38,8 +38,7 @@ class ProductsSaveReqDTO extends Data
         #[SpatieRule(new SoftExists(Category::class))]
         public int $category_id,
         public bool $active,
-    ) {
-    }
+    ) {}
 
     public static function rules(): array
     {

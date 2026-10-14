@@ -11,28 +11,26 @@ use Spatie\QueryBuilder\Sorts\Sort;
 
 readonly class SortByFieldRelation implements Sort
 {
-
     public function __construct(
         private string $relationName
-    ) {
-    }
+    ) {}
 
     public function __invoke(Builder|\Illuminate\Database\Eloquent\Builder $query, bool $descending, string $property)
     {
         $model = $query->getModel();
 
-        if (!method_exists($model, $this->relationName)) {
+        if (! method_exists($model, $this->relationName)) {
             throw new InvalidArgumentException(
                 "Relation $this->relationName does not exist on $model."
             );
         }
 
         $relation = Relation::noConstraints(
-            fn() => $model->{$this->relationName}()
+            fn () => $model->{$this->relationName}()
         );
 
-        if (!$relation instanceof HasOne &&
-            !$relation instanceof BelongsTo) {
+        if (! $relation instanceof HasOne &&
+            ! $relation instanceof BelongsTo) {
             throw new InvalidArgumentException(
                 'SortByRelationField supports only HasOne and BelongsTo relations.'
             );

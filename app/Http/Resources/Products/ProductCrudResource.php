@@ -20,6 +20,5 @@ class ProductCrudResource extends Data
         public Carbon $updated_at,
         public ?int $count_paid,
         public bool $active,
-    ) {
-    }
+    ) {}
 }

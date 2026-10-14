@@ -15,6 +15,5 @@ class CategoryCrudResource extends Data
         public Carbon $created_at,
         public Type $type,
         public ?int $parent_id
-    ) {
-    }
+    ) {}
 }

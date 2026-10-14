@@ -24,6 +24,7 @@ class ProductClientService
             ->orderByDesc('id')
             ->paginate(6);
         $products = GeneralPagination::fromPaginator($productsPaginator, ProductPublicResource::class);
+
         return [
             'products' => $products,
             'categories' => $categories,

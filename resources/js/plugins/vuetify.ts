@@ -23,7 +23,8 @@ import {
     mdiMagnify,
     mdiCheckCircleOutline,
     mdiCloseCircleOutline,
-    mdiCogs
+    mdiCogs,
+    mdiCheck
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -45,6 +46,7 @@ aliases['mdiMagnify'] = mdiMagnify
 aliases['mdiCheckOutline'] = mdiCheckCircleOutline
 aliases['mdiCloseOutline'] = mdiCloseCircleOutline
 aliases['mdiCogs'] = mdiCogs
+aliases['mdiCheck'] = mdiCheck
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

@@ -18,6 +18,5 @@ class UsersQuery extends Data
 
         #[In(10, 20, 50)]
         public Optional|int $batch,
-    ) {
-    }
+    ) {}
 }

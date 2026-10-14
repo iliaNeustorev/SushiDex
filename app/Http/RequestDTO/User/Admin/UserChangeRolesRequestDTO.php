@@ -13,6 +13,5 @@ class UserChangeRolesRequestDTO extends Data
     public function __construct(
         #[Min(1), Rule(new CheckModelIds(Role::class))]
         public array $roleIds
-    ) {
-    }
+    ) {}
 }

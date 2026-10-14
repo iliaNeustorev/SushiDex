@@ -22,6 +22,5 @@ class PostPublicResource extends Data
         public UserPublicResource $user,
         #[DataCollectionOf(TagPublicResource::class)]
         public DataCollection $tags,
-    ) {
-    }
+    ) {}
 }

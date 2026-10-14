@@ -10,6 +10,5 @@ class OrderSaveReqDTO extends Data
     public function __construct(
         public TypePaid $type,
         public bool $need_delivery,
-    ) {
-    }
+    ) {}
 }

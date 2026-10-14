@@ -9,7 +9,6 @@ use Spatie\LaravelData\Optional;
 
 class TagsQuery extends Data
 {
-
     public function __construct(
         public Optional|TagsQueryFilters $filter,
         public Optional|string $sort,
@@ -19,6 +18,5 @@ class TagsQuery extends Data
 
         #[In(10, 20, 50)]
         public Optional|int $batch,
-    ) {
-    }
+    ) {}
 }

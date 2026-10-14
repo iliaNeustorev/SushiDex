@@ -10,6 +10,5 @@ class PhoneCrudResource extends Data
     public function __construct(
         public string $phone,
         public Carbon $verified_at
-    ) {
-    }
+    ) {}
 }

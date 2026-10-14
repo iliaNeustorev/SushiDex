@@ -356,6 +356,7 @@ middle_name: string | null;
 last_name: string | null;
 address: string | null;
 };
+export enum RefundStatus { NEW = 1, SUCCEED = 2, CANCELED = 3 };
 export type RegisterReqDTO = {
 first_name: string;
 email: string;

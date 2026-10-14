@@ -19,8 +19,7 @@ class CartPublicDetailsResource extends Data
         public ?ImagePublicResource $previewImage,
         public ?string $old_price,
         public int $count,
-    ) {
-    }
+    ) {}
 
     public static function fromProduct(Product $product): self
     {
@@ -28,7 +27,7 @@ class CartPublicDetailsResource extends Data
             ...$product->attributesToArray(),
             'category' => $product->category,
             'previewImage' => $product->previewImage,
-            'count' => (int)$product->pivot->count,
+            'count' => (int) $product->pivot->count,
         ]);
     }
 }

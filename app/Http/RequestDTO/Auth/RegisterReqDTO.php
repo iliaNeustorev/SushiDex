@@ -24,8 +24,7 @@ class RegisterReqDTO extends Data
         public string $password_confirmation,
         #[Regex('/^7\d{10}$/'), Unique('phones')]
         public ?string $phone
-    ) {
-    }
+    ) {}
 
     public static function prepareForPipeline(array $properties): array
     {

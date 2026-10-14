@@ -8,7 +8,7 @@ use Spatie\LaravelData\WithData;
 
 class SaveRequest extends FormRequest
 {
-    use withData;
+    use WithData;
 
     public function dataClass(): string
     {

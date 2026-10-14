@@ -4,7 +4,14 @@
             <VCard class="mx-auto"
                    max-width="1000">
                 <VCardTitle class="d-flex justify-space-between">
-                    <span>Заказ № {{ order.id }}</span>
+                    <span>Заказ № {{ order.id }}
+                        <VIcon v-if="order.remittance?.paid"
+                               color="green-darken-2"
+                               icon="$mdiCheck"
+                               size="large"
+                               title="Платеж успешно выполнен"
+                        ></VIcon>
+                    </span>
                     <span
                         :class="[order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status !== RemittanceStatus.PAID ? 'text-orange-darken-3' : 'text-grey-darken-3']">{{
                             order.status_text
@@ -15,7 +22,11 @@
                         {{ formatPrice(order.total_price) }}
                     </div>
                     <p class="mb-4">Статус - {{ order.status_text }}</p>
-                    <p class="mb-4">Тип оплаты - {{ order.type_paid_text }}</p>
+                    <p class="mb-4">Тип оплаты - {{ order.type_paid_text }}
+                        <span v-if="order.type_paid == TypePaid.CARD_ONLINE && order.remittance?.paid"
+                              class="mb-4 text-green-darken-2">(Оплачен)
+                        </span>
+                    </p>
                     <p class="mb-4">Создан - {{ formatDate(order.created_at) }}</p>
                 </VCardText>
                 <VCardActions>

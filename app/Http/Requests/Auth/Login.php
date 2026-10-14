@@ -25,7 +25,7 @@ class Login extends FormRequest
         $this->ensureIsNotRateLimited();
         $data = $this->getData();
 
-        if (!Auth::attempt(['email' => $data->email, 'password' => $data->password], $data->remember)) {
+        if (! Auth::attempt(['email' => $data->email, 'password' => $data->password], $data->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -38,7 +38,7 @@ class Login extends FormRequest
 
     public function ensureIsNotRateLimited(): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -58,6 +58,6 @@ class Login extends FormRequest
 
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('email')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
     }
 }

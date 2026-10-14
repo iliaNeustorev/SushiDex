@@ -11,6 +11,5 @@ class RoleCrudResource extends Data
         public int $id,
         public Roles $name,
         public string $description,
-    ) {
-    }
+    ) {}
 }

@@ -9,10 +9,7 @@ use Inertia\Inertia;
 
 class PostController extends Controller
 {
-
-    public function __construct(private readonly PostClientService $postClientService)
-    {
-    }
+    public function __construct(private readonly PostClientService $postClientService) {}
 
     public function index()
     {
@@ -23,6 +20,7 @@ class PostController extends Controller
         if ($page > $lastPage) {
             return redirect()->route('posts.index', ['page' => 1]);
         }
+
         return Inertia::render('Posts/Index', [
             'posts' => Inertia::merge($posts),
             'lastPage' => $lastPage,

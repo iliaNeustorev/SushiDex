@@ -22,6 +22,5 @@ class PostCrudResource extends Data
         public CategoryCrudResource $category,
         #[DataCollectionOf(TagCrudResource::class)]
         public DataCollection $tags,
-    ) {
-    }
+    ) {}
 }

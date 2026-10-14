@@ -88,7 +88,7 @@ class Service
      */
     protected function checkModelOnImages(Model $model): true
     {
-        if (!method_exists($model, 'images')) {
+        if (! method_exists($model, 'images')) {
             throw new Exception('Not found images model', 1);
         }
 
@@ -103,7 +103,7 @@ class Service
         $newPath = '';
         try {
             $checkDelete = $this->deleteOneImage($model);
-            if (!$checkDelete) {
+            if (! $checkDelete) {
                 throw new Exception('Не удалось удалить файл', 1);
             }
             $this->checkModelOnImage($model);
@@ -127,6 +127,7 @@ class Service
             ]);
             Storage::disk('public')->delete($newPath);
         }
+
         return false;
     }
 
@@ -142,10 +143,12 @@ class Service
             $checkFile = Storage::disk('public')->exists("$image->path");
             if ($checkFile) {
                 Log::error('Не удалось удалить файл.', ['path' => $image->path]);
+
                 return false;
             }
             $image->delete();
         }
+
         return true;
     }
 
@@ -154,7 +157,7 @@ class Service
      */
     protected function checkModelOnImage(Model $model): true
     {
-        if (!method_exists($model, 'image')) {
+        if (! method_exists($model, 'image')) {
             throw new Exception('Not found image model', 1);
         }
 
@@ -163,8 +166,9 @@ class Service
 
     protected function saveNewImage(string $pathFile, UploadedFile $file): array
     {
-        $fileName = time() . mt_rand(1000, 9999) . '.' . $file->extension();
-        $pathFileForSave = $pathFile . '/' . $fileName;
+        $fileName = time().mt_rand(1000, 9999).'.'.$file->extension();
+        $pathFileForSave = $pathFile.'/'.$fileName;
+
         return [
             'resultSaveFile' => Storage::disk('public')->putFileAs($pathFile, $file, $fileName),
             'pathFile' => $pathFileForSave,

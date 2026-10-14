@@ -17,6 +17,5 @@ class CartSaveReqDTO extends Data
 
         #[Min(0), Max(100)]
         public int $count,
-    ) {
-    }
+    ) {}
 }

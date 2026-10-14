@@ -32,6 +32,13 @@
                         Текущие заказы
                     </VBtn>
                 </VBadge>
+                <VBtn v-else
+                      :href="OrderController.index().url"
+                      class="ms-4 text-none"
+                      variant="text"
+                >
+                    Текущие заказы
+                </VBtn>
 
             </template>
             <VSpacer/>
