@@ -1,5 +1,39 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
+* @see \App\Http\Controllers\Client\RemittanceController::callback
+* @see app/Http/Controllers/Client/RemittanceController.php:24
+* @route '/remittances/callbacks'
+*/
+export const callback = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: callback.url(options),
+    method: 'post',
+})
+
+callback.definition = {
+    methods: ["post"],
+    url: '/remittances/callbacks',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Client\RemittanceController::callback
+* @see app/Http/Controllers/Client/RemittanceController.php:24
+* @route '/remittances/callbacks'
+*/
+callback.url = (options?: RouteQueryOptions) => {
+    return callback.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Client\RemittanceController::callback
+* @see app/Http/Controllers/Client/RemittanceController.php:24
+* @route '/remittances/callbacks'
+*/
+callback.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: callback.url(options),
+    method: 'post',
+})
+
+/**
 * @see \App\Http\Controllers\Client\RemittanceController::store
 * @see app/Http/Controllers/Client/RemittanceController.php:17
 * @route '/orders/{order}/payment'
@@ -57,6 +91,6 @@ store.post = (args: { order: number | { id: number } } | [order: number | { id: 
     method: 'post',
 })
 
-const RemittanceController = { store }
+const RemittanceController = { callback, store }
 
 export default RemittanceController

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:17
+* @see app/Http/Controllers/Admin/TagController.php:19
 * @route '/admin/tags'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:17
+* @see app/Http/Controllers/Admin/TagController.php:19
 * @route '/admin/tags'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:17
+* @see app/Http/Controllers/Admin/TagController.php:19
 * @route '/admin/tags'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:17
+* @see app/Http/Controllers/Admin/TagController.php:19
 * @route '/admin/tags'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
