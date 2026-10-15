@@ -8,8 +8,8 @@ use App\Http\Requests\User\Profile\ChangePasswordRequest;
 use App\Http\Requests\User\Profile\SaveRequest;
 use App\Http\Resources\Orders\Client\OrderPublicResource;
 use App\Http\Resources\Users\UserProfileResource;
-use App\Models\Order;
 use App\Services\Image\Service;
+use App\Services\Order\OrderService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +22,8 @@ use Spatie\LaravelData\Exceptions\InvalidDataClass;
 class ProfileController extends Controller
 {
     public function __construct(
-        private readonly Service $imageService
+        private readonly Service $imageService,
+        private readonly OrderService $orderService
     ) {}
 
     /**
@@ -35,11 +36,7 @@ class ProfileController extends Controller
             'pendingPhones' => fn ($query) => $query->orderByDesc('id'),
             'image',
         ]);
-        $ordersPaginator = Order::byUserId($client->id)
-            ->with('remittance')
-            ->withCount('items')
-            ->orderByDesc('id')
-            ->paginate(5);
+        $ordersPaginator = $this->orderService->getOrdersWithPaginateForClient($client);
 
         $orders = OrderPublicResource::collect($ordersPaginator->items());
         $page = $ordersPaginator->currentPage();

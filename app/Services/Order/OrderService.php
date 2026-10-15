@@ -359,4 +359,13 @@ class OrderService
             ]);
         }
     }
+
+    public function getOrdersWithPaginateForClient(User $client, int $paginate = 5): LengthAwarePaginator
+    {
+        return Order::byUserId($client->id)
+            ->with('remittance')
+            ->withCount('items')
+            ->orderByDesc('id')
+            ->paginate($paginate);
+    }
 }
