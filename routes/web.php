@@ -46,5 +46,6 @@ Route::middleware(['auth', 'can:is-blocked'])->group(function () {
     Route::resource('orders', OrderController::class)->only(['index', 'store', 'show'])->whereNumber('order');
     Route::post('orders/{order}/payment', [RemittanceController::class, 'store'])->name('orders.payment.store')->whereNumber('order');
     Route::patch('orders/{order}/update-settings', [AdminOrderController::class, 'updateSettings'])->name('orders.settings.update')->whereNumber('order');
+    Route::patch('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel')->whereNumber('order');
     Route::patch('users/{user}/change-address', [UserController::class, 'changeAddress'])->name('users.change-address')->whereNumber('user');
 });

@@ -186,6 +186,146 @@ class OrderServiceTest extends TestCase
         $this->assertSame(RefundStatus::CANCELED, $remittance->refund()->firstOrFail()->status);
     }
 
+    public function test_order_owner_can_cancel_an_unpaid_order(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user);
+        $completedAt = Carbon::parse('2026-10-15 12:30:00');
+
+        $this->actingAs($user);
+        $this->travelTo($completedAt);
+
+        app(OrderService::class)->cancel($order);
+
+        $order->refresh();
+        $this->assertSame(OrderStatus::CANCELLED, $order->status);
+        $this->assertTrue($order->completed_at->equalTo($completedAt));
+
+        $this->travelBack();
+    }
+
+    public function test_completed_or_cancelled_order_cannot_be_cancelled(): void
+    {
+        $user = User::factory()->create();
+        $service = app(OrderService::class);
+
+        $this->actingAs($user);
+
+        foreach ([OrderStatus::COMPLETED, OrderStatus::CANCELLED] as $status) {
+            $order = $this->order($user, $status);
+
+            try {
+                $service->cancel($order);
+                $this->fail("An order with status {$status->value} was canceled again.");
+            } catch (ValidationException $exception) {
+                $this->assertArrayHasKey('order', $exception->errors());
+            }
+
+            $this->assertSame($status, $order->fresh()->status);
+        }
+    }
+
+    public function test_canceling_online_order_removes_local_pending_remittance(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, type: TypePaid::CARD_ONLINE);
+        $remittance = $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+        ]);
+
+        $this->actingAs($user);
+
+        app(OrderService::class)->cancel($order);
+
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
+        $this->assertDatabaseMissing('remittances', ['id' => $remittance->id]);
+    }
+
+    public function test_online_order_with_active_external_payment_cannot_be_cancelled(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, type: TypePaid::CARD_ONLINE);
+        $remittance = $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+            'payment_system_id' => '22d6d597-000f-5000-9000-145f6df21d70',
+            'payment_system_status' => 'pending',
+        ]);
+
+        $this->actingAs($user);
+
+        try {
+            app(OrderService::class)->cancel($order);
+            $this->fail('An order with an active external payment was canceled.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('order', $exception->errors());
+        }
+
+        $this->assertSame(OrderStatus::NEW, $order->fresh()->status);
+        $this->assertNull($order->fresh()->completed_at);
+        $this->assertDatabaseHas('remittances', ['id' => $remittance->id]);
+    }
+
+    public function test_canceled_external_payment_does_not_prevent_order_cancellation(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, type: TypePaid::CARD_ONLINE);
+        $remittance = $order->remittances()->create([
+            'amount' => $order->total_price,
+            'status' => RemittanceStatus::AWAIT_PAID,
+            'payment_system_id' => '22d6d597-000f-5000-9000-145f6df21d70',
+            'payment_system_status' => 'canceled',
+        ]);
+
+        $this->actingAs($user);
+
+        app(OrderService::class)->cancel($order);
+
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
+        $this->assertNotNull($order->fresh()->completed_at);
+        $this->assertDatabaseHas('remittances', ['id' => $remittance->id]);
+    }
+
+    public function test_canceling_paid_online_order_through_client_method_completes_refund(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, type: TypePaid::CARD_ONLINE);
+        $remittance = $this->paidRemittance($order);
+        $provider = $this->refundProvider('succeeded');
+        $service = new OrderService(new RefundService($provider));
+
+        $this->actingAs($user);
+
+        $service->cancel($order);
+
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
+        $this->assertSame(RemittanceStatus::REFUND, $remittance->fresh()->status);
+        $this->assertSame(RefundStatus::SUCCEED, $remittance->refund()->firstOrFail()->status);
+    }
+
+    public function test_client_order_remains_active_when_refund_is_rejected(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, type: TypePaid::CARD_ONLINE);
+        $remittance = $this->paidRemittance($order);
+        $provider = $this->refundProvider('canceled');
+        $service = new OrderService(new RefundService($provider));
+
+        $this->actingAs($user);
+
+        try {
+            $service->cancel($order);
+            $this->fail('The order was canceled after the refund was rejected.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('order', $exception->errors());
+        }
+
+        $this->assertSame(OrderStatus::NEW, $order->fresh()->status);
+        $this->assertSame(RemittanceStatus::PAID, $remittance->fresh()->status);
+        $this->assertSame(RefundStatus::CANCELED, $remittance->refund()->firstOrFail()->status);
+    }
+
     public function test_settings_can_be_partially_updated_and_manage_remittance(): void
     {
         $service = app(OrderService::class);

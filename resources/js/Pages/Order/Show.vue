@@ -1,21 +1,27 @@
 <template>
     <MainLayout>
         <VContainer>
-            <VCard class="mx-auto"
-                   max-width="1000">
+            <VCard
+                class="mx-auto"
+                max-width="1000"
+            >
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Заказ № {{ order.id }}
-                        <VIcon v-if="order.remittance?.paid"
-                               color="green-darken-2"
-                               icon="$mdiCheck"
-                               size="large"
-                               title="Платеж успешно выполнен"
+                        <VIcon
+                            v-if="order.remittance?.paid"
+                            color="green-darken-2"
+                            icon="$mdiCheck"
+                            size="large"
+                            title="Платеж успешно выполнен"
                         ></VIcon>
+                        <CancelBtn :order="order" />
                     </span>
                     <span
-                        :class="[order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status !== RemittanceStatus.PAID ? 'text-orange-darken-3' : 'text-grey-darken-3']">{{
-                            order.status_text
-                        }}</span>
+                        :class="[order.type_paid === TypePaid.CARD_ONLINE && order.remittance?.status !== RemittanceStatus.PAID ? 'text-orange-darken-3' : 'text-grey-darken-3']"
+                    >{{
+                        order.status_text
+                    }}
+                    </span>
                 </VCardTitle>
                 <VCardText>
                     <div class="text-headline-large font-weight-black mb-4">Сумма заказа
@@ -23,8 +29,10 @@
                     </div>
                     <p class="mb-4">Статус - {{ order.status_text }}</p>
                     <p class="mb-4">Тип оплаты - {{ order.type_paid_text }}
-                        <span v-if="order.type_paid == TypePaid.CARD_ONLINE && order.remittance?.paid"
-                              class="mb-4 text-green-darken-2">(Оплачен)
+                        <span
+                            v-if="order.type_paid == TypePaid.CARD_ONLINE && order.remittance?.paid"
+                            class="mb-4 text-green-darken-2"
+                        >(Оплачен)
                         </span>
                     </p>
                     <p class="mb-4">Создан - {{ formatDate(order.created_at) }}</p>
@@ -36,7 +44,7 @@
                         title="Список заказа"
                     ></VBtn>
                     <VSpacer></VSpacer>
-                    <PaymentBtn :order="order" type="default" size="x-large"/>
+                    <PaymentBtn :order="order" type="default" size="x-large" />
                 </VCardActions>
                 <VExpandTransition>
                     <div v-show="showProductList">
@@ -62,15 +70,15 @@
 
                                     <VListItemSubtitle class="text-body-1">
                                         <span>{{
-                                                formatPrice(item.price)
-                                            }} шт.</span>
+                                            formatPrice(item.price)
+                                        }} шт.</span>
                                         <span class="text-teal-darken-4"> ({{
-                                                formatPrice(item.calculateCountPrice)
-                                            }})</span>
+                                            formatPrice(item.calculateCountPrice)
+                                        }})</span>
                                     </VListItemSubtitle>
                                 </VListItem>
 
-                                <VDivider/>
+                                <VDivider />
                             </template>
                         </VList>
                     </div>
@@ -87,6 +95,7 @@ import {formatDate, formatPrice} from "~vue/shared/formatters.ts";
 import {type OrderPublicResource, type ProductOrderItemResource, RemittanceStatus, TypePaid} from "~types/generated.ts";
 import {shallowRef} from "vue";
 import PaymentBtn from "~vue/components/orders/PaymentBtn.vue";
+import CancelBtn from "~vue/components/orders/CancelBtn.vue";
 
 const {order, products} = defineProps<{ order: OrderPublicResource, products: ProductOrderItemResource[] }>()
 const showProductList = shallowRef(false)

@@ -104,7 +104,7 @@ class OrderController extends Controller
 
     public function updateSettings(UpdateSettingsRequest $request, Order $order): RedirectResponse
     {
-        Gate::authorize('view', $order);
+        Gate::authorize('updateSetting', $order);
         $data = $request->getData()->toArray();
         $this->orderService->updateSettings($order, $data);
 

@@ -310,4 +310,53 @@ class OrderService
             ->defaultSort('-id')
             ->paginate($query['batch'] ?? 10);
     }
+
+    public function cancel(Order $order): void
+    {
+        if (in_array($order->status, [OrderStatus::COMPLETED, OrderStatus::CANCELLED], true)) {
+            throw ValidationException::withMessages([
+                'order' => 'Нельзя отменить заказ!',
+            ]);
+        }
+        if ($order->type_paid === TypePaid::CARD_ONLINE) {
+            $order->loadMissing('remittance');
+            if ($order->remittance) {
+                try {
+                    $this->refundService->store($order, 'Клиент отменил заказ');
+                } catch (Throwable $e) {
+                    report($e);
+                    throw ValidationException::withMessages([
+                        'order' => 'Не удалось отменить заказ. Не удалось выполнить возврат.',
+                    ]);
+                }
+                $order->update([
+                    'status' => OrderStatus::CANCELLED,
+                    'completed_at' => Carbon::now(),
+                ]);
+            } else {
+                if ($order->remittances()
+                    ->where('paid', false)
+                    ->whereNotNull('payment_system_id')
+                    ->where('payment_system_status', '<>', 'canceled')
+                    ->exists()
+                ) {
+                    throw ValidationException::withMessages([
+                        'order' => 'Не удалось отменить заказ. Есть платежи ожидающие оплату.',
+                    ]);
+                }
+                DB::transaction(function () use ($order) {
+                    $order->remittances()->whereNull('payment_system_id')->delete();
+                    $order->update([
+                        'status' => OrderStatus::CANCELLED,
+                        'completed_at' => Carbon::now(),
+                    ]);
+                });
+            }
+        } else {
+            $order->update([
+                'status' => OrderStatus::CANCELLED,
+                'completed_at' => Carbon::now(),
+            ]);
+        }
+    }
 }

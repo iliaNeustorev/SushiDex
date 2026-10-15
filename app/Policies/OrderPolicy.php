@@ -39,4 +39,14 @@ class OrderPolicy
     {
         return Gate::forUser($user)->allows('moderator');
     }
+
+    public function cancel(User $user, Order $order): bool
+    {
+        return $user->id === $order->user_id;
+    }
+
+    public function updateSetting(User $user, Order $order): bool
+    {
+        return Gate::forUser($user)->allows('moderator');
+    }
 }

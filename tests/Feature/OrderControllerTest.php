@@ -87,12 +87,14 @@ class OrderControllerTest extends TestCase
         $this->assertSame(OrderStatus::PROCESSING, $order->fresh()->status);
     }
 
-    public function test_order_owner_can_update_settings_but_another_user_cannot(): void
+    public function test_moderator_can_update_order_settings_but_order_owner_cannot(): void
     {
+        $moderator = User::factory()->create();
+        Gate::define('moderator', fn (User $user): bool => $user->is($moderator));
         $owner = User::factory()->create();
         $order = $this->order($owner);
 
-        $this->actingAs($owner)
+        $this->actingAs($moderator)
             ->patch(route('orders.settings.update', $order), [
                 'need_delivery' => true,
                 'type' => TypePaid::CASH_COURIER->value,
@@ -103,11 +105,30 @@ class OrderControllerTest extends TestCase
         $this->assertTrue($order->need_delivery);
         $this->assertSame(TypePaid::CASH_COURIER, $order->type_paid);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs($owner)
             ->patch(route('orders.settings.update', $order), [
                 'type' => TypePaid::CARD_ONLINE->value,
             ])
             ->assertForbidden();
+    }
+
+    public function test_order_owner_can_cancel_their_order_but_another_user_cannot(): void
+    {
+        $owner = User::factory()->create();
+        $ownOrder = $this->order($owner);
+        $otherOrder = $this->order(User::factory()->create());
+
+        $this->actingAs($owner)
+            ->patch(route('orders.cancel', $ownOrder))
+            ->assertRedirect(route('orders.index'));
+
+        $this->assertSame(OrderStatus::CANCELLED, $ownOrder->fresh()->status);
+
+        $this->actingAs($owner)
+            ->patch(route('orders.cancel', $otherOrder))
+            ->assertForbidden();
+
+        $this->assertSame(OrderStatus::NEW, $otherOrder->fresh()->status);
     }
 
     public function test_moderator_can_filter_actual_orders_by_id(): void
