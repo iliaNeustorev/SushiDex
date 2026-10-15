@@ -72,7 +72,7 @@
                 </div>
                 <p class="ma-0">Почта и телефон подтверждаются отдельно и не изменяются этой формой.</p>
             </div>
-            <PhoneSettings :phones="client.pendingPhones"/>
+            <PhoneSettings :phones="client.pendingPhones" />
             <footer class="form-actions d-flex justify-space-between">
                 <span v-if="form.recentlySuccessful" class="save-message" role="status">
                     Изменения сохранены
@@ -118,11 +118,11 @@
         </header>
         <div v-show="showBlockAvatar">
             <div class="avatar-content d-flex">
-                <Avatar :user="client" :size="132" :font-size="68"/>
+                <Avatar :user="client" :size="132" :font-size="68" />
                 <div class="avatar-details">
                     <p class="avatar-caption">{{
-                            client.image ? 'Текущая фотография' : 'Фотография пока не добавлена'
-                        }}</p>
+                        client.image ? 'Текущая фотография' : 'Фотография пока не добавлена'
+                    }}</p>
                     <p class="avatar-description ma-0">Вы можете добавить или заменить изображение профиля.</p>
                     <VFileInput
                         v-model="avatarForm.image"
@@ -153,7 +153,8 @@
                         <VBtn
                             v-if="client.image"
                             class="avatar-remove-button rounded-0 text-none"
-                            type="button" variant="text"
+                            type="button"
+                            variant="text"
                             :disabled="avatarForm.processing || isDeletingAvatar"
                             :loading="isDeletingAvatar"
                             @click="deleteAvatar"
@@ -176,7 +177,7 @@
             </div>
             <p>Используйте надёжный пароль, который не применяется в других сервисах.</p>
         </header>
-        <ChangePassword v-show="showBlockChangePassword"/>
+        <ChangePassword v-show="showBlockChangePassword" />
     </section>
 </template>
 

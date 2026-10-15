@@ -1,5 +1,5 @@
 <template>
-    <Head title="Блог — SushiDex"/>
+    <Head title="Блог — SushiDex" />
     <MainLayout>
         <main class="inner-page posts-page">
             <div class="shell posts-shell">
@@ -11,8 +11,8 @@
                     <article v-for="(post, index) in posts" :key="post.id" class="post-card">
                         <div class="post-number">{{ String(index + 1).padStart(2, '0') }}</div>
                         <div class="post-art" :class="`tone-${index % 3}`"><span>{{
-                                post.category?.title || '食'
-                            }}</span></div>
+                            post.category?.title || '食'
+                        }}</span></div>
                         <div class="post-copy">
                             <div class="post-meta"><span>{{ post.category?.title || 'SushiDex' }}</span>
                                 <time>{{ formatDate(post.created_at) }}</time>
@@ -20,14 +20,19 @@
                             <h2>{{ post.title }}</h2>
                             <p>{{ excerpt(post.content) }}</p>
                             <div class="post-footer"><span>Автор: {{
-                                    post.user?.first_name || 'Команда SushiDex'
-                                }}</span>
+                                                         post.user?.first_name || 'Команда SushiDex'
+                                                     }}</span>
                                 <Link :href="Posts.show(post.id).url">Читать статью <i>→</i></Link>
                             </div>
                         </div>
                     </article>
                 </section>
-                <button v-if="page < lastPage" type="button" class="load-more" @click="nextPage">Показать ещё
+                <button
+                    v-if="page < lastPage"
+                    type="button"
+                    class="load-more"
+                    @click="nextPage"
+                >Показать ещё
                     <span>＋</span></button>
             </div>
         </main>
@@ -40,7 +45,11 @@ import Posts from '~routes/PostController';
 import MainLayout from '~vue/Layouts/MainLayout.vue';
 import {formatDate} from "~vue/shared/formatters.ts";
 
-const {posts, page, lastPage} = defineProps<{ posts: PostPublicResource[]; page: number; lastPage: number }>();
+const {posts, page, lastPage} = defineProps<{
+    posts: PostPublicResource[];
+    page: number;
+    lastPage: number
+}>();
 
 function excerpt(content: string | null): string {
     if (!content) return 'Новая история о японской кухне, свежих продуктах и культуре вкуса.';
@@ -78,7 +87,7 @@ function nextPage(): void {
     padding-top: 7px;
     color: #ac9f94;
     font-family: 'Prata', serif;
-    font-size: 12px
+    font-size: 14px
 }
 
 .post-art {
@@ -204,7 +213,7 @@ function nextPage(): void {
     background: transparent;
     color: #171716;
     font: inherit;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 800;
     cursor: pointer
 }
