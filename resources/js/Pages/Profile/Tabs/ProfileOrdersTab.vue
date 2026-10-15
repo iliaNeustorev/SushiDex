@@ -45,10 +45,36 @@
                     </div>
                     <div>
                         <dt>Состав</dt>
-                        <dd>{{ formatItemsCount(order.items_count) }}</dd>
+                        <dd>
+                            <Link
+                                :href="OrderController.show(order.id).url"
+                                class="text-decoration-none text-green-darken-3"
+                                title="Смотреть подробнее"
+                            >{{
+                                formatItemsCount(order.items_count)
+                            }}
+                            </Link>
+                        </dd>
                     </div>
                 </dl>
             </article>
+            <VBtn
+                v-if="page < lastPage"
+                rounded="xl"
+                color="light-green-lighten-4"
+                @click="nextPage"
+            >
+                <span
+                    class="text-blue-grey-darken-2"
+                >Показать еще <span class="font-weight-bold text-title-large">+</span>
+                </span>
+            </VBtn>
+            <VBtn
+                v-else-if="page > 1"
+                color="light-green-lighten-4"
+                @click="resetOrders"
+            ><span class="text-blue-grey-darken-2">Сбросить</span>
+            </VBtn>
         </div>
         <div v-else class="empty-state">
             <strong>История заказов появится здесь</strong>
@@ -60,10 +86,44 @@
 <script setup lang="ts">
 import type {OrderPublicResource} from '~types/generated';
 import {formatDate, formatItemsCount, formatPrice} from '~vue/shared/formatters';
+import {Link, router} from "@inertiajs/vue3";
+import OrderController from "~routes/Client/OrderController.ts";
+import ProfileRoutes from "~routes/Client/ProfileController.ts";
 
-const {orders} = defineProps<{
+const {orders, page, lastPage} = defineProps<{
     orders: OrderPublicResource[];
+    page: number;
+    lastPage: number
 }>();
+
+function nextPage(): void {
+    if (page >= lastPage) {
+        return;
+    }
+    router.visit(ProfileRoutes.index({
+        query: {
+            page: page + 1,
+            tab: 'orders'
+        }
+    }), {
+        preserveScroll: true,
+        only: ['orders', 'page']
+    });
+}
+
+function resetOrders(): void {
+    router.visit(ProfileRoutes.index({
+        query: {
+            page: 1,
+            tab: 'orders',
+        },
+    }), {
+        only: ['orders', 'page', 'lastPage'],
+        reset: ['orders'],
+        preserveScroll: true,
+        replace: true,
+    });
+}
 </script>
 
 <style scoped>
@@ -191,7 +251,7 @@ const {orders} = defineProps<{
     overflow-wrap: anywhere;
     margin: 7px 0 0;
     color: #504941;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.45;
 }
 
@@ -221,7 +281,7 @@ const {orders} = defineProps<{
     max-width: 430px;
     margin: 12px 0 0;
     color: #887d73;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.7;
 }
 

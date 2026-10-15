@@ -1,10 +1,10 @@
 <template>
-    <Head title="Личный кабинет — SushiDex"/>
+    <Head title="Личный кабинет — SushiDex" />
     <MainLayout>
         <main class="inner-page profile-page">
             <div class="shell">
                 <header class="profile-header">
-                    <Avatar :user="client" :size="132" :font-size="52"/>
+                    <Avatar :user="client" :size="132" :font-size="52" />
                     <div>
                         <p class="eyebrow dark"><span></span> Личный кабинет</p>
                         <h1>{{ fullName }}</h1>
@@ -36,13 +36,13 @@
 
                     <VTabsWindow v-model="activeTab" class="profile-tab-content">
                         <VTabsWindowItem value="overview">
-                            <ProfileOverviewTab :client="client" :orders="orders"/>
+                            <ProfileOverviewTab :client="client" :orders="orders" />
                         </VTabsWindowItem>
                         <VTabsWindowItem value="orders">
-                            <ProfileOrdersTab :orders="orders"/>
+                            <ProfileOrdersTab :orders="orders" :page="page" :last-page="lastPage" />
                         </VTabsWindowItem>
                         <VTabsWindowItem value="settings">
-                            <ProfileSettingsTab :client="client"/>
+                            <ProfileSettingsTab :client="client" />
                         </VTabsWindowItem>
                     </VTabsWindow>
                 </div>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import {Head} from '@inertiajs/vue3';
+import {Head, usePage} from '@inertiajs/vue3';
 import {computed, ref} from 'vue';
 import {useDisplay} from 'vuetify';
 import type {OrderPublicResource, UserProfileResource} from '~types/generated';
@@ -66,7 +66,9 @@ type ProfileTab = 'overview' | 'orders' | 'settings';
 
 const {client, orders} = defineProps<{
     client: UserProfileResource,
-    orders: OrderPublicResource[]
+    orders: OrderPublicResource[],
+    page: number;
+    lastPage: number
 }>();
 
 const {mdAndUp} = useDisplay();
@@ -76,8 +78,15 @@ const tabs: Array<{ key: ProfileTab; number: string; title: string }> = [
     {key: 'orders', number: '02', title: 'Мои заказы'},
     {key: 'settings', number: '03', title: 'Настройки'},
 ];
+const requestedTab = new URLSearchParams(
+    usePage().url.split('?')[1] ?? '',
+).get('tab');
 
-const activeTab = ref<ProfileTab>('overview');
+const activeTab = ref<ProfileTab>(
+    requestedTab === 'orders' || requestedTab === 'settings'
+        ? requestedTab
+        : 'overview'
+);
 const fullName = computed(() =>
     [client.last_name, client.first_name, client.middle_name]
         .filter(Boolean)

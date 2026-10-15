@@ -23,7 +23,12 @@
                 >
                     {{ item.title }}
                 </VBtn>
-                <VBadge v-if="checkActualOrder" location="top right" color="success" dot>
+                <VBadge
+                    v-if="checkActualOrder"
+                    location="top right"
+                    color="success"
+                    dot
+                >
                     <VBtn
                         :href="OrderController.index().url"
                         class="ms-4 text-none"
@@ -32,16 +37,17 @@
                         Текущие заказы
                     </VBtn>
                 </VBadge>
-                <VBtn v-else
-                      :href="OrderController.index().url"
-                      class="ms-4 text-none"
-                      variant="text"
+                <VBtn
+                    v-else
+                    :href="OrderController.index().url"
+                    class="ms-4 text-none"
+                    variant="text"
                 >
-                    Текущие заказы
+                    Заказы
                 </VBtn>
 
             </template>
-            <VSpacer/>
+            <VSpacer />
 
             <template #append>
                 <div class="cart-control mr-3">
@@ -101,7 +107,7 @@
                                 <span>{{ user.email }}</span>
                             </div>
                         </div>
-                        <VDivider/>
+                        <VDivider />
                         <div class="user-menu-actions">
                             <VListItem
                                 :href="ProfileRoutes.index().url"
@@ -147,7 +153,7 @@
             </VList>
         </VNavigationDrawer>
         <VMain>
-            <slot/>
+            <slot />
         </VMain>
         <footer class="site-footer">
             <div class="shell footer-inner">

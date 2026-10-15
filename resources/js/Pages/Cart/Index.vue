@@ -12,7 +12,7 @@
                         >
                             <span>Корзина</span>
 
-                            <VSpacer/>
+                            <VSpacer />
 
                             <VBtn
                                 prepend-icon="$deleteOutline"
@@ -46,12 +46,14 @@
 
                                     <VListItemSubtitle class="text-body-1">
                                         <span>{{
-                                                formatPrice(item.price)
-                                            }} шт.</span>
-                                        <span class="text-teal-darken-4"
-                                              v-if="cartStore.productCount(item.id) > 1"> ({{
-                                                formatPrice(calculateItemTotal(item))
-                                            }})</span>
+                                            formatPrice(item.price)
+                                        }} шт.</span>
+                                        <span
+                                            class="text-teal-darken-4"
+                                            v-if="cartStore.productCount(item.id) > 1"
+                                        > ({{
+                                            formatPrice(calculateItemTotal(item))
+                                        }})</span>
                                     </VListItemSubtitle>
 
                                     <template #append>
@@ -75,7 +77,7 @@
                                     </template>
                                 </VListItem>
 
-                                <VDivider/>
+                                <VDivider />
                             </template>
                         </VList>
                         <VAlert v-else>
@@ -147,7 +149,7 @@
                                             >
                                                 Доставка не возможна пока в профиле не указан адрес!
                                                 <Link
-                                                    :href="ProfileRoutes.index().url"
+                                                    :href="ProfileRoutes.index({query: {tab: 'settings'} }).url"
                                                     class="text-decoration-none text-green-darken-3"
                                                     title="Перейти на страницу профиля"
                                                 >

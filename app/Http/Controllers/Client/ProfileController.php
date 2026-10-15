@@ -21,22 +21,39 @@ use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class ProfileController extends Controller
 {
-    public function __construct(private readonly Service $imageService) {}
+    public function __construct(
+        private readonly Service $imageService
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $client = $request->user()->loadMissing([
             'phone',
             'pendingPhones' => fn ($query) => $query->orderByDesc('id'),
             'image',
         ]);
+        $ordersPaginator = Order::byUserId($client->id)
+            ->with('remittance')
+            ->withCount('items')
+            ->orderByDesc('id')
+            ->paginate(5);
+
+        $orders = OrderPublicResource::collect($ordersPaginator->items());
+        $page = $ordersPaginator->currentPage();
+        $lastPage = $ordersPaginator->lastPage();
+
+        if ($page > $lastPage) {
+            return redirect()->route('profile.index', ['page' => 1, 'tab' => 'orders']);
+        }
 
         return Inertia::render('Profile/Index', [
             'client' => fn () => UserProfileResource::from($client),
-            'orders' => fn () => OrderPublicResource::collect(Order::withCount('items')->byUserId($client->id)->orderByDesc('id')->get()),
+            'orders' => Inertia::merge($orders),
+            'page' => $page,
+            'lastPage' => $lastPage,
         ]);
     }
 

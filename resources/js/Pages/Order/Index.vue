@@ -68,6 +68,15 @@
                     </Link>
                 </VCardTitle>
             </VCard>
+            <div class="d-flex justify-space-between">
+                <VSpacer />
+                <Link
+                    class="text-green-darken-3 text-decoration-none mt-2"
+                    :href="ProfileRoutes.index({query: {tab: 'orders' }}).url"
+                >
+                    Смотреть историю заказов
+                </Link>
+            </div>
         </VContainer>
     </MainLayout>
 </template>
@@ -82,6 +91,10 @@ import OrderController from "~routes/Client/OrderController.ts";
 import PaymentBtn from "~vue/components/orders/PaymentBtn.vue";
 import GeneralRoutes from "~routes/GeneralController.ts";
 import CancelBtn from "~vue/components/orders/CancelBtn.vue";
+import ProfileRoutes from "~routes/Client/ProfileController.ts";
 
-const {orders, user} = defineProps<{ orders: OrderPublicResource[], user: UserAuthResource }>()
+const {orders, user} = defineProps<{
+    orders: OrderPublicResource[],
+    user: UserAuthResource
+}>()
 </script>
