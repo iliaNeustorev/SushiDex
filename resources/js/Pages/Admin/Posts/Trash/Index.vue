@@ -8,7 +8,7 @@
                         Назад
                     </Link>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol>
@@ -41,22 +41,22 @@
                 <VCardText>
                     <VDataTableServer
                         :items="posts.data"
-                        :itemsLength="posts.total"
+                        :items-length="posts.total"
                         :items-per-page="queryLocal.batch ?? 10"
                         :page="queryLocal.page ?? 1"
                         :items-per-page-options="[
-							{ title: '10', value: 10 },
-							{ title: '20', value: 20 },
-							{ title: '50', value: 50 }
-						]"
+                            { title: '10', value: 10 },
+                            { title: '20', value: 20 },
+                            { title: '50', value: 50 }
+                        ]"
                         :headers="[
-							{ key: 'id', title: 'Id' },
-							{ key: 'title', title: 'Название' },
-							{ key: 'created_at', title: 'Дата создания' },
-							{ key: 'status', title: 'Статус', sortable: false, align: 'center' },
-							{ key: 'category', title: 'Категория', sortable: false},
-							{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
-						]"
+                            { key: 'id', title: 'Id' },
+                            { key: 'title', title: 'Название' },
+                            { key: 'created_at', title: 'Дата создания' },
+                            { key: 'status', title: 'Статус', sortable: false, align: 'center' },
+                            { key: 'category', title: 'Категория', sortable: false},
+                            { key: 'actions', title: 'Действия', sortable: false, align: 'center'}
+                        ]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
                         @update:items-per-page="queryLocal.batch = $event"
@@ -80,8 +80,11 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="confirmDelete(item)" density="compact"
-                                              color="deep-orange-lighten-1">
+                                        <VBtn
+                                            @click="confirmDelete(item)"
+                                            density="compact"
+                                            color="deep-orange-lighten-1"
+                                        >
                                             <span class="text-white">Удалить навсегда</span>
                                         </VBtn>
                                     </VCol>
@@ -91,7 +94,11 @@
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog :model-value="!!postForDelete" max-width="420">
+            <VDialog
+                :model-value="!!postForDelete"
+                max-width="420"
+                @update:model-value="!$event && cancelDelete()"
+            >
                 <VCard v-if="postForDelete">
                     <VCardTitle>Удалить пост?</VCardTitle>
                     <VCardText>«{{ postForDelete.title }}»</VCardText>
@@ -103,7 +110,11 @@
                     </VCardActions>
                 </VCard>
             </VDialog>
-            <VDialog :model-value="!!postForRestore" max-width="420">
+            <VDialog
+                :model-value="!!postForRestore"
+                max-width="420"
+                @update:model-value="!$event && cancelRestore()"
+            >
                 <VCard v-if="postForRestore">
                     <VCardTitle>Восстановить пост?</VCardTitle>
                     <VCardText>«{{ postForRestore.title }}»</VCardText>

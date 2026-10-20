@@ -92,7 +92,11 @@
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog :model-value="!!categoryForDelete" max-width="420">
+            <VDialog
+                :model-value="!!categoryForDelete"
+                max-width="420"
+                @update:model-value="!$event && cancelDelete()"
+            >
                 <VCard v-if="categoryForDelete">
                     <VCardTitle>Удалить категорию?</VCardTitle>
                     <VCardText>«{{ categoryForDelete.title }}»</VCardText>
@@ -104,7 +108,11 @@
                     </VCardActions>
                 </VCard>
             </VDialog>
-            <VDialog :model-value="!!categoryForRestore" max-width="420">
+            <VDialog
+                :model-value="!!categoryForRestore"
+                max-width="420"
+                @update:model-value="!$event && cancelRestore()"
+            >
                 <VCard v-if="categoryForRestore">
                     <VCardTitle>Восстановить категорию?</VCardTitle>
                     <VCardText>«{{ categoryForRestore.title }}»</VCardText>

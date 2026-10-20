@@ -133,6 +133,7 @@
                                 <VDialog
                                     :model-value="showConfirmOrder"
                                     max-width="420"
+                                    @update:model-value="showConfirmOrder = $event"
                                 >
                                     <VCard v-if="showConfirmOrder">
                                         <VCardTitle>Подтвердите заказ</VCardTitle>

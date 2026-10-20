@@ -11,6 +11,7 @@
     <VDialog
         :model-value="showDialog"
         max-width="420"
+        @update:model-value="showDialog = $event"
     >
         <VCard v-if="showDialog">
             <VCardTitle>

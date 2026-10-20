@@ -58,7 +58,7 @@
                     </VTab>
                 </VTabs>
 
-                <VDivider/>
+                <VDivider />
 
                 <VTabsWindow v-model="tab">
                     <VTabsWindowItem value="actual">
@@ -94,6 +94,7 @@
             <VDialog
                 :model-value="!!orderForCancellation"
                 max-width="420"
+                @update:model-value="!$event && (orderForCancellation = null)"
             >
                 <VCard v-if="orderForCancellation">
                     <VCardTitle>
@@ -117,6 +118,7 @@
             <VDialog
                 :model-value="!!orderForSetting"
                 max-width="420"
+                @update:model-value="!$event && closeSettingDialog()"
             >
                 <VCard v-if="orderForSetting">
                     <VCardTitle>
@@ -341,6 +343,12 @@ function openSettingDialog(order: OrderAdminPublicResource): void {
 function closeSettingDialog(): void {
     orderForSetting.value = null;
     showFieldChangeAddress.value = false;
+
+    formChangeSetting.reset();
+    formChangeSetting.clearErrors();
+
+    formChangeAddress.reset();
+    formChangeAddress.clearErrors();
 }
 
 function confirmChangeSettingOrder(): void {

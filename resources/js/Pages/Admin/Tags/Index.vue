@@ -7,7 +7,7 @@
                         Новый тэг
                     </Link>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol>
@@ -42,39 +42,45 @@
                             :items-per-page="queryLocal.batch ?? 10"
                             :page="queryLocal.page ?? 1"
                             :items-per-page-options="[
-                            {title: '10', value: 10},
-                            {title: '20', value: 20},
-                            {title: '50', value: 50}
-                        ]"
+                                {title: '10', value: 10},
+                                {title: '20', value: 20},
+                                {title: '50', value: 50}
+                            ]"
                             :headers="[
-                            {key: 'id', title: 'ID'},
-                            {key: 'title', title: 'Название'},
-                            {key: 'url', title: 'URL'},
-                            {key: 'created_at', title: 'Дата создания'},
-                            {key: 'actions', title: 'Действия', sortable: false, align: 'center'}
-                        ]"
+                                {key: 'id', title: 'ID'},
+                                {key: 'title', title: 'Название'},
+                                {key: 'url', title: 'URL'},
+                                {key: 'created_at', title: 'Дата создания'},
+                                {key: 'actions', title: 'Действия', sortable: false, align: 'center'}
+                            ]"
                             :sort-by="sortAdapter.sortBy.value"
                             @update:page="queryLocal.page = $event"
                             @update:items-per-page="queryLocal.batch = $event"
-                            @update:sort-by="sortAdapter.onSort">
+                            @update:sort-by="sortAdapter.onSort"
+                        >
                             <template #item.created_at="{ item }">{{
-                                    new Date(item.created_at).toLocaleString()
-                                }}
+                                new Date(item.created_at).toLocaleString()
+                            }}
                             </template>
                             <template #item.actions="{ item }">
                                 <VContainer>
                                     <VRow class="align-center justify-center">
                                         <VCol cols="auto">
                                             <VBtn density="compact" color="green-darken-1">
-                                                <Link :href="TagsRoutes.edit(item).url"
-                                                      class="text-decoration-none">
+                                                <Link
+                                                    :href="TagsRoutes.edit(item).url"
+                                                    class="text-decoration-none"
+                                                >
                                                     <span class="text-white">Редактировать</span>
                                                 </Link>
                                             </VBtn>
                                         </VCol>
                                         <VCol cols="auto">
-                                            <VBtn @click="tagForRemove = item" density="compact"
-                                                  color="deep-orange-lighten-1">
+                                            <VBtn
+                                                @click="tagForRemove = item"
+                                                density="compact"
+                                                color="deep-orange-lighten-1"
+                                            >
                                                 <span class="text-white">Удалить</span>
                                             </VBtn>
                                         </VCol>
@@ -87,6 +93,7 @@
                 <VDialog
                     :model-value="!!tagForRemove"
                     max-width="420"
+                    @update:model-value="!$event && (tagForRemove = null)"
                 >
                     <VCard v-if="tagForRemove">
                         <VCardTitle>Удалить тэг?</VCardTitle>
@@ -94,13 +101,15 @@
                         <VCardActions>
                             <VBtn
                                 :disabled="deleteForm.processing"
-                                @click="tagForRemove = null">
+                                @click="tagForRemove = null"
+                            >
                                 Отмена
                             </VBtn>
                             <VBtn
                                 :loading="deleteForm.processing"
                                 color="error"
-                                @click="removeConfirmed">
+                                @click="removeConfirmed"
+                            >
                                 Удалить
                             </VBtn>
                         </VCardActions>

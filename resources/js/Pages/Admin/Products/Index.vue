@@ -23,22 +23,40 @@
                         />
                     </VBadge>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol cols="12" md="4">
-                            <VTextField :model-value="queryLocal.filter.title" @update:model-value="onTitleUpdate"
-                                        label="Название" variant="outlined" clearable/>
+                            <VTextField
+                                :model-value="queryLocal.filter.title"
+                                @update:model-value="onTitleUpdate"
+                                label="Название"
+                                variant="outlined"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12" md="4">
-                            <VSelect v-model="queryLocal.filter.category_id" :items="categories" item-title="title"
-                                     item-value="id" label="Категория" variant="outlined" clearable/>
+                            <VSelect
+                                v-model="queryLocal.filter.category_id"
+                                :items="categories"
+                                item-title="title"
+                                item-value="id"
+                                label="Категория"
+                                variant="outlined"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12" md="4">
-                            <VDateInput v-model="dateRangeAdapter.inputModel.value" :hide-actions="false"
-                                        @update:menu="dateRangeAdapter.onUpdateMenu"
-                                        @click:clear="dateRangeAdapter.onClear" label="Дата создания" variant="outlined"
-                                        multiple="range" clearable/>
+                            <VDateInput
+                                v-model="dateRangeAdapter.inputModel.value"
+                                :hide-actions="false"
+                                @update:menu="dateRangeAdapter.onUpdateMenu"
+                                @click:clear="dateRangeAdapter.onClear"
+                                label="Дата создания"
+                                variant="outlined"
+                                multiple="range"
+                                clearable
+                            />
                         </VCol>
                     </VRow>
                 </VCardText>
@@ -82,8 +100,8 @@
                             </div>
                         </template>
                         <template #item.created_at="{ item }">{{
-                                new Date(item.created_at).toLocaleString()
-                            }}
+                            new Date(item.created_at).toLocaleString()
+                        }}
                         </template>
                         <template #item.actions="{ item }">
                             <VContainer>
@@ -96,8 +114,11 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="confirmRemove(item)" density="compact"
-                                              color="deep-orange-lighten-1">
+                                        <VBtn
+                                            @click="confirmRemove(item)"
+                                            density="compact"
+                                            color="deep-orange-lighten-1"
+                                        >
                                             <span class="text-white">Удалить</span>
                                         </VBtn>
                                     </VCol>
@@ -110,6 +131,7 @@
             <VDialog
                 :model-value="!!productForRemove"
                 max-width="420"
+                @update:model-value="!$event && (productForRemove = null)"
             >
                 <VCard v-if="productForRemove">
                     <VCardTitle>Удалить товар?</VCardTitle>

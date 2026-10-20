@@ -5,7 +5,8 @@
                 <VCardTitle class="d-flex justify-space-between align-center">
                     <Link
                         :href="CategoriesRoutes.create().url"
-                        class="text-decoration-none text-green-darken-3">
+                        class="text-decoration-none text-green-darken-3"
+                    >
                         Новая категория
                     </Link>
                     <VSpacer />
@@ -25,7 +26,7 @@
                         />
                     </VBadge>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol cols="12" md="4">
@@ -66,7 +67,8 @@
                                 label="Дата создания"
                                 variant="outlined"
                                 multiple="range"
-                                clearable/>
+                                clearable
+                            />
                         </VCol>
                     </VRow>
                 </VCardText>
@@ -94,14 +96,15 @@
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
                         @update:items-per-page="queryLocal.batch = $event"
-                        @update:sort-by="sortAdapter.onSort">
+                        @update:sort-by="sortAdapter.onSort"
+                    >
                         <template #item.type="{ item }">{{
-                                types.find(type => type.value === item.type)?.title
-                            }}
+                            types.find(type => type.value === item.type)?.title
+                        }}
                         </template>
                         <template #item.created_at="{ item }">{{
-                                new Date(item.created_at).toLocaleString()
-                            }}
+                            new Date(item.created_at).toLocaleString()
+                        }}
                         </template>
                         <template #item.actions="{ item }">
                             <VContainer>
@@ -114,8 +117,11 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="confirmRemove(item)" density="compact"
-                                              color="deep-orange-lighten-1">
+                                        <VBtn
+                                            @click="confirmRemove(item)"
+                                            density="compact"
+                                            color="deep-orange-lighten-1"
+                                        >
                                             <span class="text-white">Удалить</span>
                                         </VBtn>
                                     </VCol>
@@ -128,6 +134,7 @@
             <VDialog
                 :model-value="!!categoryForRemove"
                 max-width="420"
+                @update:model-value="!$event && (categoryForRemove = null)"
             >
                 <VCard v-if="categoryForRemove">
                     <VCardTitle>Удалить категорию?</VCardTitle>
@@ -135,13 +142,15 @@
                     <VCardActions>
                         <VBtn
                             :disabled="deleteForm.processing"
-                            @click="categoryForRemove = null">
+                            @click="categoryForRemove = null"
+                        >
                             Отмена
                         </VBtn>
                         <VBtn
                             :loading="deleteForm.processing"
                             color="error"
-                            @click="removeConfirmed">
+                            @click="removeConfirmed"
+                        >
                             Удалить
                         </VBtn>
                     </VCardActions>

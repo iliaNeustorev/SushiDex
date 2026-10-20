@@ -149,7 +149,11 @@
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog :model-value="!!postForRemove" max-width="420">
+            <VDialog
+                :model-value="!!postForRemove"
+                max-width="420"
+                @update:model-value="!$event && (postForRemove = null)"
+            >
                 <VCard v-if="postForRemove">
                     <VCardTitle>Удалить пост?</VCardTitle>
                     <VCardText>«{{ postForRemove.title }}»</VCardText>

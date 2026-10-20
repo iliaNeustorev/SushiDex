@@ -8,18 +8,29 @@
                         Назад
                     </Link>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol cols="12" md="4">
-                            <VTextField :model-value="queryLocal.filter.title" @update:model-value="onTitleUpd"
-                                        label="Название" variant="outlined" clearable/>
+                            <VTextField
+                                :model-value="queryLocal.filter.title"
+                                @update:model-value="onTitleUpd"
+                                label="Название"
+                                variant="outlined"
+                                clearable
+                            />
                         </VCol>
                         <VCol cols="12" md="4">
-                            <VDateInput v-model="dateRangeAdapter.inputModel.value" :hide-actions="false"
-                                        @update:menu="dateRangeAdapter.onUpdateMenu"
-                                        @click:clear="dateRangeAdapter.onClear" label="Дата создания" variant="outlined"
-                                        multiple="range" clearable/>
+                            <VDateInput
+                                v-model="dateRangeAdapter.inputModel.value"
+                                :hide-actions="false"
+                                @update:menu="dateRangeAdapter.onUpdateMenu"
+                                @click:clear="dateRangeAdapter.onClear"
+                                label="Дата создания"
+                                variant="outlined"
+                                multiple="range"
+                                clearable
+                            />
                         </VCol>
                     </VRow>
                 </VCardText>
@@ -28,22 +39,22 @@
                 <VCardText>
                     <VDataTableServer
                         :items="products.data"
-                        :itemsLength="products.total"
+                        :items-length="products.total"
                         :items-per-page="queryLocal.batch ?? 10"
                         :page="queryLocal.page ?? 1"
                         :items-per-page-options="[
-							{ title: '10', value: 10 },
-							{ title: '20', value: 20 },
-							{ title: '50', value: 50 }
-						]"
+                            { title: '10', value: 10 },
+                            { title: '20', value: 20 },
+                            { title: '50', value: 50 }
+                        ]"
                         :headers="[
-							{ key: 'id', title: 'Id' },
-							{ key: 'title', title: 'Название' },
-							{ key: 'created_at', title: 'Дата создания' },
-	                        { key:'price', title: 'Цена', sortable: false },
-							{ key: 'category', title: 'Категория', sortable: false},
-							{ key: 'actions', title: 'Действия', sortable: false, align: 'center'}
-						]"
+                            { key: 'id', title: 'Id' },
+                            { key: 'title', title: 'Название' },
+                            { key: 'created_at', title: 'Дата создания' },
+                            { key:'price', title: 'Цена', sortable: false },
+                            { key: 'category', title: 'Категория', sortable: false},
+                            { key: 'actions', title: 'Действия', sortable: false, align: 'center'}
+                        ]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
                         @update:items-per-page="queryLocal.batch = $event"
@@ -64,8 +75,11 @@
                                         </VBtn>
                                     </VCol>
                                     <VCol cols="auto">
-                                        <VBtn @click="confirmDelete(item)" density="compact"
-                                              color="deep-orange-lighten-1">
+                                        <VBtn
+                                            @click="confirmDelete(item)"
+                                            density="compact"
+                                            color="deep-orange-lighten-1"
+                                        >
                                             <span class="text-white">Удалить навсегда</span>
                                         </VBtn>
                                     </VCol>
@@ -75,7 +89,11 @@
                     </VDataTableServer>
                 </VCardText>
             </VCard>
-            <VDialog :model-value="!!productForDelete" max-width="420">
+            <VDialog
+                :model-value="!!productForDelete"
+                max-width="420"
+                @update:model-value="!$event && cancelDelete()"
+            >
                 <VCard v-if="productForDelete">
                     <VCardTitle>Удалить пост?</VCardTitle>
                     <VCardText>«{{ productForDelete.title }}»</VCardText>
@@ -87,7 +105,11 @@
                     </VCardActions>
                 </VCard>
             </VDialog>
-            <VDialog :model-value="!!productForRestore" max-width="420">
+            <VDialog
+                :model-value="!!productForRestore"
+                max-width="420"
+                @update:model-value="!$event && cancelRestore()"
+            >
                 <VCard v-if="productForRestore">
                     <VCardTitle>Восстановить продукт?</VCardTitle>
                     <VCardText>«{{ productForRestore.title }}»</VCardText>
