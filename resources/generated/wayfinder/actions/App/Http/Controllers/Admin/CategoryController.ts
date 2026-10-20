@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:31
+* @see app/Http/Controllers/Admin/CategoryController.php:29
 * @route '/admin/categories'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:31
+* @see app/Http/Controllers/Admin/CategoryController.php:29
 * @route '/admin/categories'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:31
+* @see app/Http/Controllers/Admin/CategoryController.php:29
 * @route '/admin/categories'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::index
-* @see app/Http/Controllers/Admin/CategoryController.php:31
+* @see app/Http/Controllers/Admin/CategoryController.php:29
 * @route '/admin/categories'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:49
+* @see app/Http/Controllers/Admin/CategoryController.php:47
 * @route '/admin/categories/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:49
+* @see app/Http/Controllers/Admin/CategoryController.php:47
 * @route '/admin/categories/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:49
+* @see app/Http/Controllers/Admin/CategoryController.php:47
 * @route '/admin/categories/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::create
-* @see app/Http/Controllers/Admin/CategoryController.php:49
+* @see app/Http/Controllers/Admin/CategoryController.php:47
 * @route '/admin/categories/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:64
+* @see app/Http/Controllers/Admin/CategoryController.php:62
 * @route '/admin/categories'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:64
+* @see app/Http/Controllers/Admin/CategoryController.php:62
 * @route '/admin/categories'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\CategoryController::store
-* @see app/Http/Controllers/Admin/CategoryController.php:64
+* @see app/Http/Controllers/Admin/CategoryController.php:62
 * @route '/admin/categories'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

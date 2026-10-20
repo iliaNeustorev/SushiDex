@@ -8,7 +8,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PostClientService
 {
-    public function getPostsWithPaginate(): LengthAwarePaginator
+    public function getPublishedPostsWithPaginate(): LengthAwarePaginator
     {
         return QueryBuilder::for(Post::class::isPublished())
             ->with(['user', 'category', 'tags'])

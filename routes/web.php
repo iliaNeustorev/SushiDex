@@ -22,6 +22,9 @@ Route::get('/', [GeneralController::class, 'index'])->name('home');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
 Route::middleware(['auth', 'can:is-blocked'])->group(function () {
+    Route::prefix('posts')->group(function () {
+        Route::put('/{post}/moderating', [PostController::class, 'moderating'])->name('posts.moderating');
+    });
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/', [ProfileController::class, 'update'])->name('profile.update');

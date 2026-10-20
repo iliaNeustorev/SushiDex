@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Client\OrderController::index
-* @see app/Http/Controllers/Client/OrderController.php:25
+* @see app/Http/Controllers/Client/OrderController.php:24
 * @route '/orders'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::index
-* @see app/Http/Controllers/Client/OrderController.php:25
+* @see app/Http/Controllers/Client/OrderController.php:24
 * @route '/orders'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::index
-* @see app/Http/Controllers/Client/OrderController.php:25
+* @see app/Http/Controllers/Client/OrderController.php:24
 * @route '/orders'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::index
-* @see app/Http/Controllers/Client/OrderController.php:25
+* @see app/Http/Controllers/Client/OrderController.php:24
 * @route '/orders'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::store
-* @see app/Http/Controllers/Client/OrderController.php:49
+* @see app/Http/Controllers/Client/OrderController.php:48
 * @route '/orders'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::store
-* @see app/Http/Controllers/Client/OrderController.php:49
+* @see app/Http/Controllers/Client/OrderController.php:48
 * @route '/orders'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::store
-* @see app/Http/Controllers/Client/OrderController.php:49
+* @see app/Http/Controllers/Client/OrderController.php:48
 * @route '/orders'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -79,7 +79,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::show
-* @see app/Http/Controllers/Client/OrderController.php:36
+* @see app/Http/Controllers/Client/OrderController.php:35
 * @route '/orders/{order}'
 */
 export const show = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::show
-* @see app/Http/Controllers/Client/OrderController.php:36
+* @see app/Http/Controllers/Client/OrderController.php:35
 * @route '/orders/{order}'
 */
 show.url = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ show.url = (args: { order: number | { id: number } } | [order: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::show
-* @see app/Http/Controllers/Client/OrderController.php:36
+* @see app/Http/Controllers/Client/OrderController.php:35
 * @route '/orders/{order}'
 */
 show.get = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -137,7 +137,7 @@ show.get = (args: { order: number | { id: number } } | [order: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::show
-* @see app/Http/Controllers/Client/OrderController.php:36
+* @see app/Http/Controllers/Client/OrderController.php:35
 * @route '/orders/{order}'
 */
 show.head = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -147,7 +147,7 @@ show.head = (args: { order: number | { id: number } } | [order: number | { id: n
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::cancel
-* @see app/Http/Controllers/Client/OrderController.php:58
+* @see app/Http/Controllers/Client/OrderController.php:57
 * @route '/orders/{order}/cancel'
 */
 export const cancel = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -162,7 +162,7 @@ cancel.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::cancel
-* @see app/Http/Controllers/Client/OrderController.php:58
+* @see app/Http/Controllers/Client/OrderController.php:57
 * @route '/orders/{order}/cancel'
 */
 cancel.url = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -195,7 +195,7 @@ cancel.url = (args: { order: number | { id: number } } | [order: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Client\OrderController::cancel
-* @see app/Http/Controllers/Client/OrderController.php:58
+* @see app/Http/Controllers/Client/OrderController.php:57
 * @route '/orders/{order}/cancel'
 */
 cancel.patch = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({

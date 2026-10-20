@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:14
+* @see app/Http/Controllers/PostController.php:16
 * @route '/posts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:14
+* @see app/Http/Controllers/PostController.php:16
 * @route '/posts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:14
+* @see app/Http/Controllers/PostController.php:16
 * @route '/posts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:14
+* @see app/Http/Controllers/PostController.php:16
 * @route '/posts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:31
+* @see app/Http/Controllers/PostController.php:33
 * @route '/posts/{post}'
 */
 export const show = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:31
+* @see app/Http/Controllers/PostController.php:33
 * @route '/posts/{post}'
 */
 show.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ show.url = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:31
+* @see app/Http/Controllers/PostController.php:33
 * @route '/posts/{post}'
 */
 show.get = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -103,7 +103,7 @@ show.get = (args: { post: number | { id: number } } | [post: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:31
+* @see app/Http/Controllers/PostController.php:33
 * @route '/posts/{post}'
 */
 show.head = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -111,6 +111,64 @@ show.head = (args: { post: number | { id: number } } | [post: number | { id: num
     method: 'head',
 })
 
-const PostController = { index, show }
+/**
+* @see \App\Http\Controllers\PostController::moderating
+* @see app/Http/Controllers/PostController.php:42
+* @route '/posts/{post}/moderating'
+*/
+export const moderating = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: moderating.url(args, options),
+    method: 'put',
+})
+
+moderating.definition = {
+    methods: ["put"],
+    url: '/posts/{post}/moderating',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\PostController::moderating
+* @see app/Http/Controllers/PostController.php:42
+* @route '/posts/{post}/moderating'
+*/
+moderating.url = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { post: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { post: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            post: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        post: typeof args.post === 'object'
+        ? args.post.id
+        : args.post,
+    }
+
+    return moderating.definition.url
+            .replace('{post}', parsedArgs.post.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PostController::moderating
+* @see app/Http/Controllers/PostController.php:42
+* @route '/posts/{post}/moderating'
+*/
+moderating.put = (args: { post: number | { id: number } } | [post: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: moderating.url(args, options),
+    method: 'put',
+})
+
+const PostController = { index, show, moderating }
 
 export default PostController

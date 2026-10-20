@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\CartController::update
-* @see app/Http/Controllers/Client/CartController.php:51
+* @see app/Http/Controllers/Client/CartController.php:52
 * @route '/cart/update'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::update
-* @see app/Http/Controllers/Client/CartController.php:51
+* @see app/Http/Controllers/Client/CartController.php:52
 * @route '/cart/update'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::update
-* @see app/Http/Controllers/Client/CartController.php:51
+* @see app/Http/Controllers/Client/CartController.php:52
 * @route '/cart/update'
 */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -79,7 +79,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\CartController::destroy
-* @see app/Http/Controllers/Client/CartController.php:67
+* @see app/Http/Controllers/Client/CartController.php:69
 * @route '/cart/delete'
 */
 export const destroy = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -94,7 +94,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::destroy
-* @see app/Http/Controllers/Client/CartController.php:67
+* @see app/Http/Controllers/Client/CartController.php:69
 * @route '/cart/delete'
 */
 destroy.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ destroy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::destroy
-* @see app/Http/Controllers/Client/CartController.php:67
+* @see app/Http/Controllers/Client/CartController.php:69
 * @route '/cart/delete'
 */
 destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -113,7 +113,7 @@ destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\CartController::syncWithTemp
-* @see app/Http/Controllers/Client/CartController.php:75
+* @see app/Http/Controllers/Client/CartController.php:77
 * @route '/cart/sync-temp-cart'
 */
 export const syncWithTemp = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -128,7 +128,7 @@ syncWithTemp.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::syncWithTemp
-* @see app/Http/Controllers/Client/CartController.php:75
+* @see app/Http/Controllers/Client/CartController.php:77
 * @route '/cart/sync-temp-cart'
 */
 syncWithTemp.url = (options?: RouteQueryOptions) => {
@@ -137,7 +137,7 @@ syncWithTemp.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\CartController::syncWithTemp
-* @see app/Http/Controllers/Client/CartController.php:75
+* @see app/Http/Controllers/Client/CartController.php:77
 * @route '/cart/sync-temp-cart'
 */
 syncWithTemp.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({

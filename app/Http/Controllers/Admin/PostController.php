@@ -152,13 +152,13 @@ class PostController extends Controller
 
     public function publish(Post $post)
     {
-        if ($post->status !== Status::DRAFT) {
+        if ($post->status !== Status::MODERATING) {
             abort(400);
         }
-        $post->status = Status::MODERATING;
+        $post->status = Status::PUBLISHED;
         $post->save();
 
-        Inertia::flash(config('app-notifications.posts.update'));
+        Inertia::flash(config('app-notifications.posts.publish'));
 
         return redirect()->route('admin.posts.index');
     }

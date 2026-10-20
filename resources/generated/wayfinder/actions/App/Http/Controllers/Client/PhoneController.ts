@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Client\PhoneController::store
-* @see app/Http/Controllers/Client/PhoneController.php:24
+* @see app/Http/Controllers/Client/PhoneController.php:25
 * @route '/profile/phone'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::store
-* @see app/Http/Controllers/Client/PhoneController.php:24
+* @see app/Http/Controllers/Client/PhoneController.php:25
 * @route '/profile/phone'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::store
-* @see app/Http/Controllers/Client/PhoneController.php:24
+* @see app/Http/Controllers/Client/PhoneController.php:25
 * @route '/profile/phone'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::sendCode
-* @see app/Http/Controllers/Client/PhoneController.php:33
+* @see app/Http/Controllers/Client/PhoneController.php:36
 * @route '/profile/phone/send-code'
 */
 export const sendCode = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -50,7 +50,7 @@ sendCode.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::sendCode
-* @see app/Http/Controllers/Client/PhoneController.php:33
+* @see app/Http/Controllers/Client/PhoneController.php:36
 * @route '/profile/phone/send-code'
 */
 sendCode.url = (options?: RouteQueryOptions) => {
@@ -59,7 +59,7 @@ sendCode.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::sendCode
-* @see app/Http/Controllers/Client/PhoneController.php:33
+* @see app/Http/Controllers/Client/PhoneController.php:36
 * @route '/profile/phone/send-code'
 */
 sendCode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -69,7 +69,7 @@ sendCode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::confirmCode
-* @see app/Http/Controllers/Client/PhoneController.php:54
+* @see app/Http/Controllers/Client/PhoneController.php:57
 * @route '/profile/phone/confirm-code'
 */
 export const confirmCode = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -84,7 +84,7 @@ confirmCode.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::confirmCode
-* @see app/Http/Controllers/Client/PhoneController.php:54
+* @see app/Http/Controllers/Client/PhoneController.php:57
 * @route '/profile/phone/confirm-code'
 */
 confirmCode.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ confirmCode.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::confirmCode
-* @see app/Http/Controllers/Client/PhoneController.php:54
+* @see app/Http/Controllers/Client/PhoneController.php:57
 * @route '/profile/phone/confirm-code'
 */
 confirmCode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -103,7 +103,7 @@ confirmCode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::destroy
-* @see app/Http/Controllers/Client/PhoneController.php:84
+* @see app/Http/Controllers/Client/PhoneController.php:87
 * @route '/profile/phone/{pendingPhone}'
 */
 export const destroy = (args: { pendingPhone: number | { id: number } } | [pendingPhone: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -118,7 +118,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::destroy
-* @see app/Http/Controllers/Client/PhoneController.php:84
+* @see app/Http/Controllers/Client/PhoneController.php:87
 * @route '/profile/phone/{pendingPhone}'
 */
 destroy.url = (args: { pendingPhone: number | { id: number } } | [pendingPhone: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -151,7 +151,7 @@ destroy.url = (args: { pendingPhone: number | { id: number } } | [pendingPhone: 
 
 /**
 * @see \App\Http\Controllers\Client\PhoneController::destroy
-* @see app/Http/Controllers/Client/PhoneController.php:84
+* @see app/Http/Controllers/Client/PhoneController.php:87
 * @route '/profile/phone/{pendingPhone}'
 */
 destroy.delete = (args: { pendingPhone: number | { id: number } } | [pendingPhone: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

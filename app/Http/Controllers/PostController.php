@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Posts\Status;
 use App\Http\Resources\Posts\PostPublicResource;
 use App\Models\Post;
 use App\Services\Post\PostClientService;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class PostController extends Controller
@@ -13,7 +15,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $paginator = $this->postClientService->getPostsWithPaginate();
+        $paginator = $this->postClientService->getPublishedPostsWithPaginate();
         $posts = $paginator->items();
         $page = $paginator->currentPage();
         $lastPage = $paginator->lastPage();
@@ -35,5 +37,20 @@ class PostController extends Controller
         return Inertia::render('Posts/Show', [
             'post' => PostPublicResource::from($post),
         ]);
+    }
+
+    public function moderating(Post $post)
+    {
+        Gate::authorize('update', $post);
+
+        if ($post->status !== Status::DRAFT) {
+            abort(400);
+        }
+        $post->status = Status::MODERATING;
+        $post->save();
+
+        Inertia::flash(config('app-notifications.posts.moderating'));
+
+        return redirect()->route('admin.posts.index');
     }
 }

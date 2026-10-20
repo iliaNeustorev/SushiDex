@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeAddress
-* @see app/Http/Controllers/Admin/UserController.php:98
+* @see app/Http/Controllers/Admin/UserController.php:67
 * @route '/users/{user}/change-address'
 */
 export const changeAddress = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -16,7 +16,7 @@ changeAddress.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeAddress
-* @see app/Http/Controllers/Admin/UserController.php:98
+* @see app/Http/Controllers/Admin/UserController.php:67
 * @route '/users/{user}/change-address'
 */
 changeAddress.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ changeAddress.url = (args: { user: number | { id: number } } | [user: number | {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeAddress
-* @see app/Http/Controllers/Admin/UserController.php:98
+* @see app/Http/Controllers/Admin/UserController.php:67
 * @route '/users/{user}/change-address'
 */
 changeAddress.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -59,7 +59,7 @@ changeAddress.patch = (args: { user: number | { id: number } } | [user: number |
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::index
-* @see app/Http/Controllers/Admin/UserController.php:33
+* @see app/Http/Controllers/Admin/UserController.php:29
 * @route '/admin/users'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -74,7 +74,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::index
-* @see app/Http/Controllers/Admin/UserController.php:33
+* @see app/Http/Controllers/Admin/UserController.php:29
 * @route '/admin/users'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -83,7 +83,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::index
-* @see app/Http/Controllers/Admin/UserController.php:33
+* @see app/Http/Controllers/Admin/UserController.php:29
 * @route '/admin/users'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -93,7 +93,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::index
-* @see app/Http/Controllers/Admin/UserController.php:33
+* @see app/Http/Controllers/Admin/UserController.php:29
 * @route '/admin/users'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -103,7 +103,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::update
-* @see app/Http/Controllers/Admin/UserController.php:80
+* @see app/Http/Controllers/Admin/UserController.php:47
 * @route '/admin/users/{user}'
 */
 export const update = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -118,7 +118,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::update
-* @see app/Http/Controllers/Admin/UserController.php:80
+* @see app/Http/Controllers/Admin/UserController.php:47
 * @route '/admin/users/{user}'
 */
 update.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -151,7 +151,7 @@ update.url = (args: { user: number | { id: number } } | [user: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::update
-* @see app/Http/Controllers/Admin/UserController.php:80
+* @see app/Http/Controllers/Admin/UserController.php:47
 * @route '/admin/users/{user}'
 */
 update.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -161,7 +161,7 @@ update.put = (args: { user: number | { id: number } } | [user: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::update
-* @see app/Http/Controllers/Admin/UserController.php:80
+* @see app/Http/Controllers/Admin/UserController.php:47
 * @route '/admin/users/{user}'
 */
 update.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -171,7 +171,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeBlock
-* @see app/Http/Controllers/Admin/UserController.php:89
+* @see app/Http/Controllers/Admin/UserController.php:56
 * @route '/admin/users/{user}/change-block'
 */
 export const changeBlock = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -186,7 +186,7 @@ changeBlock.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeBlock
-* @see app/Http/Controllers/Admin/UserController.php:89
+* @see app/Http/Controllers/Admin/UserController.php:56
 * @route '/admin/users/{user}/change-block'
 */
 changeBlock.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ changeBlock.url = (args: { user: number | { id: number } } | [user: number | { i
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::changeBlock
-* @see app/Http/Controllers/Admin/UserController.php:89
+* @see app/Http/Controllers/Admin/UserController.php:56
 * @route '/admin/users/{user}/change-block'
 */
 changeBlock.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({

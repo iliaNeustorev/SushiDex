@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:19
+* @see app/Http/Controllers/Admin/TagController.php:17
 * @route '/admin/tags'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:19
+* @see app/Http/Controllers/Admin/TagController.php:17
 * @route '/admin/tags'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:19
+* @see app/Http/Controllers/Admin/TagController.php:17
 * @route '/admin/tags'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::index
-* @see app/Http/Controllers/Admin/TagController.php:19
+* @see app/Http/Controllers/Admin/TagController.php:17
 * @route '/admin/tags'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::create
-* @see app/Http/Controllers/Admin/TagController.php:41
+* @see app/Http/Controllers/Admin/TagController.php:39
 * @route '/admin/tags/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::create
-* @see app/Http/Controllers/Admin/TagController.php:41
+* @see app/Http/Controllers/Admin/TagController.php:39
 * @route '/admin/tags/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::create
-* @see app/Http/Controllers/Admin/TagController.php:41
+* @see app/Http/Controllers/Admin/TagController.php:39
 * @route '/admin/tags/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::create
-* @see app/Http/Controllers/Admin/TagController.php:41
+* @see app/Http/Controllers/Admin/TagController.php:39
 * @route '/admin/tags/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::store
-* @see app/Http/Controllers/Admin/TagController.php:49
+* @see app/Http/Controllers/Admin/TagController.php:47
 * @route '/admin/tags'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::store
-* @see app/Http/Controllers/Admin/TagController.php:49
+* @see app/Http/Controllers/Admin/TagController.php:47
 * @route '/admin/tags'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::store
-* @see app/Http/Controllers/Admin/TagController.php:49
+* @see app/Http/Controllers/Admin/TagController.php:47
 * @route '/admin/tags'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -259,7 +259,7 @@ update.patch = (args: { tag: number | { id: number } } | [tag: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:81
+* @see app/Http/Controllers/Admin/TagController.php:83
 * @route '/admin/tags/{tag}'
 */
 export const destroy = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:81
+* @see app/Http/Controllers/Admin/TagController.php:83
 * @route '/admin/tags/{tag}'
 */
 destroy.url = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ destroy.url = (args: { tag: number | { id: number } } | [tag: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Admin\TagController::destroy
-* @see app/Http/Controllers/Admin/TagController.php:81
+* @see app/Http/Controllers/Admin/TagController.php:83
 * @route '/admin/tags/{tag}'
 */
 destroy.delete = (args: { tag: number | { id: number } } | [tag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

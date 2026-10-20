@@ -154,6 +154,14 @@ return [
             'type' => 'warning',
             'text' => 'Пост удален в корзину',
         ],
+        'moderating' => [
+            'type' => 'info',
+            'text' => 'Пост отправлен на модерацию',
+        ],
+        'publish' => [
+            'type' => 'success',
+            'text' => 'Пост опубликован',
+        ],
     ],
 
     'products' => [

@@ -96,6 +96,7 @@
                             { key: 'created_at', title: 'Дата создания' },
                             { key: 'status', title: 'Статус', sortable: false, align: 'center' },
                             { key: 'category', title: 'Категория'},
+                            { key: 'publish', title: 'Опубликовать'},
                             { key: 'actions', title: 'Действия', sortable: false, align: 'center'}
                         ]"
                         :sort-by="sortAdapter.sortBy.value"
@@ -111,6 +112,17 @@
                         </template>
                         <template #item.category="{item}">
                             {{ item.category.title }}
+                        </template>
+                        <template #item.publish="{item}">
+                            <VContainer>
+                                <VBtn
+                                    v-if="item.status === PostStatus.MODERATING"
+                                    icon="$mdiCheckOutline"
+                                    color="deep-purple-accent-1"
+                                    @click="sendPublish(item)"
+                                />
+                                <span v-else>-</span>
+                            </VContainer>
                         </template>
                         <template #item.actions="{ item }">
                             <VContainer>
@@ -156,7 +168,7 @@ import {Link, useForm, router} from '@inertiajs/vue3';
 import {reactive, ref, watch, computed} from 'vue';
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import PostsRoutes from "~routes/Admin/PostController"
-import type {PostCrudResource, PostsQuery, PostStatus, TagCrudResource} from "~types/generated";
+import type {PostCrudResource, PostsQuery, TagCrudResource} from "~types/generated";
 import type {TypedPagination} from '~vue/shared/pagination';
 import {debounce, merge} from 'lodash-es';
 import type {RequiredKeys} from "~vue/shared/objects.ts";
@@ -164,6 +176,7 @@ import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapte
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import PostTrashRoutes from "~routes/Admin/Trash/PostTrashController.ts";
+import {PostStatus} from '~types/generated';
 
 const {query = {}} = defineProps<{
     posts: TypedPagination<PostCrudResource>,
@@ -187,10 +200,10 @@ function applyReload() {
 }
 
 const statuses: Array<{ title: string, value: PostStatus }> = [
-    {value: 0, title: 'Опубликованные'},
-    {value: 5, title: 'Черновики'},
-    {value: 10, title: 'На модерации'},
-    {value: 15, title: 'Отклонённые'}
+    {value: PostStatus.PUBLISHED, title: 'Опубликованные'},
+    {value: PostStatus.DRAFT, title: 'Черновики'},
+    {value: PostStatus.MODERATING, title: 'На модерации'},
+    {value: PostStatus.REJECTED, title: 'Отклонённые'}
 ]
 const sortAdapter = useSpatieSortAdapter(() => queryLocal.sort, sort => queryLocal.sort = sort);
 const dateRangeAdapter = useSpatieDateRangeAdapter(
@@ -236,5 +249,12 @@ watch(tagSearch, onTagSerach);
 
 function moveToTrashPage() {
     router.visit(PostTrashRoutes.index().url)
+}
+
+function sendPublish(post: PostCrudResource): void {
+    router.visit(PostsRoutes.publish(post.id), {
+        preserveState: true,
+        preserveScroll: true,
+    });
 }
 </script>
