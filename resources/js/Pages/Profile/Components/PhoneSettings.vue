@@ -160,7 +160,7 @@
                     Закрыть
                 </VBtn>
                 <VBtn
-                    :disabled="addPhoneForm.processing || addPhoneForm.phone === ''"
+                    :disabled="addPhoneForm.processing || !addPhoneForm.isDirty"
                     :loading="addPhoneForm.processing"
                     class="phone-dialog-confirm-button rounded-0 text-none"
                     min-width="122"
@@ -224,7 +224,7 @@ const confirmCodeForm = useForm<ConfirmCodeReqDTO>({
     code: ''
 })
 const addPhoneForm = useForm<AddPhoneReqDTO>({
-    phone: ''
+    phone: '7'
 })
 
 const confirmPhoneDialog = ref<boolean>(false);
