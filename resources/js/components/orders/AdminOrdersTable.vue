@@ -34,11 +34,15 @@
         </template>
 
         <template #item.type_paid_text="{ item }">
-            <VAlert width="150" :type="item.remittance?.paid ? 'success' : 'warning'" density="compact"
-                    v-if="item.type_paid === TypePaid.CARD_ONLINE">
+            <VAlert
+                width="150"
+                :type="item.remittance?.paid ? 'success' : 'warning'"
+                density="compact"
+                v-if="item.type_paid === TypePaid.CARD_ONLINE"
+            >
                 <span :title="item.remittance?.paid ? 'Оплата принята' : 'Оплата ожидается'">{{
-                        item.type_paid_text
-                    }}</span>
+                    item.type_paid_text
+                }}</span>
             </VAlert>
             <VAlert v-else type="success" density="compact">
                 {{ item.type_paid_text }}

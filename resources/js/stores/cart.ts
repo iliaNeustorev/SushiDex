@@ -10,11 +10,7 @@ import axios from 'axios';
 import {router} from '@inertiajs/vue3';
 import CartRoutes from '~routes/Client/CartController.ts';
 import storageHelper from '~vue/utils/storage.ts';
-
-interface ErrorResponse {
-    message?: string;
-    errors?: Record<string, string[]>;
-}
+import type {ErrorResponse} from '~vue/types/axios.ts';
 
 function getErrorMessage(error: unknown): string {
     if (!axios.isAxiosError<ErrorResponse>(error)) {

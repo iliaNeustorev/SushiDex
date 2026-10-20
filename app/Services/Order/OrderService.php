@@ -200,10 +200,11 @@ class OrderService
                 ]);
             }
             if (isset($settings['type']) && $type === TypePaid::CARD_ONLINE->value && $order->type_paid !== TypePaid::CARD_ONLINE) {
-                $order->remittances()->create([
-                    'amount' => $order->total_price,
-                    'status' => RemittanceStatus::AWAIT_PAID,
-                ]);
+                $order->remittances()
+                    ->create([
+                        'amount' => $order->total_price,
+                        'status' => RemittanceStatus::AWAIT_PAID,
+                    ]);
             }
             if (isset($settings['type']) && $type !== TypePaid::CARD_ONLINE->value && $order->type_paid === TypePaid::CARD_ONLINE) {
                 $remittances = $order->remittances()

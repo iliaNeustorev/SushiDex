@@ -39,9 +39,9 @@ class RemittanceService
                 ]);
             }
 
-            if ($lockedOrder->status !== OrderStatus::NEW) {
+            if (in_array($lockedOrder->status, [OrderStatus::COMPLETED, OrderStatus::CANCELLED], true)) {
                 throw ValidationException::withMessages([
-                    'payment' => 'Оплата доступна только для нового заказа.',
+                    'payment' => 'Оплата недоступна для текущего статуса заказа.',
                 ]);
             }
 
@@ -54,13 +54,19 @@ class RemittanceService
                     'payment' => 'Заказ уже оплачен.',
                 ]);
             }
+            $activeRemittance = $lockedOrder->remittances()
+                ->whereNull('payment_system_id')
+                ->whereNull('payment_system_status')
+                ->first();
 
-            $activeRemittance = $lockedOrder->remittances()->create([
-                'amount' => $lockedOrder->total_price,
-                'status' => Status::AWAIT_PAID,
-            ]);
+            if (is_null($activeRemittance)) {
+                $activeRemittance = $lockedOrder->remittances()->create([
+                    'amount' => $lockedOrder->total_price,
+                    'status' => Status::AWAIT_PAID,
+                ]);
+            }
 
-            return $activeRemittance->refresh();
+            return $activeRemittance;
         });
 
         try {

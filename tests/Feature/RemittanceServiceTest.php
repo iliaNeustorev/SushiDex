@@ -114,6 +114,61 @@ class RemittanceServiceTest extends TestCase
         $this->service()->store($order);
     }
 
+    public function test_completed_order_cannot_request_payment_url(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $order->update(['status' => OrderStatus::COMPLETED]);
+        $this->actingAs($user);
+
+        $this->expectException(ValidationException::class);
+
+        $this->service()->store($order);
+    }
+
+    public function test_processing_order_can_request_payment_url(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $order->update(['status' => OrderStatus::PROCESSING]);
+        $provider = Mockery::mock(PaymentProviderInterface::class);
+        $provider->shouldReceive('store')
+            ->once()
+            ->andReturn(new RemittancePaymentDTO(
+                paymentId: 'payment-processing',
+                status: 'pending',
+                amount: '10.25',
+                url: 'https://payments.example/processing',
+            ));
+        $this->actingAs($user);
+
+        $url = (new RemittanceService($provider))->store($order);
+
+        $this->assertSame('https://payments.example/processing', $url);
+    }
+
+    public function test_payment_retry_reuses_an_unsubmitted_remittance(): void
+    {
+        $user = User::factory()->create();
+        $order = $this->order($user, TypePaid::CARD_ONLINE);
+        $provider = Mockery::mock(PaymentProviderInterface::class);
+        $provider->shouldReceive('store')
+            ->twice()
+            ->andThrow(new \Exception('Provider error'));
+        $service = new RemittanceService($provider);
+        $this->actingAs($user);
+
+        for ($attempt = 0; $attempt < 2; $attempt++) {
+            try {
+                $service->store($order);
+            } catch (ValidationException) {
+                // The same local remittance should be reused on the next attempt.
+            }
+        }
+
+        $this->assertDatabaseCount('remittances', 1);
+    }
+
     public function test_payment_provider_error_becomes_validation_error(): void
     {
         $user = User::factory()->create();
