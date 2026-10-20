@@ -12,11 +12,9 @@ use App\Http\Resources\Images\ImageCrudResource;
 use App\Models\Category;
 use App\Services\Category\CategoryAdminService;
 use Exception;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Inertia\Response;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class CategoryController extends Controller
@@ -28,7 +26,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request)
     {
         Gate::authorize('viewAny', Category::class);
         $query = CategoriesQuery::validateAndCreate($request->query())->toArray();
@@ -46,7 +44,7 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create()
     {
         Gate::authorize('create', Category::class);
         $types = collect(Type::TEXTS);
@@ -61,11 +59,13 @@ class CategoryController extends Controller
      *
      * @throws InvalidDataClass
      */
-    public function store(SaveRequest $request): RedirectResponse
+    public function store(SaveRequest $request)
     {
         Gate::authorize('create', Category::class);
         $data = $request->getData()->toArray();
         $category = Category::create($data);
+
+        Inertia::flash(config('app-notifications.categories.store'));
 
         return redirect()->route('admin.categories.edit', $category->id);
     }
@@ -73,7 +73,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category): Response
+    public function edit(Category $category)
     {
         Gate::authorize('update', $category);
 
@@ -87,13 +87,13 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Category $category): RedirectResponse
+    public function update(SaveRequest $request, Category $category)
     {
         Gate::authorize('update', $category);
         $data = $request->getData()->toArray();
         $category->update($data);
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.categories.update'))->back();
     }
 
     /**
@@ -101,14 +101,18 @@ class CategoryController extends Controller
      *
      * @throws Exception
      */
-    public function destroy(Category $category): RedirectResponse
+    public function destroy(Category $category)
     {
         Gate::authorize('delete', $category);
         $deleted = $this->categoryAdminService->delete($category);
         if (! $deleted) {
-            return redirect()->route('admin.categories.index')->withErrors(['error', 'categories.deleted']);
+            Inertia::flash(config('app-notifications.categories.errors.delete'));
+
+            return redirect()->route('admin.categories.index');
         }
 
-        return redirect()->route('admin.categories.index')->with('notice', 'categories.deleted');
+        Inertia::flash(config('app-notifications.categories.destroy'));
+
+        return redirect()->route('admin.categories.index');
     }
 }

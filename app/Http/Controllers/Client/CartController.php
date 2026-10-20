@@ -10,8 +10,8 @@ use App\Http\Resources\Carts\CartPublicResource;
 use App\Models\Product;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class CartController extends Controller
@@ -24,6 +24,7 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $client = $request->user();
+
         if ($client) {
             $products = $client
                 ->products()
@@ -48,10 +49,11 @@ class CartController extends Controller
         );
     }
 
-    public function update(SaveRequest $request): JsonResponse
+    public function update(SaveRequest $request)
     {
         $client = $request->user();
         $data = $request->getData()->toArray();
+
         $product = Product::active()->findOrFail($data['product_id']);
         $this->cartService->put($client, $product, $data['count']);
         $products = $client->products()->get();
@@ -86,6 +88,8 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json([], 400);
+        throw ValidationException::withMessages([
+            'cart' => 'Не удалось синхронизировать корзину. Попробуйте ещё раз.',
+        ]);
     }
 }

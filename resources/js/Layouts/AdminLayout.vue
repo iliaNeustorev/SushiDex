@@ -1,5 +1,6 @@
 <template>
     <VApp>
+        <SystemNotify />
         <VAppBar app height="54">
             <VContainer fluid>
                 <VToolbarTitle>
@@ -19,7 +20,7 @@
                         rounded="xl"
                     >
                         <template #prepend>
-                            <VIcon :icon="item.icon"/>
+                            <VIcon :icon="item.icon" />
                         </template>
                         <VListItemTitle class="text-wrap">
                             <Link
@@ -38,7 +39,7 @@
         </VNavigationDrawer>
         <VMain class="appMain">
             <div class="ps-4 pe-4">
-                <slot/>
+                <slot />
             </div>
         </VMain>
         <VFooter app class="flex-grow-0">
@@ -60,6 +61,7 @@ import CategoryRoutes from "~routes/Admin/CategoryController.ts";
 import TagsRoutes from "~routes/Admin/TagController.ts";
 import UsersRoutes from "~routes/Admin/UserController.ts";
 import OrderRoutes from "~routes/Admin/OrderController.ts";
+import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
 
 const {props} = usePage<{ user: UserAuthResource | null }>();
 const page = usePage();

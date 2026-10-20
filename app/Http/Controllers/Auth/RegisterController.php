@@ -11,17 +11,15 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
-use Inertia\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RegisterController extends Controller
 {
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', []);
     }
 
-    public function store(RegisterRequest $request): RedirectResponse
+    public function store(RegisterRequest $request)
     {
         $data = $request->getData()->toArray();
         $data['password'] = Hash::make($data['password']);
@@ -33,6 +31,8 @@ class RegisterController extends Controller
         event(new Registered($user));
 
         // TODO: отправить смс если ввели номер
-        return redirect()->route('profile.index')->with('notification', 'auth.register');
+        Inertia::flash(config('app-notifications.auth.register'));
+
+        return redirect()->route('profile.index');
     }
 }

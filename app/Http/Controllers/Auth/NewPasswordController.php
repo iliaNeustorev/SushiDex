@@ -9,17 +9,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Inertia\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class NewPasswordController extends Controller
 {
-    public function create(string $token): Response
+    public function create(string $token)
     {
         return Inertia::render('Auth/ResetPassword', ['token' => $token]);
     }
 
-    public function store(PasswordResetRequest $request): RedirectResponse
+    public function store(PasswordResetRequest $request)
     {
         $data = $request->getData()->toArray();
         $status = Password::reset(
@@ -35,8 +33,12 @@ class NewPasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('notification', 'password.reset')
-            : back()->withErrors(['email' => [__($status)]]);
+        if ($status === Password::PASSWORD_RESET) {
+            Inertia::flash(config('app-notifications.password.reset'));
+
+            return redirect()->route('login');
+        }
+
+        return back()->withErrors(['email' => [__($status)]]);
     }
 }

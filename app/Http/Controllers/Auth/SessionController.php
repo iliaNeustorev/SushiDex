@@ -7,17 +7,15 @@ use App\Http\Requests\Auth\Login as LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Inertia\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class SessionController extends Controller
 {
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Login', []);
     }
 
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
         $request->session()->regenerate();
@@ -25,7 +23,7 @@ class SessionController extends Controller
         return redirect()->intended();
     }
 
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request)
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();

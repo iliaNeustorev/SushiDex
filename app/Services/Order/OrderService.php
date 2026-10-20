@@ -315,7 +315,7 @@ class OrderService
     {
         if (in_array($order->status, [OrderStatus::COMPLETED, OrderStatus::CANCELLED], true)) {
             throw ValidationException::withMessages([
-                'order' => 'Нельзя отменить заказ!',
+                'order' => 'Нельзя отменить заказ! Статус - '.$order->status->text(),
             ]);
         }
         if ($order->type_paid === TypePaid::CARD_ONLINE) {

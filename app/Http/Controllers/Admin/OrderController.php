@@ -14,11 +14,9 @@ use App\Http\Resources\Orders\Admin\OrderAdminHistoryResource;
 use App\Http\Resources\Orders\Admin\OrderAdminPublicResource;
 use App\Models\Order;
 use App\Services\Order\OrderService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class OrderController extends Controller
 {
@@ -29,7 +27,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response|RedirectResponse
+    public function index(Request $request)
     {
         $query = OrdersCompletedQuery::validateAndCreate($request->query())->toArray();
 
@@ -63,16 +61,16 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRequest $request, Order $order): RedirectResponse
+    public function update(UpdateRequest $request, Order $order)
     {
         Gate::authorize('update', $order);
         $status = $request->getData()->status;
         $this->orderService->updateStatus($order, $status);
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.orders.admin.update-status'))->back();
     }
 
-    public function actual(Request $request): Response
+    public function actual(Request $request)
     {
         $query = OrdersActualQuery::validateAndCreate($request->query())->toArray();
         $actualOrdersPaginator = $this->orderService->getOrdersWithPaginate(
@@ -102,12 +100,12 @@ class OrderController extends Controller
         );
     }
 
-    public function updateSettings(UpdateSettingsRequest $request, Order $order): RedirectResponse
+    public function updateSettings(UpdateSettingsRequest $request, Order $order)
     {
         Gate::authorize('updateSetting', $order);
         $data = $request->getData()->toArray();
         $this->orderService->updateSettings($order, $data);
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.orders.admin.update-settings'))->back();
     }
 }

@@ -7,23 +7,21 @@ use App\Http\Resources\Categories\CategoryPublicResource;
 use App\Http\Resources\Products\ProductPublicResource;
 use App\Models\Product;
 use App\Services\Product\ProductClientService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class GeneralController extends Controller
 {
     public function __construct(private readonly ProductClientService $productClientService) {}
 
-    public function index(): Response
+    public function index()
     {
         return Inertia::render('Home', [
             'topProducts' => fn () => ProductPublicResource::collect(Product::with('images')->topSale()->get()),
         ]);
     }
 
-    public function menu(Request $request): Response|RedirectResponse
+    public function menu(Request $request)
     {
         $filters = ProductsClientQuery::validateAndCreate($request->query())->toArray();
 

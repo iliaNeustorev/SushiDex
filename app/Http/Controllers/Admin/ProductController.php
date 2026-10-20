@@ -14,11 +14,10 @@ use App\Http\Resources\Products\ProductCrudResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\Product\ProductAdminService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class ProductController extends Controller
 {
@@ -29,7 +28,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response|RedirectResponse
+    public function index(Request $request)
     {
         Gate::authorize('viewAny', Product::class);
         $query = ProductsQuery::validateAndCreate($request->query())->toArray();
@@ -55,7 +54,7 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create()
     {
         Gate::authorize('create', Product::class);
 
@@ -67,11 +66,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveRequest $request): RedirectResponse
+    public function store(SaveRequest $request)
     {
         Gate::authorize('create', Product::class);
         $data = $request->getData()->toArray();
         $product = Product::create($data);
+
+        Inertia::flash(config('app-notifications.products.admin.store'));
 
         return redirect()->route('admin.products.edit', $product);
     }
@@ -79,7 +80,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product): Response
+    public function edit(Product $product)
     {
         Gate::authorize('update', $product);
         $product->load('category', 'images');
@@ -94,31 +95,38 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Product $product): RedirectResponse
+    public function update(SaveRequest $request, Product $product)
     {
         Gate::authorize('update', $product);
         $data = $request->getData()->toArray();
         $product->update($data);
 
-        return redirect()->back()->with('notice', 'products.updated');
+        return Inertia::flash(config('app-notifications.products.admin.update'))->back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product): RedirectResponse
+    public function destroy(Product $product)
     {
         Gate::authorize('delete', $product);
-        $this->productAdminService->delete($product);
+        try {
+            $this->productAdminService->delete($product);
+            Inertia::flash(config('app-notifications.products.admin.destroy'));
+        } catch (\Exception $e) {
+            Log::error('Не удалось удалить продукт', ['id' => $product->id]);
+            report($e);
+            Inertia::flash(config('app-notifications.products.admin.errors.destroy'));
+        }
 
-        return redirect()->route('admin.products.index')->with('notice', 'products.deleted');
+        return redirect()->route('admin.products.index');
     }
 
-    public function changeActive(ChangeActiveRequest $request, Product $product): RedirectResponse
+    public function changeActive(ChangeActiveRequest $request, Product $product)
     {
         Gate::authorize('update', $product);
         $this->productAdminService->changeActive($product, $request->getData()->active);
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.products.admin.active'))->back();
     }
 }

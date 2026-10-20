@@ -49,7 +49,7 @@ class PostTrashController extends Controller
         Gate::authorize('restore', $postTrash);
         $postTrash->restore();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.posts.admin.trash.update'))->back();
     }
 
     /**
@@ -63,6 +63,6 @@ class PostTrashController extends Controller
         Gate::authorize('forceDelete', $postTrash);
         $postTrash->forceDelete();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.posts.admin.trash.destroy'))->back();
     }
 }

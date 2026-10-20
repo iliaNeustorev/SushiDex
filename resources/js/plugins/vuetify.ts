@@ -21,6 +21,8 @@ import {
     mdiChevronDown,
     mdiCashClock,
     mdiMagnify,
+    mdiAlertOutline,
+    mdiInformationOutline,
     mdiCheckCircleOutline,
     mdiCloseCircleOutline,
     mdiCogs,
@@ -43,6 +45,8 @@ aliases['mdiUp'] = mdiChevronUp
 aliases['mdiDown'] = mdiChevronDown
 aliases['mdiCashClock'] = mdiCashClock
 aliases['mdiMagnify'] = mdiMagnify
+aliases['mdiAlertOutline'] = mdiAlertOutline
+aliases['mdiInformationOutline'] = mdiInformationOutline
 aliases['mdiCheckOutline'] = mdiCheckCircleOutline
 aliases['mdiCloseOutline'] = mdiCloseCircleOutline
 aliases['mdiCogs'] = mdiCogs

@@ -49,7 +49,7 @@ class CategoryTrashController extends Controller
         Gate::authorize('restore', $categoryTrash);
         $categoryTrash->restore();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.categories.trash.update'))->back();
     }
 
     /**
@@ -63,6 +63,6 @@ class CategoryTrashController extends Controller
         Gate::authorize('forceDelete', $categoryTrash);
         $categoryTrash->forceDelete();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.categories.trash.destroy'))->back();
     }
 }

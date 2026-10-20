@@ -2,8 +2,8 @@
     <VCard>
         <VCardTitle>Загрузить картинки</VCardTitle>
         <VCardText>
-            <VFileInput v-model="form.images" multiple density="compact"/>
-            <VBtn @click="send" :disabled="form.images.length < 1" color="primary">Upload</VBtn>
+            <VFileInput v-model="form.images" multiple density="compact" />
+            <VBtn @click="send" :disabled="form.images.length < 1" color="primary">Загрузить</VBtn>
             <VAlert v-if="Object.keys(form.errors).length > 0" type="error" class="mt-3">
                 <p v-for="err in form.errors">{{ err }}</p>
             </VAlert>

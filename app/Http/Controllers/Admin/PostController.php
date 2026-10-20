@@ -17,11 +17,9 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Services\Image\Service as ImageService;
 use App\Services\Post\PostAdminService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class PostController extends Controller
 {
@@ -33,7 +31,7 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response|RedirectResponse
+    public function index(Request $request)
     {
         Gate::authorize('viewAny', Post::class);
         $filters = PostsQuery::validateAndCreate($request->query())->toArray();
@@ -80,7 +78,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create()
     {
         Gate::authorize('create', Post::class);
         $categories = CategoryCrudResource::collect(Category::byType(Type::BLOG)->get());
@@ -92,7 +90,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveRequest $request): RedirectResponse
+    public function store(SaveRequest $request)
     {
         Gate::authorize('create', Post::class);
         $user = $request->user();
@@ -102,13 +100,15 @@ class PostController extends Controller
             $newPost->tags()->attach($data['tags']);
         }
 
+        Inertia::flash(config('app-notifications.posts.store'));
+
         return redirect()->route('admin.posts.edit', $newPost->id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post): Response
+    public function edit(Post $post)
     {
         Gate::authorize('update', $post);
         $post->load('category:id,title', 'user', 'tags');
@@ -124,7 +124,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request, Post $post): RedirectResponse
+    public function update(SaveRequest $request, Post $post)
     {
         Gate::authorize('update', $post);
         $data = $request->getData()->toArray();
@@ -133,22 +133,24 @@ class PostController extends Controller
             $post->tags()->sync($data['tags']);
         }
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.posts.update'))->back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post): RedirectResponse
+    public function destroy(Post $post)
     {
         Gate::authorize('delete', $post);
         $post->delete();
         $this->imageService->deleteAllImagesModel($post, ['catalogPath' => 'posts']);
 
-        return redirect()->route('admin.posts.index')->with('notice', 'posts.deleted');
+        Inertia::flash(config('app-notifications.posts.destroy'));
+
+        return redirect()->route('admin.posts.index');
     }
 
-    public function publish(Post $post): RedirectResponse
+    public function publish(Post $post)
     {
         if ($post->status !== Status::DRAFT) {
             abort(400);
@@ -156,6 +158,8 @@ class PostController extends Controller
         $post->status = Status::MODERATING;
         $post->save();
 
-        return redirect()->route('admin.posts.index')->with('notice', 'posts.updated');
+        Inertia::flash(config('app-notifications.posts.update'));
+
+        return redirect()->route('admin.posts.index');
     }
 }

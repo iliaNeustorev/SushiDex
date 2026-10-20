@@ -120,10 +120,10 @@ class Service
                 return true;
             }
         } catch (Exception $e) {
+            report($e);
             Log::error('Не удалось сохранить картинку', [
                 'class' => get_class($model),
                 'model_id' => $model->id,
-                'errorMessage' => $e->getMessage(),
             ]);
             Storage::disk('public')->delete($newPath);
         }

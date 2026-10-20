@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 use Spatie\LaravelData\WithData;
 
 class Login extends FormRequest
@@ -46,7 +47,7 @@ class Login extends FormRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
-        session()->flash('notification', 'limit.login');
+        Inertia::flash(config('app-notifications.limit.login'));
 
         throw ValidationException::withMessages([
             'email' => trans('auth.throttle', [

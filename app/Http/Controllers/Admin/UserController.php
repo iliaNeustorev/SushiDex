@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Helpers\Spattie\CustomSort\SortByFieldRelation;
 use App\Http\Controllers\Controller;
 use App\Http\RequestDTO\User\Admin\UsersQuery;
 use App\Http\Requests\Admin\User\ChangeBlockRequest;
@@ -11,96 +10,68 @@ use App\Http\Requests\User\Profile\ChangeAddressRequest;
 use App\Http\Resources\General\GeneralPagination;
 use App\Http\Resources\Role\RoleCrudResource;
 use App\Http\Resources\Users\UserCrudResource;
-use App\Interfaces\SystemHelperInterface;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Inertia\Response;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\AllowedSort;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
-    public function __construct(public SystemHelperInterface $systemHelper) {}
+    public function __construct(
+        private readonly UserService $userService
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request)
     {
         $rolesForSelect = RoleCrudResource::collect(Role::get());
-        $filters = UsersQuery::validateAndCreate($request->query())->toArray();
+        $query = UsersQuery::validateAndCreate($request->query())->toArray();
 
-        $usersPaginator = QueryBuilder::for(User::class)
-            ->with(['roles', 'phone'])
-            ->allowedFilters([
-                'address',
-                AllowedFilter::partial('phone', 'phone.phone'),
-                AllowedFilter::callback(
-                    'name',
-                    function ($q, $v) {
-                        $words = preg_split('/\s+/', trim($v));
-
-                        foreach ($words as $word) {
-                            $q->where(
-                                fn ($query) => $query->whereAny(
-                                    ['first_name', 'middle_name', 'last_name'],
-                                    'ILIKE',
-                                    "%$word%"
-                                )
-                            );
-                        }
-                    }
-                ),
-            ])
-            ->defaultSort('-id')
-            ->allowedSorts([
-                'id',
-                'created_at',
-                'block',
-                AllowedSort::custom('phone', new SortByFieldRelation('phone'), 'phone'),
-            ])
-            ->paginate($filters['batch'] ?? 10);
+        $usersPaginator = $this->userService->getUsersWithPaginate($query);
         $users = GeneralPagination::fromPaginator($usersPaginator, UserCrudResource::class);
 
         return Inertia::render('Admin/Users/Index', [
             'rolesForSelect' => fn () => $rolesForSelect,
             'users' => $users,
-            'query' => $filters,
+            'query' => $query,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ChangeRolesRequest $request, User $user): RedirectResponse
+    public function update(ChangeRolesRequest $request, User $user)
     {
         $data = $request->getData()->toArray();
-        $user->roles()->sync($data['roleIds']);
-        $this->systemHelper->saveRolesUserInCache($user);
 
-        return redirect()->back();
+        $this->userService->changeRoles($user, $data['roleIds']);
+
+        return Inertia::flash(config('app-notifications.users.admin.change-roles'))->back();
     }
 
-    public function changeBlock(ChangeBlockRequest $request, User $user): RedirectResponse
+    public function changeBlock(ChangeBlockRequest $request, User $user)
     {
         $data = $request->getData()->toArray();
-        $user->block = $data['block'];
-        $user->save();
 
-        return redirect()->back();
+        $this->userService->changeBlock($user, $data);
+
+        return $data['block']
+            ? Inertia::flash(config('app-notifications.users.admin.block.on'))->back()
+            : Inertia::flash(config('app-notifications.users.admin.block.off'))->back();
     }
 
-    public function changeAddress(ChangeAddressRequest $request, User $user): RedirectResponse
+    public function changeAddress(ChangeAddressRequest $request, User $user)
     {
-        Gate::authorize('update', $user);
         $address = $request->getData()->address;
-        $user->update(['address' => $address]);
 
-        return redirect()->back();
+        Gate::authorize('update', $user);
+
+        $this->userService->changeAddress($user, $address);
+
+        return Inertia::flash(config('app-notifications.users.admin.change-address'))->back();
     }
 }

@@ -35,6 +35,8 @@ class ProfileChangePasswordTest extends TestCase
             ->from(route('profile.index'))
             ->put($this->changePasswordUrl(), $this->validPayload())
             ->assertRedirect(route('profile.index'))
+            ->assertInertiaFlash('type', 'success')
+            ->assertInertiaFlash('text', 'Пароль успешно изменен!')
             ->assertSessionHasNoErrors();
 
         $user->refresh();

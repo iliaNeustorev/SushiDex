@@ -6,9 +6,30 @@ import type {
     GuestCartItem,
     GuestCartPayload,
 } from '~vue/types/cart';
-import axios from "axios";
-import CartRoutes from "~routes/Client/CartController.ts";
-import storageHelper from "~vue/utils/storage.ts";
+import axios from 'axios';
+import {router} from '@inertiajs/vue3';
+import CartRoutes from '~routes/Client/CartController.ts';
+import storageHelper from '~vue/utils/storage.ts';
+
+interface ErrorResponse {
+    message?: string;
+    errors?: Record<string, string[]>;
+}
+
+function getErrorMessage(error: unknown): string {
+    if (!axios.isAxiosError<ErrorResponse>(error)) {
+        return 'Произошла неизвестная ошибка.';
+    }
+
+    const data = error.response?.data;
+    const firstError = Object.values(data?.errors ?? {})
+        .flat()
+        .at(0);
+
+    return firstError
+        ?? data?.message
+        ?? 'Не удалось связаться с сервером.';
+}
 
 export const useCartStore = defineStore('cart', {
     state: () => ({
@@ -71,11 +92,15 @@ export const useCartStore = defineStore('cart', {
                 );
 
                 this.setCart(response.data.cart);
-            } catch (error) {
-                if (product && previousCount != 0) {
+            } catch (error: unknown) {
+                if (product && previousCount !== 0) {
                     product.count = previousCount;
                 }
-                throw error;
+
+                router.flash({
+                    type: 'error',
+                    text: getErrorMessage(error),
+                });
             } finally {
                 this.updatingProductIds = this.updatingProductIds.filter(
                     productId => productId !== id,
@@ -142,8 +167,11 @@ export const useCartStore = defineStore('cart', {
                     CartRoutes.syncWithTemp().url, {tempCart},
                 );
                 this.setCart(response.data.cart);
-            } catch (e) {
-                // TODO: сделать сообщение что не удалось синхронизитровать корзину
+            } catch (error: unknown) {
+                router.flash({
+                    type: 'error',
+                    text: getErrorMessage(error),
+                });
             } finally {
                 storageHelper.removeCart();
             }

@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard class="mb-4">
                 <VCardTitle tag="h1">Редактирование поста {{ post.url }}</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <VCardText>
                     <VTextField
                         v-model.trim.lazy="form.url"
@@ -49,8 +49,8 @@
                     <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>
                 </VCardActions>
             </VCard>
-            <ShowImages :images="images"/>
-            <ImagesUploader item="post" :id="post.id"/>
+            <ShowImages :images="images" />
+            <ImagesUploader item="post" :id="post.id" />
         </AdminWrapper>
     </AdminLayout>
 </template>

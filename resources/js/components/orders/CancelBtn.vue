@@ -47,8 +47,11 @@ const loading = shallowRef<boolean>(false)
 function confirmCancel() {
     loading.value = true
     router.visit(OrderController.cancel(order.id), {
-        onError: () => {
-            // TODO: Обработка ошибок
+        onError: (errors) => {
+            router.flash({
+                type: 'error',
+                text: errors.order ?? 'Не удалось отменить заказ.',
+            });
         },
         onFinish: () => {
             loading.value = false

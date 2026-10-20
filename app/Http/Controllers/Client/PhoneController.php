@@ -16,6 +16,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class PhoneController extends Controller
 {
@@ -26,6 +27,8 @@ class PhoneController extends Controller
         $client = $request->user();
         $phone = $request->getData()->phone;
         $client->pendingPhones()->create(['phone' => $phone]);
+
+        Inertia::flash(config('app-notifications.profile.phone.store'));
 
         return redirect()->back();
     }
@@ -88,6 +91,8 @@ class PhoneController extends Controller
             abort(403);
         }
         $pendingPhone->delete();
+
+        Inertia::flash(config('app-notifications.profile.phone.destroy'));
 
         return redirect()->back();
     }

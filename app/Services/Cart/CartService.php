@@ -47,7 +47,7 @@ class CartService
             report($e);
 
             throw ValidationException::withMessages([
-                'cart' => 'Не удалось обновить корзину. Попробуйте ещё раз.',
+                'cart' => 'Не удалось обновить корзину. Попробуйте ещё раз!',
             ]);
         }
     }

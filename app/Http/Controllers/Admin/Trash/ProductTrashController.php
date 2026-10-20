@@ -52,7 +52,7 @@ class ProductTrashController extends Controller
         Gate::authorize('restore', $productTrash);
         $productTrash->restore();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.products.admin.trash.update'))->back();
     }
 
     /**
@@ -66,6 +66,6 @@ class ProductTrashController extends Controller
         Gate::authorize('forceDelete', $productTrash);
         $productTrash->forceDelete();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.products.admin.trash.destroy'))->back();
     }
 }

@@ -5,21 +5,25 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Inertia\Inertia;
 
 class VerificationController extends Controller
 {
-    public function repeatSendMail(Request $request): RedirectResponse
+    public function repeatSendMail(Request $request)
     {
         $request->user()->sendEmailVerificationNotification();
 
-        return redirect()->route('posts.index')->with('notification', 'auth.verify-mail');
+        Inertia::flash(config('app-notifications.auth.verify-mail'));
+
+        return redirect()->route('posts.index');
     }
 
-    public function verify(EmailVerificationRequest $request): RedirectResponse
+    public function verify(EmailVerificationRequest $request)
     {
         $request->fulfill();
 
-        return redirect()->route('posts.index')->with('notification', 'auth.verify');
+        Inertia::flash(config('app-notifications.auth.verify'));
+
+        return redirect()->route('posts.index');
     }
 }

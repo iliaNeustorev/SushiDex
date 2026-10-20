@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Services\Image\Service as ImageService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ImagesController extends Controller
 {
@@ -31,7 +32,7 @@ class ImagesController extends Controller
             $this->imageService->saveImage($model, $data);
         }
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.images.store'))->back();
     }
 
     /**
@@ -44,6 +45,6 @@ class ImagesController extends Controller
         Storage::disk('public')->delete($image->path);
         $image->delete();
 
-        return redirect()->back();
+        return Inertia::flash(config('app-notifications.images.destroy'))->back();
     }
 }

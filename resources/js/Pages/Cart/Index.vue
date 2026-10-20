@@ -297,6 +297,16 @@ function sendFormOrder(): void {
     formOrder.submit(OrderRoutes.store(), {
         preserveScroll: true,
         preserveState: true,
+        onError: (errors) => {
+            const errorMessage = errors.order
+                ?? errors.cart
+                ?? 'Не удалось создать заказ.';
+
+            router.flash({
+                type: 'error',
+                text: errorMessage,
+            });
+        },
     });
 }
 </script>

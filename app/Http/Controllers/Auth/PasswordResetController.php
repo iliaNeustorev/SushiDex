@@ -6,25 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
-use Inertia\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PasswordResetController extends Controller
 {
-    public function create(): Response
+    public function create()
     {
         return Inertia::render('Auth/ForgotPassword', []);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate(['email' => 'required|email']);
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
-        return $status === Password::RESET_LINK_SENT
-            ? redirect()->route('login')->with('notification', 'password.reset.email')
-            : back()->withErrors(['email' => __($status)]);
+        if ($status === Password::RESET_LINK_SENT) {
+            Inertia::flash(config('app-notifications.password.reset.email'));
+
+            return redirect()->route('login');
+        } else {
+            return back()->withErrors(['email' => __($status)]);
+        }
     }
 }

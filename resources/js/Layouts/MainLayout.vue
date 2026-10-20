@@ -1,5 +1,6 @@
 <template>
     <VApp class="sushi-page">
+        <SystemNotify />
         <VAppBar class="site-app-bar px-md-4" color="#151514" flat>
             <template #prepend>
                 <VAppBarNavIcon
@@ -181,6 +182,7 @@ import CartRoutes from "~routes/Client/CartController.ts";
 import type {CartPayload} from '~vue/types/cart';
 import storageHelper from "~vue/utils/storage";
 import OrderController from "~routes/Client/OrderController.ts";
+import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
 
 const page = usePage<{ user: UserAuthResource | null, cart: CartPayload; checkActualOrder: boolean }>();
 const user = computed(() => page.props.user)

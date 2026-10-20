@@ -11,12 +11,10 @@ use App\Http\Resources\Users\UserProfileResource;
 use App\Services\Image\Service;
 use App\Services\Order\OrderService;
 use Exception;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Inertia\Response;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class ProfileController extends Controller
@@ -29,7 +27,7 @@ class ProfileController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response|RedirectResponse
+    public function index(Request $request)
     {
         $client = $request->user()->loadMissing([
             'phone',
@@ -57,11 +55,13 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveRequest $request): RedirectResponse
+    public function update(SaveRequest $request)
     {
         $data = $request->getData()->toArray();
         $user = $request->user();
         $user->update($data);
+
+        Inertia::flash(config('app-notifications.profile.update'));
 
         return redirect()->back();
     }
@@ -70,7 +70,7 @@ class ProfileController extends Controller
      * @throws InvalidDataClass
      * @throws Exception
      */
-    public function changeAvatar(ChangeAvatarRequest $request): RedirectResponse
+    public function changeAvatar(ChangeAvatarRequest $request)
     {
         $client = $request->user()->loadMissing('image');
         $data = $request->getData();
@@ -83,31 +83,41 @@ class ProfileController extends Controller
         ];
         $checkSave = $this->imageService->saveOneImage($client, $data);
 
-        return $checkSave
-            ? redirect()->back()
-            : redirect()->back()->withErrors(['image' => 'Не удалось загрузить файл попробуйте позднее.']);
+        if ($checkSave) {
+            Inertia::flash(config('app-notifications.profile.change-avatar'));
+        } else {
+            Inertia::flash(config('app-notifications.profile.change-avatar-fail'));
+        }
+
+        return redirect()->back();
     }
 
     /**
      * @throws Exception
      */
-    public function destroyAvatar(Request $request): RedirectResponse
+    public function destroyAvatar(Request $request)
     {
         $client = $request->user()->loadMissing('image');
         $checkDelete = $this->imageService->deleteOneImage($client);
 
-        return $checkDelete
-            ? redirect()->back()
-            : redirect()->back()->withErrors(['image' => 'Произошла ошибка попробуйте позднее.']);
+        if ($checkDelete) {
+            Inertia::flash(config('app-notifications.profile.delete-avatar'));
+        } else {
+            Inertia::flash(config('app-notifications.profile.change-avatar-fail'));
+        }
+
+        return redirect()->back();
     }
 
-    public function changePassword(ChangePasswordRequest $request): RedirectResponse
+    public function changePassword(ChangePasswordRequest $request)
     {
         $data = $request->getData();
         $request->user()->forceFill([
             'password' => Hash::make($data->password),
             'remember_token' => Str::random(60),
         ])->save();
+
+        Inertia::flash(config('app-notifications.profile.change-password'));
 
         return redirect()->back();
     }

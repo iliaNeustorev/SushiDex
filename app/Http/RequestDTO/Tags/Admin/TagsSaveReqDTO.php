@@ -13,7 +13,7 @@ class TagsSaveReqDTO extends Data
 {
     public function __construct(
         #[
-            Min(3),
+            Min(2),
             Max((16)),
             AlphaDash,
             Unique('tags', ignore: new RouteParameterReference('tag', 'id', true))
@@ -21,7 +21,7 @@ class TagsSaveReqDTO extends Data
         public string $url,
 
         #[
-            Min(3),
+            Min(2),
             Max((32))
         ]
         public string $title,
