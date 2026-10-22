@@ -5,7 +5,7 @@
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Пользователи</span>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol>
@@ -48,24 +48,24 @@
                 <VCardText>
                     <VDataTableServer
                         :items="users.data"
-                        :itemsLength="users.total"
+                        :items-length="users.total"
                         :items-per-page="queryLocal.batch ?? 10"
                         :page="queryLocal.page ?? 1"
                         :items-per-page-options="[
-							{ title: '10', value: 10 },
-							{ title: '20', value: 20 },
-							{ title: '50', value: 50 }
-						]"
+                            { title: '10', value: 10 },
+                            { title: '20', value: 20 },
+                            { title: '50', value: 50 }
+                        ]"
                         :headers="[
-							{ key: 'id', title: 'ID' },
-							{ key: 'name', title: 'ФИО', sortable: false },
-							{ key: 'address', title: 'Адрес', sortable: false },
-							{ key: 'phone', title: 'Телефон' },
-							{ key:'verified_at', title:'Верификация номера' },
-							{ key: 'block', title: 'Бан', align: 'center' },
-							{ key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
-							{ key: 'created_at', title: 'Дата регистрации' },
-						]"
+                            { key: 'id', title: 'ID' },
+                            { key: 'name', title: 'ФИО', sortable: false },
+                            { key: 'address', title: 'Адрес', sortable: false },
+                            { key: 'phone', title: 'Телефон' },
+                            { key:'verified_at', title:'Верификация номера' },
+                            { key: 'block', title: 'Бан', align: 'center' },
+                            { key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
+                            { key: 'created_at', title: 'Дата регистрации' },
+                        ]"
                         :sort-by="sortAdapter.sortBy.value"
                         @update:page="queryLocal.page = $event"
                         @update:items-per-page="queryLocal.batch = $event"
