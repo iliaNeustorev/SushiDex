@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\User;
 use App\Notifications\Client\OrderCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -57,6 +59,39 @@ class NotificationControllerTest extends TestCase
 
         $this->get(route('notifications.index', ['all' => 0]))
             ->assertOk()->assertInertia(fn (Assert $page) => $page->has('notifications', 0));
+    }
+
+    public function test_switching_filter_resets_collection_and_returns_updated_query_and_pagination(): void
+    {
+        $user = User::factory()->create();
+        $this->notification($user);
+        for ($i = 0; $i < 6; $i++) {
+            $this->notification($user, true);
+        }
+
+        $this->actingAs($user)->withHeaders([
+            'X-Inertia' => 'true',
+            'X-Inertia-Version' => app(HandleInertiaRequests::class)->version(Request::create('/notifications')),
+            'X-Inertia-Partial-Component' => 'Notifications/Index',
+            'X-Inertia-Partial-Data' => 'notifications,query,page,lastPage,checkUnreadNotify',
+            'X-Inertia-Reset' => 'notifications',
+        ]);
+
+        $all = $this->get(route('notifications.index', ['all' => 1]))
+            ->assertOk()
+            ->assertJsonCount(5, 'props.notifications')
+            ->assertJsonPath('props.query.all', true)
+            ->assertJsonPath('props.page', 1)
+            ->assertJsonPath('props.lastPage', 2);
+        $this->assertNotContains('notifications', $all->json('mergeProps') ?? []);
+
+        $unread = $this->get(route('notifications.index', ['all' => 0]))
+            ->assertOk()
+            ->assertJsonCount(1, 'props.notifications')
+            ->assertJsonPath('props.query.all', false)
+            ->assertJsonPath('props.page', 1)
+            ->assertJsonPath('props.lastPage', 1);
+        $this->assertNotContains('notifications', $unread->json('mergeProps') ?? []);
     }
 
     public function test_invalid_filter_is_rejected(): void

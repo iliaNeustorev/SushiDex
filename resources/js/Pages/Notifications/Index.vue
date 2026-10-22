@@ -16,7 +16,7 @@
                     />
                     <VSpacer />
                     <VCheckbox
-                        v-model="showAllNotifications"
+                        v-model="query.all"
                         label="Показать все"
                         color="success"
                         @update:model-value="showAll"
@@ -98,7 +98,7 @@ import MainLayout from '~vue/Layouts/MainLayout.vue';
 import {formatDate} from '~vue/shared/formatters.ts';
 import NotificationRoutes from '~routes/Client/NotificationController.ts';
 import {Link, router} from '@inertiajs/vue3';
-import {ref, shallowRef, watch} from 'vue';
+import {shallowRef} from 'vue';
 
 const {notifications, query = {all: false}, lastPage, page = 1, checkUnreadNotify} = defineProps<{
     query: NotificationsQuery;
@@ -109,11 +109,6 @@ const {notifications, query = {all: false}, lastPage, page = 1, checkUnreadNotif
 }>();
 
 const loadingRead = shallowRef(false);
-const showAllNotifications = ref(query.all ?? false);
-
-watch(() => query.all, (all) => {
-    showAllNotifications.value = all ?? false;
-});
 
 function readAll(): void {
     loadingRead.value = true;
@@ -133,7 +128,7 @@ function nextPage(): void {
     router.visit(NotificationRoutes.index({
         query: {
             page: page + 1,
-            all: showAllNotifications.value,
+            all: query.all,
         },
     }), {
         preserveScroll: true,
@@ -142,8 +137,9 @@ function nextPage(): void {
 }
 
 function showAll(): void {
-    router.visit(NotificationRoutes.index({query: {all: showAllNotifications.value}}), {
+    router.visit(NotificationRoutes.index({query: {all: query.all}}), {
         reset: ['notifications'],
+        only: ['notifications', 'query', 'page', 'lastPage', 'checkUnreadNotify'],
     });
 }
 </script>
