@@ -24,6 +24,16 @@
                 </div>
             </div>
         </div>
+        <template #actions>
+            <VBtn
+                color="white"
+                variant="text"
+                aria-label="Закрыть уведомление"
+                @click="visible = false"
+            >
+                x
+            </VBtn>
+        </template>
     </VSnackbar>
 </template>
 
