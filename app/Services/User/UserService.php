@@ -12,6 +12,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class UserService
 {
+    private const NOTIFICATIONS_PER_PAGE = 5;
+
     public function __construct(
         private readonly SystemHelperInterface $systemHelper,
     ) {}
@@ -65,5 +67,25 @@ class UserService
     public function changeAddress(User $user, string $address): void
     {
         $user->update(['address' => $address]);
+    }
+
+    public function getNotifications(User $user, array $payload): LengthAwarePaginator
+    {
+        $notifications = ($payload['all'] ?? false)
+            ? $user->notifications()
+            : $user->unreadNotifications();
+
+        return $notifications->orderByDesc('id')->paginate(self::NOTIFICATIONS_PER_PAGE);
+    }
+
+    public function readAllNotifications(User $user): void
+    {
+        $user->unreadNotifications()->update(['read_at' => now()]);
+    }
+
+    public function readNotification(User $user, string $id): void
+    {
+        $notification = $user->unreadNotifications()->where('id', $id)->first();
+        $notification?->markAsRead();
     }
 }

@@ -65,6 +65,7 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'checkActualOrder' => fn () => $user ? Order::actualOrder($user->id)->exists() : false,
+            'checkUnreadNotify' => fn () => $user ? $user->unreadNotifications()->exists() : false,
         ]);
     }
 }

@@ -26,7 +26,12 @@ import {
     mdiCheckCircleOutline,
     mdiCloseCircleOutline,
     mdiCogs,
-    mdiCheck
+    mdiCheck,
+    mdiAccountOutline,
+    mdiLogout,
+    mdiBellOutline,
+    mdiBellRing,
+    mdiRead
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -51,6 +56,11 @@ aliases['mdiCheckOutline'] = mdiCheckCircleOutline
 aliases['mdiCloseOutline'] = mdiCloseCircleOutline
 aliases['mdiCogs'] = mdiCogs
 aliases['mdiCheck'] = mdiCheck
+aliases['accountOutline'] = mdiAccountOutline
+aliases['logout'] = mdiLogout
+aliases['bellOutline'] = mdiBellOutline
+aliases['bellRing'] = mdiBellRing
+aliases['read'] = mdiRead
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

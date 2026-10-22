@@ -85,6 +85,13 @@ export type ConfirmCodeReqDTO = {
 code: string;
 id: number;
 };
+export type DatabaseNotificationResource = {
+id: string;
+type: string;
+data: NotificationPayloadResource;
+read_at: string | null;
+created_at: string;
+};
 export type GeneralPagination = {
 page: number;
 total: number;
@@ -110,6 +117,14 @@ export type LoginReqDTO = {
 email: string;
 password: string;
 remember: boolean;
+};
+export type NotificationPayloadResource = {
+message: string;
+url: string;
+sender: string;
+};
+export type NotificationsQuery = {
+all?: boolean;
 };
 export type OrderAdminHistoryResource = {
 status_text: string;

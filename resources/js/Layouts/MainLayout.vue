@@ -9,11 +9,12 @@
                     @click="drawer = !drawer"
                 />
             </template>
-
             <Link :href="GeneralRoutes.index().url" class="brand light" title="SushiDex — на главную">
-                <span class="brand-mark">よ</span><span>SushiDex</span>
+                <span class="brand-mark">よ</span><span>SushiDex </span>
             </Link>
-
+            <a class="ml-2 phone" href="tel:+74951234567">
+                <span>Ежедневно 11:00–23:00</span>+7 495 123-45-67
+            </a>
             <template v-if="$vuetify.display.mdAndUp">
                 <VBtn
                     v-for="item in mainMenu"
@@ -25,7 +26,7 @@
                     {{ item.title }}
                 </VBtn>
                 <VBadge
-                    v-if="checkActualOrder"
+                    :model-value="checkActualOrder"
                     location="top right"
                     color="success"
                     dot
@@ -35,17 +36,9 @@
                         class="ms-4 text-none"
                         variant="text"
                     >
-                        Текущие заказы
+                        {{ checkActualOrder ? 'Текущие заказы' : 'Заказы' }}
                     </VBtn>
                 </VBadge>
-                <VBtn
-                    v-else
-                    :href="OrderController.index().url"
-                    class="ms-4 text-none"
-                    variant="text"
-                >
-                    Заказы
-                </VBtn>
 
             </template>
             <VSpacer />
@@ -72,28 +65,34 @@
                         {{ cartTotal }}
                     </span>
                 </div>
-                <a class="phone" href="tel:+74951234567">
-                    <span>Ежедневно 11:00–23:00</span>+7 495 123-45-67
-                </a>
                 <VMenu
                     v-if="user"
                     content-class="user-menu"
                     location="bottom end"
                     :offset="10"
                 >
+
                     <template #activator="{ props: menuProps }">
-                        <VBtn
-                            v-bind="menuProps"
-                            class="avatar-button ms-3"
-                            icon
-                            title="Открыть меню пользователя"
+                        <VBadge
+                            :model-value="checkUnreadNotify"
+                            location="top right"
+                            color="warning"
+                            dot
+                            title="У вас не прочитанное сообщение"
                         >
-                            <Avatar
-                                :user="user"
-                                :size="36"
-                                :font-size="18"
-                            />
-                        </VBtn>
+                            <VBtn
+                                v-bind="menuProps"
+                                class="avatar-button ms-3"
+                                icon
+                                title="Открыть меню пользователя"
+                            >
+                                <Avatar
+                                    :user="user"
+                                    :size="36"
+                                    :font-size="18"
+                                />
+                            </VBtn>
+                        </VBadge>
                     </template>
 
                     <VList class="user-menu-list" density="comfortable">
@@ -111,12 +110,17 @@
                         <VDivider />
                         <div class="user-menu-actions">
                             <VListItem
+                                :href="NotificationRoutes.index().url"
+                                :prepend-icon="checkUnreadNotify ? '$bellRing' : '$bellOutline'"
+                                title="Уведомления"
+                            />
+                            <VListItem
                                 :href="ProfileRoutes.index().url"
-                                prepend-icon="mdi-account-outline"
+                                prepend-icon="$accountOutline"
                                 title="Личный кабинет"
                             />
                             <VListItem
-                                prepend-icon="mdi-logout"
+                                prepend-icon="$logout"
                                 title="Выйти"
                                 :disabled="logoutForm.processing"
                                 @click="logout"
@@ -183,9 +187,16 @@ import type {CartPayload} from '~vue/types/cart';
 import storageHelper from "~vue/utils/storage";
 import OrderController from "~routes/Client/OrderController.ts";
 import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
+import NotificationRoutes from "~routes/Client/NotificationController.ts";
 
-const page = usePage<{ user: UserAuthResource | null, cart: CartPayload; checkActualOrder: boolean }>();
+const page = usePage<{
+    user: UserAuthResource | null,
+    cart: CartPayload;
+    checkActualOrder: boolean,
+    checkUnreadNotify: boolean
+}>();
 const user = computed(() => page.props.user)
+const checkUnreadNotify = computed(() => page.props.checkUnreadNotify);
 const checkActualOrder = computed(() => page.props.checkActualOrder)
 const cart = useCartStore();
 cart.setAuthenticated(user.value !== null);

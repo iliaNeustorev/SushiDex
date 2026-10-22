@@ -9,11 +9,14 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Notifications\Admin\OrderCreated as AdminOrderCreated;
+use App\Notifications\Client\OrderCreated;
 use App\Services\Refund\RefundService;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -80,9 +83,15 @@ class OrderService
             Cart::query()->whereKey($items->modelKeys())->delete();
             $order->load('items.product');
 
+            $user->notify(new OrderCreated($order));
+
+            if (config('services.slack.notifications.channel') && config('services.slack.notifications.bot_user_oauth_token')) {
+                Notification::route('slack', config('services.slack.notifications.channel'))
+                    ->notify(new AdminOrderCreated($order));
+            }
+
             DB::commit();
 
-            // TODO: добавить уведовмление админу и клиенту о успешном заказе
             return $order;
         } catch (ValidationException $e) {
             DB::rollBack();

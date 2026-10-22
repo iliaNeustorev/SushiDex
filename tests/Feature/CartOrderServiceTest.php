@@ -8,9 +8,13 @@ use App\Interfaces\PaymentProviderInterface;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\Admin\OrderCreated as AdminOrderCreated;
+use App\Notifications\Client\OrderCreated;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Notification;
 use Mockery;
 use Tests\TestCase;
 
@@ -101,6 +105,11 @@ class CartOrderServiceTest extends TestCase
 
     public function test_create_calculates_total_snapshots_price_and_clears_cart(): void
     {
+        Notification::fake();
+        config([
+            'services.slack.notifications.channel' => '#orders',
+            'services.slack.notifications.bot_user_oauth_token' => 'test-token',
+        ]);
         $user = User::factory()->create();
         $product = $this->product('10.25');
         app(CartService::class)->put($user, $product, 2);
@@ -119,6 +128,33 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame(OrderStatus::NEW, $order->status);
         $this->assertSame(TypePaid::IN_PICKUP_LOCATION, $order->type_paid);
         $this->assertFalse($order->need_delivery);
+        Notification::assertSentTo($user, OrderCreated::class,
+            fn (OrderCreated $notification): bool => $notification->order->is($order) && $notification->afterCommit);
+        Notification::assertSentOnDemand(AdminOrderCreated::class,
+            fn (AdminOrderCreated $notification, array $channels, AnonymousNotifiable $notifiable): bool => $notification->order->is($order)
+                && $notification->afterCommit
+                && $channels === ['slack']
+                && $notifiable->routes['slack'] === '#orders');
+    }
+
+    public function test_missing_slack_configuration_does_not_prevent_order_creation(): void
+    {
+        Notification::fake();
+        config([
+            'services.slack.notifications.channel' => null,
+            'services.slack.notifications.bot_user_oauth_token' => null,
+        ]);
+        $user = User::factory()->create();
+        app(CartService::class)->put($user, $this->product('10.25'), 1);
+
+        $order = app(OrderService::class)->create($user, [
+            'type' => TypePaid::IN_PICKUP_LOCATION->value,
+            'need_delivery' => false,
+        ]);
+
+        $this->assertTrue($order->exists);
+        Notification::assertSentTo($user, OrderCreated::class);
+        Notification::assertNotSentTo(new AnonymousNotifiable, AdminOrderCreated::class);
     }
 
     private function product(string $price): Product

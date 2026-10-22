@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\Client\PhoneController;
 use App\Http\Controllers\Client\ProfileController;
@@ -22,6 +23,8 @@ Route::get('/', [GeneralController::class, 'index'])->name('home');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
 Route::middleware(['auth', 'can:is-blocked'])->group(function () {
+    Route::post('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::resource('notifications', NotificationController::class)->only(['index', 'update']);
     Route::prefix('posts')->group(function () {
         Route::put('/{post}/moderating', [PostController::class, 'moderating'])->name('posts.moderating');
     });

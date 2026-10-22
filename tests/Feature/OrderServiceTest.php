@@ -19,6 +19,7 @@ use App\Services\Order\OrderService;
 use App\Services\Refund\RefundService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Mockery;
 use Tests\TestCase;
@@ -58,6 +59,7 @@ class OrderServiceTest extends TestCase
 
     public function test_user_cannot_create_more_than_two_actual_orders(): void
     {
+        Notification::fake();
         $user = User::factory()->create();
 
         foreach ([OrderStatus::NEW, OrderStatus::PROCESSING] as $status) {
@@ -78,6 +80,7 @@ class OrderServiceTest extends TestCase
 
         $this->assertSame(2, $user->orders()->actualStatus()->count());
         $this->assertSame(1, $user->products()->count());
+        Notification::assertNothingSent();
     }
 
     public function test_delivery_and_courier_payment_require_an_address(): void
