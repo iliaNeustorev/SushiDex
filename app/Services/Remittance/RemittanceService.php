@@ -11,6 +11,8 @@ use App\Interfaces\PaymentProviderInterface;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\Remittance;
+use App\Notifications\Client\Remittances\Refund as NotifyRefund;
+use App\Notifications\Client\Remittances\Success;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -128,6 +130,9 @@ class RemittanceService
             $remittance->update([
                 'status' => Status::REFUND,
             ]);
+
+            $remittance->loadMissing('order.user');
+            $remittance->order->user->notify(new NotifyRefund($remittance));
         });
     }
 
@@ -149,6 +154,8 @@ class RemittanceService
                         'payed_at' => Carbon::now(),
                         'status' => Status::PAID,
                     ]);
+                    $remittance->loadMissing('order.user');
+                    $remittance->order->user->notify(new Success($remittance));
                 }
                 if ($payloadWebhook->status === RemittanceWebhookDTO::STATUS_WAITING && ! $remittance->paid && $remittance->status !== Status::PAID) {
                     $remittance->update([

@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\User;
-use App\Notifications\Client\OrderCreated;
+use App\Notifications\Client\Orders\OrderCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -37,6 +37,7 @@ class NotificationControllerTest extends TestCase
             ->where('notifications.0.id', $notification->id)
             ->where('notifications.0.read_at', null)
             ->where('notifications.0.data.sender', 'Система')
+            ->where('notifications.0.data.type', 'success')
             ->where('checkUnreadNotify', true));
     }
 
@@ -132,12 +133,49 @@ class NotificationControllerTest extends TestCase
         $this->assertNull($other->fresh()->read_at);
     }
 
+    public function test_opening_notification_marks_it_as_read_and_redirects_to_its_url(): void
+    {
+        $user = User::factory()->create();
+        $notification = $this->notification($user);
+
+        $this->actingAs($user)
+            ->patch(route('notifications.update', $notification->id), ['redirect' => true])
+            ->assertRedirect('/orders/123');
+
+        $this->assertNotNull($notification->fresh()->read_at);
+    }
+
+    public function test_redirect_cannot_open_another_users_notification(): void
+    {
+        $notification = $this->notification(User::factory()->create());
+
+        $this->actingAs(User::factory()->create())
+            ->from('/notifications')
+            ->patch(route('notifications.update', $notification->id), ['redirect' => true])
+            ->assertRedirect('/notifications');
+
+        $this->assertNull($notification->fresh()->read_at);
+    }
+
+    public function test_invalid_redirect_is_rejected(): void
+    {
+        $user = User::factory()->create();
+        $notification = $this->notification($user);
+
+        $this->actingAs($user)
+            ->patchJson(route('notifications.update', $notification->id), ['redirect' => 'invalid'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('redirect');
+
+        $this->assertNull($notification->fresh()->read_at);
+    }
+
     private function notification(User $user, bool $read = false): DatabaseNotification
     {
         return $user->notifications()->create([
             'id' => Str::uuid()->toString(),
             'type' => OrderCreated::class,
-            'data' => ['message' => 'Новый заказ', 'url' => '/orders/123', 'sender' => 'Система'],
+            'data' => ['message' => 'Новый заказ', 'url' => '/orders/123', 'sender' => 'Система', 'type' => 'success'],
             'read_at' => $read ? now()->subMinute() : null,
         ]);
     }

@@ -8,8 +8,8 @@ use App\Interfaces\PaymentProviderInterface;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
-use App\Notifications\Admin\OrderCreated as AdminOrderCreated;
-use App\Notifications\Client\OrderCreated;
+use App\Notifications\Admin\Orders\OrderCreated as AdminOrderCreated;
+use App\Notifications\Client\Orders\OrderCreated;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -128,13 +128,18 @@ class CartOrderServiceTest extends TestCase
         $this->assertSame(OrderStatus::NEW, $order->status);
         $this->assertSame(TypePaid::IN_PICKUP_LOCATION, $order->type_paid);
         $this->assertFalse($order->need_delivery);
-        Notification::assertSentTo($user, OrderCreated::class,
-            fn (OrderCreated $notification): bool => $notification->order->is($order) && $notification->afterCommit);
-        Notification::assertSentOnDemand(AdminOrderCreated::class,
+        Notification::assertSentTo(
+            $user,
+            OrderCreated::class,
+            fn (OrderCreated $notification): bool => $notification->order->is($order) && $notification->afterCommit
+        );
+        Notification::assertSentOnDemand(
+            AdminOrderCreated::class,
             fn (AdminOrderCreated $notification, array $channels, AnonymousNotifiable $notifiable): bool => $notification->order->is($order)
                 && $notification->afterCommit
                 && $channels === ['slack']
-                && $notifiable->routes['slack'] === '#orders');
+                && $notifiable->routes['slack'] === '#orders'
+        );
     }
 
     public function test_missing_slack_configuration_does_not_prevent_order_creation(): void

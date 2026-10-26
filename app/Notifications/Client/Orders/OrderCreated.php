@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Client;
+namespace App\Notifications\Client\Orders;
 
 use App\Models\Order;
 use Carbon\Carbon;
@@ -58,7 +58,7 @@ class OrderCreated extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('/orders/'.$this->order->id);
+        $url = url('/orders/' . $this->order->id);
 
         return (new MailMessage)
             ->greeting('Здравствуйте!')
@@ -76,8 +76,9 @@ class OrderCreated extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Создан новый заказ на сумму '.$this->order->total_price.'р. !',
-            'url' => '/orders/'.$this->order->id,
+            'message' => 'Создан новый заказ на сумму ' . $this->order->total_price . 'р. !',
+            'url' => '/orders/' . $this->order->id,
+            'type' => 'success',
             'sender' => 'Система',
         ];
     }
@@ -90,7 +91,7 @@ class OrderCreated extends Notification implements ShouldQueue
     public function withDelay(object $notifiable): array
     {
         return [
-            'mail' => Carbon::now()->plus(minutes: 5),
+            'mail' => Carbon::now()->plus(minutes: 1),
         ];
     }
 
@@ -99,9 +100,8 @@ class OrderCreated extends Notification implements ShouldQueue
         if ($channel !== 'mail') {
             return true;
         }
-
-        return ! $notifiable->notifications()
-            ->whereKey($this->id)
+        return !$notifiable->notifications()
+            ->where('id', $this->id)
             ->whereNotNull('read_at')
             ->exists();
     }

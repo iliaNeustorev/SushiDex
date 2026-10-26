@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Admin;
+namespace App\Notifications\Admin\Orders;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
@@ -11,18 +11,37 @@ use Illuminate\Notifications\Slack\BlockKit\Blocks\ContextBlock;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
 
-class OrderCreated extends Notification implements ShouldQueue
+class CancelOrder extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    /**
+     * Количество попыток выполнения уведомления.
+     *
+     * @var int
+     */
+    public $tries = 5;
+
+    /**
+     * Количество секунд, в течение которых уведомление может выполняться до истечения времени ожидания.
+     *
+     * @var int
+     */
+    public $timeout = 60;
+
+    /**
+     * Максимальное количество необработанных исключений до завершения с ошибкой.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
 
     /**
      * Create a new notification instance.
      */
     public function __construct(
         public Order $order
-    ) {
-        $this->afterCommit();
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -37,10 +56,10 @@ class OrderCreated extends Notification implements ShouldQueue
     public function toSlack(object $notifiable): SlackMessage
     {
         return (new SlackMessage)
-            ->text("Новый заказ №{$this->order->id} на сумму {$this->order->total_price} ₽")
-            ->headerBlock("🍣 Новый заказ №{$this->order->id}")
+            ->text("Заказ №{$this->order->id} на сумму {$this->order->total_price} ₽")
+            ->headerBlock("🍣 Отмена заказа №{$this->order->id}")
             ->sectionBlock(function (SectionBlock $block): void {
-                $block->text('Поступил новый заказ. Проверьте детали и примите его в работу.');
+                $block->text('Заказ был отменен клиентом.');
             })
             ->sectionBlock(function (SectionBlock $block): void {
                 $block->field("*Сумма заказа*\n{$this->order->total_price} ₽")->markdown();
@@ -49,9 +68,9 @@ class OrderCreated extends Notification implements ShouldQueue
             })
             ->dividerBlock()
             ->actionsBlock(function (ActionsBlock $block): void {
-                $block->button('Открыть заказы')
+                $block->button('Посмотреть подробнее')
                     ->id('open_actual_orders')
-                    ->url(route('admin.orders.actual'))
+                    ->url(route('admin.orders.index', ['filter' => ['id' => $this->order->id]]))
                     ->primary();
             })
             ->contextBlock(function (ContextBlock $block): void {

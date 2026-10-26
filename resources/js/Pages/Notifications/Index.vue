@@ -33,7 +33,10 @@
                         v-for="notification in notifications"
                         :key="notification.id"
                     >
-                        <div class="d-flex align-center justify-space-between">
+                        <div
+                            class="d-flex align-center justify-space-between"
+                            :class="selectNotifyColor(notification.data.type)"
+                        >
                             <VListItem
                                 :title="notification.data.message"
                                 :subtitle="formatDate(notification.created_at)"
@@ -56,13 +59,13 @@
                                 </template>
                             </VListItem>
                             <VSpacer />
-                            <VListItem v-if="notification.data.url && notification.read_at === null">
-                                <Link
-                                    :href="notification.data.url"
+                            <VListItem v-if="notification.data.url">
+                                <VBtn
+                                    @click="moveToUrl(notification)"
                                     class="text-decoration-none text-green-darken-3"
                                 >
                                     Перейти
-                                </Link>
+                                </VBtn>
                             </VListItem>
                         </div>
                         <VDivider />
@@ -108,6 +111,13 @@ const {notifications, query = {all: false}, lastPage, page = 1, checkUnreadNotif
     checkUnreadNotify: boolean;
 }>();
 
+const selectNotifyColor = (type: string) => ({
+    '': type === 'success',
+    'notify-warning': type === 'warning',
+    'notify-error': type === 'error',
+});
+
+
 const loadingRead = shallowRef(false);
 
 function readAll(): void {
@@ -142,4 +152,23 @@ function showAll(): void {
         only: ['notifications', 'query', 'page', 'lastPage', 'checkUnreadNotify'],
     });
 }
+
+function moveToUrl(notification: DatabaseNotificationResource) {
+    if (notification.read_at === null) {
+        router.visit(NotificationRoutes.update(notification.id, {query: {redirect: true}}))
+    } else {
+        router.visit(notification.data.url)
+    }
+}
+
 </script>
+
+<style scoped>
+.notify-error {
+    background: #d86a6a1f;
+}
+
+.notify-warning {
+    background: #fbf8442e;
+}
+</style>

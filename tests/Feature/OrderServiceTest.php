@@ -14,6 +14,9 @@ use App\Models\Product;
 use App\Models\Refund;
 use App\Models\Remittance;
 use App\Models\User;
+use App\Notifications\Client\Orders\CancelOrder;
+use App\Notifications\Client\Orders\OrderUpdateSettings;
+use App\Notifications\Client\Orders\OrderUpdateStatus;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 use App\Services\Refund\RefundService;
@@ -107,6 +110,7 @@ class OrderServiceTest extends TestCase
 
     public function test_order_status_follows_allowed_transitions(): void
     {
+        Notification::fake();
         $service = app(OrderService::class);
         $order = $this->order(User::factory()->create());
 
@@ -115,6 +119,7 @@ class OrderServiceTest extends TestCase
 
         $service->updateStatus($order->fresh(), OrderStatus::COMPLETED);
         $this->assertSame(OrderStatus::COMPLETED, $order->fresh()->status);
+        Notification::assertSentToTimes($order->user, OrderUpdateStatus::class, 2);
 
         $this->expectException(ValidationException::class);
         $service->updateStatus($order->fresh(), OrderStatus::CANCELLED);
@@ -191,6 +196,7 @@ class OrderServiceTest extends TestCase
 
     public function test_order_owner_can_cancel_an_unpaid_order(): void
     {
+        Notification::fake();
         $user = User::factory()->create();
         $order = $this->order($user);
         $completedAt = Carbon::parse('2026-10-15 12:30:00');
@@ -203,6 +209,8 @@ class OrderServiceTest extends TestCase
         $order->refresh();
         $this->assertSame(OrderStatus::CANCELLED, $order->status);
         $this->assertTrue($order->completed_at->equalTo($completedAt));
+        Notification::assertSentTo($user, CancelOrder::class,
+            fn (CancelOrder $notification): bool => $notification->order->is($order));
 
         $this->travelBack();
     }
@@ -331,6 +339,7 @@ class OrderServiceTest extends TestCase
 
     public function test_settings_can_be_partially_updated_and_manage_remittance(): void
     {
+        Notification::fake();
         $service = app(OrderService::class);
         $order = $this->order(User::factory()->create());
 
@@ -350,6 +359,10 @@ class OrderServiceTest extends TestCase
         $service->updateSettings($order->fresh(), ['type' => TypePaid::CASH_COURIER->value]);
         $this->assertSame(TypePaid::CASH_COURIER, $order->fresh()->type_paid);
         $this->assertDatabaseMissing('remittances', ['order_id' => $order->id]);
+        Notification::assertSentToTimes($order->user, OrderUpdateSettings::class, 3);
+        Notification::assertSentTo($order->user, OrderUpdateSettings::class,
+            fn (OrderUpdateSettings $notification): bool => $notification->payload['typePaid'] === TypePaid::IN_PICKUP_LOCATION
+                && $notification->payload['needDelivery'] === false);
     }
 
     public function test_paid_online_order_payment_type_cannot_be_changed(): void

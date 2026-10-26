@@ -10,5 +10,6 @@ class NotificationPayloadResource extends Data
         public string $message,
         public string $url,
         public string $sender,
+        public string $type,
     ) {}
 }

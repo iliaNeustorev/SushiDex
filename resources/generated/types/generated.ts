@@ -122,9 +122,13 @@ export type NotificationPayloadResource = {
 message: string;
 url: string;
 sender: string;
+type: string;
 };
 export type NotificationsQuery = {
 all?: boolean;
+};
+export type NotificationsUpdateDTO = {
+redirect?: boolean;
 };
 export type OrderAdminHistoryResource = {
 status_text: string;

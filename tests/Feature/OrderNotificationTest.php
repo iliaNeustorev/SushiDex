@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Enums\Orders\TypePaid;
 use App\Models\Order;
 use App\Models\User;
-use App\Notifications\Admin\OrderCreated as AdminOrderCreated;
-use App\Notifications\Client\OrderCreated;
+use App\Notifications\Admin\Orders\OrderCreated as AdminOrderCreated;
+use App\Notifications\Client\Orders\OrderCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Support\Str;
@@ -19,8 +19,12 @@ class OrderNotificationTest extends TestCase
     public function test_slack_card_contains_order_details_and_primary_url_button(): void
     {
         foreach ([true, false] as $delivery) {
-            $order = new Order(['id' => 123, 'total_price' => '2500.50',
-                'type_paid' => TypePaid::CARD_ONLINE, 'need_delivery' => $delivery]);
+            $order = new Order([
+                'id' => 123,
+                'total_price' => '2500.50',
+                'type_paid' => TypePaid::CARD_ONLINE,
+                'need_delivery' => $delivery,
+            ]);
             $notification = new AdminOrderCreated($order);
             $payload = $notification->toSlack(new \stdClass)->toArray();
 
@@ -46,7 +50,7 @@ class OrderNotificationTest extends TestCase
 
         $this->assertTrue($notification->afterCommit);
         $this->assertSame(['mail', 'database'], $notification->via($user));
-        $this->assertTrue($notification->withDelay($user)['mail']->equalTo(now()->addMinutes(5)));
+        $this->assertTrue($notification->withDelay($user)['mail']->equalTo(now()->addMinute()));
         app(DatabaseChannel::class)->send($user, $notification);
         $saved = $user->notifications()->sole();
         $this->assertSame('/orders/123', $saved->data['url']);

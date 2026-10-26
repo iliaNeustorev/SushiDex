@@ -9,8 +9,12 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
-use App\Notifications\Admin\OrderCreated as AdminOrderCreated;
-use App\Notifications\Client\OrderCreated;
+use App\Notifications\Admin\Orders\CancelOrder as AdminOrderCancel;
+use App\Notifications\Admin\Orders\OrderCreated as AdminOrderCreated;
+use App\Notifications\Client\Orders\CancelOrder;
+use App\Notifications\Client\Orders\OrderCreated;
+use App\Notifications\Client\Orders\OrderUpdateSettings;
+use App\Notifications\Client\Orders\OrderUpdateStatus;
 use App\Services\Refund\RefundService;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -83,12 +87,14 @@ class OrderService
             Cart::query()->whereKey($items->modelKeys())->delete();
             $order->load('items.product');
 
-            $user->notify(new OrderCreated($order));
+            DB::afterCommit(function () use ($order, $user) {
+                $user->notify(new OrderCreated($order));
 
-            if (config('services.slack.notifications.channel') && config('services.slack.notifications.bot_user_oauth_token')) {
-                Notification::route('slack', config('services.slack.notifications.channel'))
-                    ->notify(new AdminOrderCreated($order));
-            }
+                if (config('services.slack.notifications.channel') && config('services.slack.notifications.bot_user_oauth_token')) {
+                    Notification::route('slack', config('services.slack.notifications.channel'))
+                        ->notify(new AdminOrderCreated($order));
+                }
+            });
 
             DB::commit();
 
@@ -100,7 +106,6 @@ class OrderService
         } catch (Throwable $e) {
             DB::rollBack();
             report($e);
-            // TODO: добавить уведовмление админу и клиенту о неуспешном заказе
             throw ValidationException::withMessages([
                 'order' => 'Не удалось создать заказ. Попробуйте ещё раз.',
             ]);
@@ -128,6 +133,7 @@ class OrderService
 
     public function updateStatus(Order $order, OrderStatus $status): void
     {
+        $order->loadMissing('user');
         switch ($status) {
             case OrderStatus::PROCESSING:
                 if (in_array($order->status, [OrderStatus::NEW])) {
@@ -141,7 +147,8 @@ class OrderService
                     }
                     $order->update(['status' => OrderStatus::PROCESSING]);
 
-                    // TODO: отправить уведомление
+                    $order->user->notify(new OrderUpdateStatus($order));
+
                     return;
                 }
                 break;
@@ -152,7 +159,8 @@ class OrderService
                         'completed_at' => now(),
                     ]);
 
-                    // TODO: отправить уведомление
+                    $order->user->notify(new OrderUpdateStatus($order));
+
                     return;
                 }
                 break;
@@ -174,7 +182,8 @@ class OrderService
                         'completed_at' => Carbon::now(),
                     ]);
 
-                    // TODO: отправить уведомление
+                    $order->user->notify(new OrderUpdateStatus($order));
+
                     return;
                 }
                 break;
@@ -240,12 +249,20 @@ class OrderService
                     ->delete();
             }
 
+            $oldType = $order->type_paid;
+            $oldNeedDelivery = $order->need_delivery;
+
             $order->update([
                 'type_paid' => $type,
                 'need_delivery' => $needDelivery,
             ]);
 
-            // TODO: отправить уведомление
+            DB::afterCommit(function () use ($order, $oldType, $oldNeedDelivery) {
+                $order->user->notify(new OrderUpdateSettings($order, [
+                    'typePaid' => $oldType,
+                    'needDelivery' => $oldNeedDelivery,
+                ]));
+            });
 
             DB::commit();
         } catch (ValidationException $e) {
@@ -368,6 +385,14 @@ class OrderService
                 'completed_at' => Carbon::now(),
             ]);
         }
+
+        if (config('services.slack.notifications.channel') && config('services.slack.notifications.bot_user_oauth_token')) {
+            Notification::route('slack', config('services.slack.notifications.channel'))
+                ->notify(new AdminOrderCancel($order));
+        }
+
+        $order->loadMissing('user');
+        $order->user->notify(new CancelOrder($order));
     }
 
     public function getOrdersWithPaginateForClient(User $client, int $paginate = 5): LengthAwarePaginator

@@ -12,8 +12,11 @@ use App\Integrations\PaymentProvider\YKassaAdapter;
 use App\Models\Order;
 use App\Models\Remittance;
 use App\Models\User;
+use App\Notifications\Client\Remittances\Refund as RefundNotification;
+use App\Notifications\Client\Remittances\Success;
 use App\Services\Remittance\RemittanceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -22,6 +25,13 @@ use YooKassa\Model\Notification\NotificationEventType;
 class RemittanceWebhookTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Notification::fake();
+    }
 
     #[DataProvider('paymentEventProvider')]
     public function test_adapter_maps_yookassa_payment_events_to_internal_statuses(
@@ -48,6 +58,8 @@ class RemittanceWebhookTest extends TestCase
         $this->assertSame(RemittanceStatus::PAID, $remittance->status);
         $this->assertSame('succeeded', $remittance->payment_system_status);
         $this->assertNotNull($remittance->payed_at);
+        Notification::assertSentTo($remittance->order->user, Success::class,
+            fn (Success $notification): bool => $notification->remittance->is($remittance) && $notification->afterCommit);
     }
 
     public function test_repeated_succeeded_webhook_is_idempotent(): void
@@ -63,6 +75,7 @@ class RemittanceWebhookTest extends TestCase
         $this->service()->handleWebhook($payload);
 
         $this->assertTrue($updatedAt->equalTo($remittance->fresh()->updated_at));
+        Notification::assertSentToTimes($remittance->order->user, Success::class, 1);
     }
 
     #[DataProvider('pendingPaymentEventProvider')]
@@ -80,6 +93,7 @@ class RemittanceWebhookTest extends TestCase
         $this->assertSame(RemittanceStatus::AWAIT_PAID, $remittance->status);
         $this->assertSame($expectedStatus, $remittance->payment_system_status);
         $this->assertNull($remittance->payed_at);
+        Notification::assertNothingSent();
     }
 
     public function test_adapter_maps_refund_succeeded_event(): void
@@ -106,6 +120,8 @@ class RemittanceWebhookTest extends TestCase
         $this->assertSame('succeeded', $refund->external_system_status);
         $this->assertNotNull($refund->refunded_at);
         $this->assertSame(RemittanceStatus::REFUND, $remittance->status);
+        Notification::assertSentTo($remittance->order->user, RefundNotification::class,
+            fn (RefundNotification $notification): bool => $notification->remittance->is($remittance) && $notification->afterCommit);
     }
 
     public function test_repeated_refund_succeeded_webhook_is_idempotent(): void
@@ -121,6 +137,7 @@ class RemittanceWebhookTest extends TestCase
         $this->service()->handleWebhook($this->refundPayload());
 
         $this->assertTrue($updatedAt->equalTo($refund->fresh()->updated_at));
+        Notification::assertSentToTimes($remittance->order->user, RefundNotification::class, 1);
     }
 
     public static function paymentEventProvider(): array

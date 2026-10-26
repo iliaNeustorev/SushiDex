@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Helpers\Spattie\CustomSort\SortByFieldRelation;
 use App\Interfaces\SystemHelperInterface;
 use App\Models\User;
+use App\Notifications\Client\Profiles\UpdateAddress;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
@@ -67,6 +68,7 @@ class UserService
     public function changeAddress(User $user, string $address): void
     {
         $user->update(['address' => $address]);
+        $user->notify(new UpdateAddress($address));
     }
 
     public function getNotifications(User $user, array $payload): LengthAwarePaginator
@@ -83,9 +85,11 @@ class UserService
         $user->unreadNotifications()->update(['read_at' => now()]);
     }
 
-    public function readNotification(User $user, string $id): void
+    public function readNotification(User $user, string $id): ?string
     {
         $notification = $user->unreadNotifications()->where('id', $id)->first();
         $notification?->markAsRead();
+
+        return $notification?->data['url'] ?? null;
     }
 }

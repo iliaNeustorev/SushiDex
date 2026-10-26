@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Notifications\IndexRequest;
+use App\Http\RequestDTO\Notifications\NotificationsQuery;
+use App\Http\Requests\Notifications\UpdateRequest;
 use App\Http\Resources\Notifications\DatabaseNotificationResource;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
@@ -15,9 +16,9 @@ class NotificationController extends Controller
         public UserService $userService
     ) {}
 
-    public function index(IndexRequest $request)
+    public function index(Request $request)
     {
-        $query = $request->getData()->toArray();
+        $query = NotificationsQuery::validateAndCreate($request->query())->toArray();
         $user = $request->user();
 
         $notificationsPaginate = $this->userService->getNotifications($user, $query);
@@ -34,10 +35,14 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $notification)
+    public function update(UpdateRequest $request, string $notification)
     {
+        $query = $request->getData()->toArray();
         $user = $request->user();
-        $this->userService->readNotification($user, $notification);
+        $route = $this->userService->readNotification($user, $notification);
+        if (isset($query['redirect'], $route) && $query['redirect']) {
+            return redirect()->to($route);
+        }
 
         return redirect()->back();
     }
