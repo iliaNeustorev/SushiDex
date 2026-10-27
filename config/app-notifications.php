@@ -43,6 +43,10 @@ return [
             'type' => 'info',
             'text' => 'Профиль удален',
         ],
+        'delete-failed' => [
+            'type' => 'error',
+            'text' => 'Не удалось удалить профиль',
+        ],
         'update' => [
             'type' => 'success',
             'text' => 'Данные профиля успешно изменены!',

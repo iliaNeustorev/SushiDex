@@ -41,7 +41,8 @@ Route::middleware(['auth', 'can:is-blocked'])->group(function () {
 
         Route::post('/change-avatar', [ProfileController::class, 'changeAvatar'])->name('profile.change-avatar');
         Route::delete('/delete-avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.delete-avatar');
-        Route::put('/changePassword', [ProfileController::class, 'changePassword']);
+        Route::put('/changePassword', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+        Route::delete('/delete-profile', [ProfileController::class, 'destroyProfile'])->name('profile.delete-profile');
     });
 
     Route::prefix('cart')->group(function () {

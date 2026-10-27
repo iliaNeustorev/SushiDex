@@ -14,6 +14,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -73,5 +74,16 @@ class UserController extends Controller
         $this->userService->changeAddress($user, $address);
 
         return Inertia::flash(config('app-notifications.users.admin.change-address'))->back();
+    }
+
+    public function authUser(Request $request, User $user)
+    {
+        if ($user->id === Auth::id()) {
+            return redirect()->back();
+        }
+
+        $this->userService->authUser($request, $user);
+
+        return redirect()->route('home');
     }
 }

@@ -66,7 +66,7 @@ class OrderCreated extends Notification implements ShouldQueue
             ->sectionBlock(function (SectionBlock $block): void {
                 $block->field("*Сумма заказа*\n{$this->order->total_price} ₽")->markdown();
                 $block->field("*Оплата*\n{$this->order->type_paid->text()}")->markdown();
-                $block->field("*Получение*\n" . ($this->order->need_delivery ? '🚚 Доставка' : '🥡 Самовывоз'))->markdown();
+                $block->field("*Получение*\n".($this->order->need_delivery ? '🚚 Доставка' : '🥡 Самовывоз'))->markdown();
             })
             ->dividerBlock()
             ->actionsBlock(function (ActionsBlock $block): void {

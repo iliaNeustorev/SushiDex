@@ -10,10 +10,9 @@ use App\Http\Resources\Orders\Client\OrderPublicResource;
 use App\Http\Resources\Users\UserProfileResource;
 use App\Services\Image\Service;
 use App\Services\Order\OrderService;
+use App\Services\User\UserService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
@@ -21,7 +20,8 @@ class ProfileController extends Controller
 {
     public function __construct(
         private readonly Service $imageService,
-        private readonly OrderService $orderService
+        private readonly OrderService $orderService,
+        private readonly UserService $userService,
     ) {}
 
     /**
@@ -111,14 +111,22 @@ class ProfileController extends Controller
 
     public function changePassword(ChangePasswordRequest $request)
     {
-        $data = $request->getData();
-        $request->user()->forceFill([
-            'password' => Hash::make($data->password),
-            'remember_token' => Str::random(60),
-        ])->save();
+        $data = $request->getData()->toArray();
+
+        $this->userService->changePassword($request->user(), $data['password']);
 
         Inertia::flash(config('app-notifications.profile.change-password'));
 
         return redirect()->back();
+    }
+
+    public function destroyProfile(Request $request)
+    {
+        $user = $request->user();
+        $result = $this->userService->deleteProfile($request, $user);
+
+        return $result
+            ? redirect()->route('login')
+            : redirect()->back();
     }
 }

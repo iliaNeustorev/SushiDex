@@ -316,7 +316,13 @@ class OrderService
     public function getCompletedWithPaginate(array $query): LengthAwarePaginator
     {
         return QueryBuilder::for(Order::completedStatus())
-            ->with('products', 'remittance', 'user')
+            ->with(
+                [
+                    'products',
+                    'remittance',
+                    'user' => fn ($query) => $query->withTrashed(),
+                ]
+            )
             ->allowedFilters([
                 AllowedFilter::exact('id'),
                 AllowedFilter::exact('status'),

@@ -179,6 +179,40 @@ changePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     method: 'put',
 })
 
-const ProfileController = { index, update, changeAvatar, destroyAvatar, changePassword }
+/**
+* @see \App\Http\Controllers\Client\ProfileController::destroyProfile
+* @see app/Http/Controllers/Client/ProfileController.php:123
+* @route '/profile/delete-profile'
+*/
+export const destroyProfile = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroyProfile.url(options),
+    method: 'delete',
+})
+
+destroyProfile.definition = {
+    methods: ["delete"],
+    url: '/profile/delete-profile',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\Client\ProfileController::destroyProfile
+* @see app/Http/Controllers/Client/ProfileController.php:123
+* @route '/profile/delete-profile'
+*/
+destroyProfile.url = (options?: RouteQueryOptions) => {
+    return destroyProfile.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Client\ProfileController::destroyProfile
+* @see app/Http/Controllers/Client/ProfileController.php:123
+* @route '/profile/delete-profile'
+*/
+destroyProfile.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroyProfile.url(options),
+    method: 'delete',
+})
+
+const ProfileController = { index, update, changeAvatar, destroyAvatar, changePassword, destroyProfile }
 
 export default ProfileController

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Client\NotificationController::readAll
-* @see app/Http/Controllers/Client/NotificationController.php:45
+* @see app/Http/Controllers/Client/NotificationController.php:50
 * @route '/notifications/read-all'
 */
 export const readAll = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ readAll.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::readAll
-* @see app/Http/Controllers/Client/NotificationController.php:45
+* @see app/Http/Controllers/Client/NotificationController.php:50
 * @route '/notifications/read-all'
 */
 readAll.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ readAll.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::readAll
-* @see app/Http/Controllers/Client/NotificationController.php:45
+* @see app/Http/Controllers/Client/NotificationController.php:50
 * @route '/notifications/read-all'
 */
 readAll.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ readAll.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::index
-* @see app/Http/Controllers/Client/NotificationController.php:18
+* @see app/Http/Controllers/Client/NotificationController.php:19
 * @route '/notifications'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -50,7 +50,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::index
-* @see app/Http/Controllers/Client/NotificationController.php:18
+* @see app/Http/Controllers/Client/NotificationController.php:19
 * @route '/notifications'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -59,7 +59,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::index
-* @see app/Http/Controllers/Client/NotificationController.php:18
+* @see app/Http/Controllers/Client/NotificationController.php:19
 * @route '/notifications'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -69,7 +69,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::index
-* @see app/Http/Controllers/Client/NotificationController.php:18
+* @see app/Http/Controllers/Client/NotificationController.php:19
 * @route '/notifications'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::update
-* @see app/Http/Controllers/Client/NotificationController.php:37
+* @see app/Http/Controllers/Client/NotificationController.php:38
 * @route '/notifications/{notification}'
 */
 export const update = (args: { notification: string | number } | [notification: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -94,7 +94,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::update
-* @see app/Http/Controllers/Client/NotificationController.php:37
+* @see app/Http/Controllers/Client/NotificationController.php:38
 * @route '/notifications/{notification}'
 */
 update.url = (args: { notification: string | number } | [notification: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -121,7 +121,7 @@ update.url = (args: { notification: string | number } | [notification: string | 
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::update
-* @see app/Http/Controllers/Client/NotificationController.php:37
+* @see app/Http/Controllers/Client/NotificationController.php:38
 * @route '/notifications/{notification}'
 */
 update.put = (args: { notification: string | number } | [notification: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -131,7 +131,7 @@ update.put = (args: { notification: string | number } | [notification: string | 
 
 /**
 * @see \App\Http\Controllers\Client\NotificationController::update
-* @see app/Http/Controllers/Client/NotificationController.php:37
+* @see app/Http/Controllers/Client/NotificationController.php:38
 * @route '/notifications/{notification}'
 */
 update.patch = (args: { notification: string | number } | [notification: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({

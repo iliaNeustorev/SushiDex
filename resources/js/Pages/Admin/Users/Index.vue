@@ -57,13 +57,14 @@
                             { title: '50', value: 50 }
                         ]"
                         :headers="[
+                            { key: 'burger_menu' },
                             { key: 'id', title: 'ID' },
                             { key: 'name', title: 'ФИО', sortable: false },
                             { key: 'address', title: 'Адрес', sortable: false },
                             { key: 'phone', title: 'Телефон' },
-                            { key:'verified_at', title:'Верификация номера' },
+                            { key: 'verified_at', title: 'Верификация номера', sortable: false },
                             { key: 'block', title: 'Бан', align: 'center' },
-                            { key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth:300 },
+                            { key: 'roles', title: 'Роли', sortable: false, align: 'center', maxWidth: 300 },
                             { key: 'created_at', title: 'Дата регистрации' },
                         ]"
                         :sort-by="sortAdapter.sortBy.value"
@@ -71,6 +72,34 @@
                         @update:items-per-page="queryLocal.batch = $event"
                         @update:sort-by="sortAdapter.onSort"
                     >
+                        <template #item.burger_menu="{ item }">
+                            <div class="text-center">
+                                <VMenu>
+                                    <template v-slot:activator="{ props: activatorProps }">
+                                        <VBtn
+                                            color="success"
+                                            v-bind="activatorProps"
+                                            icon="$mdiFormatAlignJustify"
+                                            variant="text"
+                                            size="default"
+                                        />
+                                    </template>
+
+                                    <VList>
+                                        <VListItem
+                                            link
+                                            :disabled="item.id === user?.id"
+                                        >
+                                            <Link
+                                                :href="UsersRoutes.authUser(item.id)"
+                                            >
+                                                Авторизоваться
+                                            </Link>
+                                        </VListItem>
+                                    </VList>
+                                </VMenu>
+                            </div>
+                        </template>
                         <template #item.created_at="{ item }">
                             {{ (new Date(item.created_at)).toLocaleString() }}
                         </template>
@@ -120,12 +149,13 @@
 
 <script setup lang="ts">
 
-import {router, useForm} from '@inertiajs/vue3';
-import {reactive, ref, watch} from 'vue';
+import {Link, router, useForm, usePage} from '@inertiajs/vue3';
+import {computed, reactive, ref, watch} from 'vue';
 import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import UsersRoutes from "~routes/Admin/UserController"
 import type {
     RoleCrudResource,
+    UserAuthResource,
     UserChangeBlockDTO,
     UserChangeRolesRequestDTO,
     UserCrudResource,
@@ -142,6 +172,12 @@ const {query = {}} = defineProps<{
     query: UsersQuery,
     rolesForSelect: RoleCrudResource[]
 }>()
+
+const page = usePage<{
+    user: UserAuthResource | null,
+}>();
+
+const user = computed(() => page.props.user);
 
 const queryDefaults: RequiredKeys<UsersQuery, 'filter'> = {
     filter: {}

@@ -179,6 +179,41 @@
         </header>
         <ChangePassword v-show="showBlockChangePassword" />
     </section>
+    <div class="d-flex mt-4">
+        <VSpacer />
+        <VBtn
+            density="compact"
+            color="deep-orange-darken-3"
+            @click="showDeleteProfileModal = true"
+        >
+            Удалить профиль
+        </VBtn>
+        <VDialog
+            :model-value="showDeleteProfileModal"
+            max-width="520"
+        >
+            <VCard v-if="showDeleteProfileModal">
+                <VCardTitle class="text-center">
+                    Вы действительно хотите удалить профиль?
+                </VCardTitle>
+                <VCardActions>
+                    <VBtn
+                        :disabled="deleteForm.processing"
+                        @click="showDeleteProfileModal = false"
+                    >
+                        Отмена
+                    </VBtn>
+                    <VBtn
+                        :loading="deleteForm.processing"
+                        color="error"
+                        @click="removeConfirmed"
+                    >
+                        Удалить
+                    </VBtn>
+                </VCardActions>
+            </VCard>
+        </VDialog>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -186,7 +221,7 @@ import {router, useForm} from '@inertiajs/vue3';
 import type {ChangeAvatarReqDTO, ProfileSaveReqDTO, UserProfileResource} from '~types/generated';
 import ProfileRoutes from '~routes/Client/ProfileController';
 import PhoneSettings from "~vue/Pages/Profile/Components/PhoneSettings.vue";
-import {ref} from "vue";
+import {ref, shallowRef} from "vue";
 import Avatar from "~vue/components/widgets/Avatar.vue";
 import ChangePassword from "~vue/Pages/Profile/Components/ChangePassword.vue";
 
@@ -237,6 +272,13 @@ function deleteAvatar(): void {
 
 function reset(): void {
     form.resetAndClearErrors();
+}
+
+const showDeleteProfileModal = shallowRef<boolean>(false);
+const deleteForm = useForm({});
+
+function removeConfirmed() {
+    deleteForm.submit(ProfileRoutes.destroyProfile());
 }
 </script>
 
