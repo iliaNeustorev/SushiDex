@@ -12,10 +12,10 @@
                             SushiDex club
                         </p>
                         <h1>
-                            <slot name="title"/>
+                            <slot name="title" />
                         </h1>
                         <p>
-                            <slot name="description"/>
+                            <slot name="description" />
                         </p>
                     </div>
                     <div class="auth-signature">
@@ -29,7 +29,7 @@
 
                 <section class="auth-form-panel">
                     <div class="auth-form-wrap">
-                        <slot/>
+                        <slot />
                     </div>
                 </section>
             </div>

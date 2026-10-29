@@ -25,7 +25,7 @@
                 label="Новый пароль"
                 rounded="0"
                 :type="showNewPassword ? 'text' : 'password'"
-                variant="outlined" ,
+                variant="outlined"
                 v-model="form.password"
                 :error-messages="form.errors.password"
                 @click:append="showNewPassword = !showNewPassword"

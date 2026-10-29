@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard class="mb-4">
                 <VCardTitle tag="h1">Редактирование тега {{ tag.url }}</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <VCardText>
                     <VTextField
                         v-model.trim.lazy="form.url"

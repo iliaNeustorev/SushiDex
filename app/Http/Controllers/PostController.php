@@ -13,8 +13,7 @@ class PostController extends Controller
 {
     public function __construct(
         private readonly PostClientService $postClientService
-    ) {
-    }
+    ) {}
 
     public function index()
     {

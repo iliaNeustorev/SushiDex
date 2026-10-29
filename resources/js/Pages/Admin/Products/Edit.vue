@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard class="mb-4" :loading="form.processing">
                 <VCardTitle tag="h1">Редактировать товар</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <VCardText>
                     <VTextField
                         v-model="form.title"
@@ -67,8 +67,8 @@
                     <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>
                 </VCardActions>
             </VCard>
-            <ShowImages :images="images"/>
-            <ImagesUploader item="product" :id="product.id"/>
+            <ShowImages :images="images" />
+            <ImagesUploader item="product" :id="product.id" />
         </AdminWrapper>
     </AdminLayout>
 </template>

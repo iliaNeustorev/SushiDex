@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Создать пост</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <form @submit.prevent="send" class="mb-3 ml-2">
                     <VTextField
                         v-model="form.url"
@@ -23,7 +23,8 @@
                         v-model="form.content"
                         clearable
                         :error-messages="form.errors.content"
-                        label="Контент">
+                        label="Контент"
+                    >
                     </VTextarea>
 
                     <VSelect

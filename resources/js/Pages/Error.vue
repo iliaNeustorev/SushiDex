@@ -1,5 +1,5 @@
 <template>
-    <Head :title="`${status} — ${page.title} | SushiDex`"/>
+    <Head :title="`${status} — ${page.title} | SushiDex`" />
     <div class="error-page">
         <header class="error-header">
             <Link :href="GeneralRoutes.index().url" class="error-brand" title="SushiDex — на главную">
@@ -25,7 +25,12 @@
                     <p class="error-description">{{ page.description }}</p>
                     <div class="error-actions">
                         <a href="/" class="error-primary">На главную <span aria-hidden="true">↗</span></a>
-                        <button v-if="status === 500" type="button" class="error-secondary" @click="reload">
+                        <button
+                            v-if="status === 500"
+                            type="button"
+                            class="error-secondary"
+                            @click="reload"
+                        >
                             Обновить страницу <span aria-hidden="true">↻</span>
                         </button>
                         <a v-else href="/menu" class="error-secondary">Посмотреть меню <span aria-hidden="true">→</span></a>

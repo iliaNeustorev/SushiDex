@@ -46,9 +46,10 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        if ($user->id === $post->user_id && !Gate::check('moderator', $user)) {
-            return !($post->status === Status::PUBLISHED);
+        if ($user->id === $post->user_id && ! Gate::check('moderator', $user)) {
+            return ! ($post->status === Status::PUBLISHED);
         }
+
         return Gate::check('moderator', $user);
     }
 

@@ -26,8 +26,7 @@ class PostController extends Controller
     public function __construct(
         private readonly PostAdminService $postAdminService,
         private readonly PostClientService $postClientService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -52,11 +51,11 @@ class PostController extends Controller
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
             'statuses' => $statuses,
             'query' => $filters,
-            'tags' => fn() => $tags,
-            'countDeletedPost' => fn() => Post::onlyTrashed()->count(),
+            'tags' => fn () => $tags,
+            'countDeletedPost' => fn () => Post::onlyTrashed()->count(),
         ]);
     }
 
@@ -97,10 +96,10 @@ class PostController extends Controller
         $post->load('category:id,title', 'user', 'tags');
 
         return Inertia::render('Admin/Posts/Edit', [
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
-            'post' => fn() => $post,
-            'tags' => fn() => TagCrudResource::collect(Tag::get()),
-            'images' => fn() => ImageCrudResource::collect($post->images),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'post' => fn () => $post,
+            'tags' => fn () => TagCrudResource::collect(Tag::get()),
+            'images' => fn () => ImageCrudResource::collect($post->images),
         ]);
     }
 

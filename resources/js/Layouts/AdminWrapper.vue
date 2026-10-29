@@ -13,7 +13,7 @@
             >
                 {{ item.title }}
             </Link>
-            <VSpacer/>
+            <VSpacer />
             <VDialog
                 v-model="closeModalLogout"
                 max-width="600"

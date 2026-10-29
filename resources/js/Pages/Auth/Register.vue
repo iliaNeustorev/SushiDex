@@ -1,5 +1,5 @@
 <template>
-    <Head title="Регистрация — SushiDex"/>
+    <Head title="Регистрация — SushiDex" />
     <AuthLayout>
         <template #title>Станьте частью SushiDex</template>
         <template #description>Создайте аккаунт — и любимые блюда, адреса доставки и история заказов всегда будут под
@@ -49,7 +49,12 @@
                 type="password"
                 variant="outlined"
             />
-            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+            <VBtn
+                class="auth-submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+                type="submit"
+            >
                 Создать аккаунт
             </VBtn>
         </form>

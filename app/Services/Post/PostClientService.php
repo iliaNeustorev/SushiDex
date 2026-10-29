@@ -17,11 +17,9 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PostClientService
 {
-
     public function __construct(
         private ImageService $imageService
-    ) {
-    }
+    ) {}
 
     public function getPublishedPostsWithPaginate(): LengthAwarePaginator
     {
@@ -40,10 +38,10 @@ class PostClientService
                 AllowedFilter::exact('status'),
                 AllowedFilter::callback(
                     'tags',
-                    fn($query, $values) => $query->whereHas('tags', fn($q) => $q->whereIn('tag_id', (array)$values))
+                    fn ($query, $values) => $query->whereHas('tags', fn ($q) => $q->whereIn('tag_id', (array) $values))
                 ),
-                AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
+                AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
             ])
             ->defaultSort('-id')
             ->allowedSorts([
@@ -61,7 +59,7 @@ class PostClientService
             $tagsBuilder = Tag::orderBy('url', 'ASC')->limit(5);
 
             if (isset($filters['tagSearch'])) {
-                $tagsBuilder->where('url', 'LIKE', '%' . $filters['tagSearch'] . '%');
+                $tagsBuilder->where('url', 'LIKE', '%'.$filters['tagSearch'].'%');
             }
 
             $tagsBySearch = $tagsBuilder->get();
@@ -80,9 +78,10 @@ class PostClientService
     {
         $data = $data + ['user_id' => $user->id, 'status' => Status::DRAFT];
         $post = Post::create($data);
-        if (!empty($data['tags'])) {
+        if (! empty($data['tags'])) {
             $post->tags()->attach($data['tags']);
         }
+
         return $post;
     }
 

@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Создать категорию</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <form @submit.prevent="send" class="mb-3 ml-2">
                     <VTextField
                         v-model="form.url"
@@ -25,7 +25,7 @@
                         :items="Object.keys(props.types).map(Number)"
                         :item-title="id => props.types[id]"
                         :item-value="id => id"
-                        label="Тип" ,
+                        label="Тип"
                     ></VSelect>
 
                     <VSelect
@@ -34,7 +34,7 @@
                         :items="categories"
                         item-title="title"
                         item-value="id"
-                        label="Категория" ,
+                        label="Категория"
                         clearable
                     ></VSelect>
 

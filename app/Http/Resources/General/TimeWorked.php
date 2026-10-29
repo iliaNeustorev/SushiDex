@@ -13,6 +13,5 @@ class TimeWorked extends Data
         public Carbon $nextChangeAt,
         public string $startWork,
         public string $endWork,
-    ) {
-    }
+    ) {}
 }

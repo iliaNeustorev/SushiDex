@@ -1,5 +1,5 @@
 <template>
-    <Head title="Вход — SushiDex"/>
+    <Head title="Вход — SushiDex" />
     <AuthLayout>
         <template #title>С возвращением</template>
         <template #description>Войдите, чтобы увидеть историю заказов, сохранить любимые блюда и пользоваться
@@ -38,7 +38,12 @@
                 />
                 <Link :href="ForgotPasswordRoutes.create().url" class="auth-link">Забыли пароль?</Link>
             </div>
-            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+            <VBtn
+                class="auth-submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+                type="submit"
+            >
                 Войти
             </VBtn>
         </form>

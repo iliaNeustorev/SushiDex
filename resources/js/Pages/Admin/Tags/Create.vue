@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Создать тэг</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <form @submit.prevent="send" class="mb-3 ml-2">
                     <VTextField
                         v-model="form.url"
@@ -25,7 +25,8 @@
                         v-model="form.description"
                         clearable
                         :error-messages="form.errors.description"
-                        label="Описание">
+                        label="Описание"
+                    >
                     </VTextarea>
                     <VBtn
                         class="me-4"

@@ -1,5 +1,5 @@
 <template>
-    <Head title="SushiDex — суши и роллы"/>
+    <Head title="SushiDex — суши и роллы" />
     <MainLayout>
         <section class="hero">
             <img class="hero-image" :src="'/images/sushi/hero.png'" alt="Ассорти свежих суши и роллов">
@@ -46,7 +46,7 @@
                 </div>
                 <div v-if="topProducts.length > 0" class="menu-grid">
                     <article v-for="product in topProducts" :key="product.id" class="menu-card">
-                        <CardProduct :product="product"/>
+                        <CardProduct :product="product" />
                     </article>
                 </div>
                 <div v-else class="menu-grid">

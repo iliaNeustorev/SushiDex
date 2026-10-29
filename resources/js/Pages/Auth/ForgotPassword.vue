@@ -1,5 +1,5 @@
 <template>
-    <Head title="Восстановление пароля — SushiDex"/>
+    <Head title="Восстановление пароля — SushiDex" />
     <AuthLayout>
         <template #title>Вернём доступ к аккаунту</template>
         <template #description>Укажите почту, с которой регистрировались. Мы отправим безопасную ссылку для создания
@@ -19,7 +19,12 @@
                 type="email"
                 variant="outlined"
             />
-            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+            <VBtn
+                class="auth-submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+                type="submit"
+            >
                 Отправить ссылку
             </VBtn>
         </form>

@@ -1,5 +1,5 @@
 <template>
-    <Head title="Новый пароль — SushiDex"/>
+    <Head title="Новый пароль — SushiDex" />
     <AuthLayout>
         <template #title>Придумайте новый пароль</template>
         <template #description>Остался последний шаг. Укажите новый пароль — после сохранения вы снова сможете войти в
@@ -35,7 +35,12 @@
                 type="password"
                 variant="outlined"
             />
-            <VBtn class="auth-submit" :disabled="form.processing" :loading="form.processing" type="submit">
+            <VBtn
+                class="auth-submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+                type="submit"
+            >
                 Сохранить пароль
             </VBtn>
         </form>

@@ -5,7 +5,7 @@
                 <VCardTitle class="d-flex justify-space-between">
                     <span>Завершенные заказы</span>
                 </VCardTitle>
-                <VDivider/>
+                <VDivider />
                 <VCardText>
                     <VRow>
                         <VCol cols="12" md="4">

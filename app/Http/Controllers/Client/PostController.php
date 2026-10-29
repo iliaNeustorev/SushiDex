@@ -24,9 +24,7 @@ class PostController extends Controller
 {
     public function __construct(
         private readonly PostClientService $postClientService
-    ) {
-    }
-
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -52,10 +50,10 @@ class PostController extends Controller
 
         return Inertia::render('Posts/Author/Index', [
             'posts' => $posts,
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
             'statuses' => $statuses,
             'query' => $filters,
-            'tags' => fn() => $tags,
+            'tags' => fn () => $tags,
         ]);
     }
 
@@ -99,10 +97,10 @@ class PostController extends Controller
         $post->load('category:id,title', 'tags');
 
         return Inertia::render('Posts/Author/Edit', [
-            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
-            'post' => fn() => $post,
-            'tags' => fn() => TagCrudResource::collect(Tag::get()),
-            'images' => fn() => ImageCrudResource::collect($post->images),
+            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'post' => fn () => $post,
+            'tags' => fn () => TagCrudResource::collect(Tag::get()),
+            'images' => fn () => ImageCrudResource::collect($post->images),
         ]);
     }
 

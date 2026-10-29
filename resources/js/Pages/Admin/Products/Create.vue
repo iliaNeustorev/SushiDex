@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard class="mt-3" :loading="form.processing">
                 <VCardTitle tag="h1">Создать товар</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <VCardText>
                     <form @submit.prevent="form.submit(ProductRoutes.store())">
                         <VTextField
@@ -17,31 +17,37 @@
                             item-title="title"
                             item-value="id"
                             label="Категория"
-                            :error-messages="form.errors.category_id"/>
+                            :error-messages="form.errors.category_id"
+                        />
                         <VTextarea
                             v-model="form.description"
                             label="Краткое описание"
-                            :error-messages="form.errors.description"/>
+                            :error-messages="form.errors.description"
+                        />
                         <VTextarea
                             v-model="form.content"
                             label="Описание"
-                            :error-messages="form.errors.content"/>
+                            :error-messages="form.errors.content"
+                        />
                         <VTextField
                             v-model="form.price"
                             type="number"
                             step="0.01"
                             label="Цена"
-                            :error-messages="form.errors.price"/>
+                            :error-messages="form.errors.price"
+                        />
                         <VTextField
                             v-model="form.old_price"
                             type="number"
                             step="0.01"
                             label="Старая цена"
-                            :error-messages="form.errors.old_price"/>
+                            :error-messages="form.errors.old_price"
+                        />
                         <VBtn
                             type="submit"
                             color="primary"
-                            :disabled="form.processing">Создать
+                            :disabled="form.processing"
+                        >Создать
                         </VBtn>
                     </form>
                 </VCardText>

@@ -3,7 +3,7 @@
         <AdminWrapper>
             <VCard :loading="form.processing" class="mt-3">
                 <VCardTitle tag="h1">Редактировать категорию</VCardTitle>
-                <VDivider class="mb-2"/>
+                <VDivider class="mb-2" />
                 <VTextField
                     v-model="form.url"
                     :counter="10"
@@ -24,7 +24,7 @@
                     :items="categories"
                     item-title="title"
                     item-value="id"
-                    label="Категория" ,
+                    label="Категория"
                     clearable
                 ></VSelect>
 
@@ -40,8 +40,8 @@
 
             </VCard>
 
-            <ShowImages :images="images"/>
-            <ImagesUploader item="category" :id="category.id"/>
+            <ShowImages :images="images" />
+            <ImagesUploader item="category" :id="category.id" />
 
         </AdminWrapper>
     </AdminLayout>

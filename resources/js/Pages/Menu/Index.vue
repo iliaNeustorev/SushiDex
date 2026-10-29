@@ -1,5 +1,5 @@
 <template>
-    <Head title="Меню — SushiDex"/>
+    <Head title="Меню — SushiDex" />
     <MainLayout>
         <main class="inner-page menu-page">
             <div class="shell">
@@ -45,7 +45,7 @@
                     </div>
                     <div v-if="products.data.length > 0" class="product-grid">
                         <article v-for="product in products.data" :key="product.id" class="product-card">
-                            <CardProduct :product="product"/>
+                            <CardProduct :product="product" />
                         </article>
                     </div>
                     <div v-else class="empty-state">
