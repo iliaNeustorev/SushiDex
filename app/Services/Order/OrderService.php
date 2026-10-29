@@ -5,6 +5,7 @@ namespace App\Services\Order;
 use App\Enums\Orders\Status as OrderStatus;
 use App\Enums\Orders\TypePaid;
 use App\Enums\Remittances\Status as RemittanceStatus;
+use App\Http\Resources\General\TimeWorked;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -28,19 +29,28 @@ use Throwable;
 
 class OrderService
 {
+
+    public const string START_WORK = '11:00';
+    public const string END_WORK = '23:00';
+
     public function __construct(
         private RefundService $refundService,
-    ) {}
+    ) {
+    }
 
     public function create(User $user, array $data): Order
     {
-        DB::beginTransaction();
+        $getWorkTime = $this->getWorkTime();
+        if (!$getWorkTime->isOpen) {
+            throw ValidationException::withMessages(['order' => 'Сейчас заказы не принимаются! Время работы с ' . self::START_WORK . ' до ' . self::END_WORK]);
+        }
 
+        $actualCountOrders = Order::where('user_id', $user->id)->actualStatus()->count();
+        if ($actualCountOrders >= Order::LIMIT_ACTUAL_ORDERS) {
+            throw ValidationException::withMessages(['order' => 'Нельзя создать заказ у вас уже 2 активных заказа!']);
+        }
         try {
-            $actualCountOrders = Order::where('user_id', $user->id)->actualStatus()->count();
-            if ($actualCountOrders >= Order::LIMIT_ACTUAL_ORDERS) {
-                throw ValidationException::withMessages(['order' => 'Нельзя создать заказ у вас уже 2 активных заказа!']);
-            }
+            DB::beginTransaction();
 
             $this->validateDeliverySettings($user, $data);
 
@@ -55,11 +65,11 @@ class OrderService
                 throw ValidationException::withMessages(['cart' => 'Корзина пуста.']);
             }
 
-            if ($items->contains(fn (Cart $item) => ! $item->product)) {
+            if ($items->contains(fn(Cart $item) => !$item->product)) {
                 throw ValidationException::withMessages(['cart' => 'Один из товаров больше недоступен.']);
             }
 
-            $total = $items->sum(fn (Cart $item) => $item->product->price * $item->count);
+            $total = $items->sum(fn(Cart $item) => $item->product->price * $item->count);
             $order = Order::create([
                 'user_id' => $user->id,
                 'total_price' => number_format($total, 2, '.', ''),
@@ -139,7 +149,7 @@ class OrderService
                 if (in_array($order->status, [OrderStatus::NEW])) {
                     if ($order->type_paid === TypePaid::CARD_ONLINE) {
                         $order->loadMissing('remittance');
-                        if (! $order->remittance || $order->remittance->status === RemittanceStatus::AWAIT_PAID) {
+                        if (!$order->remittance || $order->remittance->status === RemittanceStatus::AWAIT_PAID) {
                             throw ValidationException::withMessages([
                                 'order' => 'Не удалось обновить статус заказа. Ожидается оплата заказа онлайн',
                             ]);
@@ -206,13 +216,13 @@ class OrderService
             $type = $settings['type'] ?? $order->type_paid->value;
 
             if ($needDelivery) {
-                if (! $this->hasDeliveryAddress($order->user)) {
+                if (!$this->hasDeliveryAddress($order->user)) {
                     throw ValidationException::withMessages([
                         'need_delivery' => 'Не удалось включить доставку. Не указан адрес в профиле.',
                     ]);
                 }
             }
-            if (! $this->hasDeliveryAddress($order->user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
+            if (!$this->hasDeliveryAddress($order->user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
                 throw ValidationException::withMessages([
                     'type' => 'Нельзя выбрать данный тип. Не указан адрес в профиле.',
                 ]);
@@ -236,7 +246,7 @@ class OrderService
                 }
 
                 if ($remittances->contains(
-                    fn ($remittance) => $remittance->payment_system_id !== null
+                    fn($remittance) => $remittance->payment_system_id !== null
                         && $remittance->payment_system_status !== 'canceled',
                 )) {
                     throw ValidationException::withMessages([
@@ -282,8 +292,8 @@ class OrderService
     public function getTypePaid(User $user): Collection
     {
         $collect = collect(TypePaid::TEXTS);
-        if (! $this->hasDeliveryAddress($user)) {
-            $collect = $collect->filter(fn ($type, $key) => in_array($key, [TypePaid::CARD_ONLINE->value, TypePaid::IN_PICKUP_LOCATION->value]));
+        if (!$this->hasDeliveryAddress($user)) {
+            $collect = $collect->filter(fn($type, $key) => in_array($key, [TypePaid::CARD_ONLINE->value, TypePaid::IN_PICKUP_LOCATION->value]));
         }
 
         return $collect;
@@ -291,7 +301,7 @@ class OrderService
 
     private function validateDeliverySettings(User $user, array $data): void
     {
-        if (($data['need_delivery'] ?? false) && ! $this->hasDeliveryAddress($user)) {
+        if (($data['need_delivery'] ?? false) && !$this->hasDeliveryAddress($user)) {
             throw ValidationException::withMessages([
                 'need_delivery' => 'Не удалось включить доставку. Не указан адрес в профиле.',
             ]);
@@ -301,7 +311,7 @@ class OrderService
             ? $data['type']->value
             : $data['type'];
 
-        if (! $this->hasDeliveryAddress($user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
+        if (!$this->hasDeliveryAddress($user) && in_array($type, [TypePaid::CARD_COURIER->value, TypePaid::CASH_COURIER->value], true)) {
             throw ValidationException::withMessages([
                 'type' => 'Нельзя выбрать данный тип. Не указан адрес в профиле.',
             ]);
@@ -320,17 +330,17 @@ class OrderService
                 [
                     'products',
                     'remittance',
-                    'user' => fn ($query) => $query->withTrashed(),
+                    'user' => fn($query) => $query->withTrashed(),
                 ]
             )
             ->allowedFilters([
                 AllowedFilter::exact('id'),
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('type_paid'),
-                AllowedFilter::callback('date_created_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_created_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
-                AllowedFilter::callback('date_completed_from', fn ($q, $v) => $q->where('completed_at', '>=', $v)),
-                AllowedFilter::callback('date_completed_to', fn ($q, $v) => $q->where('completed_at', '<=', $v.' 23:59:59')),
+                AllowedFilter::callback('date_created_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_created_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
+                AllowedFilter::callback('date_completed_from', fn($q, $v) => $q->where('completed_at', '>=', $v)),
+                AllowedFilter::callback('date_completed_to', fn($q, $v) => $q->where('completed_at', '<=', $v . ' 23:59:59')),
             ])
             ->allowedSorts([
                 'id',
@@ -348,7 +358,7 @@ class OrderService
     {
         if (in_array($order->status, [OrderStatus::COMPLETED, OrderStatus::CANCELLED], true)) {
             throw ValidationException::withMessages([
-                'order' => 'Нельзя отменить заказ! Статус - '.$order->status->text(),
+                'order' => 'Нельзя отменить заказ! Статус - ' . $order->status->text(),
             ]);
         }
         if ($order->type_paid === TypePaid::CARD_ONLINE) {
@@ -408,5 +418,30 @@ class OrderService
             ->withCount('items')
             ->orderByDesc('id')
             ->paginate($paginate);
+    }
+
+    public function getWorkTime(): TimeWorked
+    {
+        preg_match('/(\d{2}):(\d{2})/', self::START_WORK, $startWork);
+        preg_match('/(\d{2}):(\d{2})/', self::END_WORK, $endWork);
+        $todayStartWork = Carbon::createFromTime($startWork[1], $startWork[2]);
+        $todayEndWork = Carbon::createFromTime($endWork[1], $endWork[2]);
+        $now = Carbon::now();
+        $isOpen = true;
+        if ($now < $todayStartWork || $now >= $todayEndWork) {
+            $isOpen = false;
+        }
+        if ($now >= $todayEndWork) {
+            $todayStartWork->addDay();
+        }
+
+        $data = [
+            'isOpen' => $isOpen,
+            'serverNow' => $now->toIso8601String(),
+            'nextChangeAt' => $isOpen ? $todayEndWork->toIso8601String() : $todayStartWork->toIso8601String(),
+            'startWork' => self::START_WORK,
+            'endWork' => self::END_WORK,
+        ];
+        return TimeWorked::from($data);
     }
 }

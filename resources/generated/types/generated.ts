@@ -437,6 +437,13 @@ url: string;
 title: string;
 description: string | null;
 };
+export type TimeWorked = {
+isOpen: boolean;
+serverNow: string;
+nextChangeAt: string;
+startWork: string;
+endWork: string;
+};
 export enum Type { PRODUCT = 1, BLOG = 2 };
 export enum TypePaid { CARD_ONLINE = 1, CARD_COURIER = 2, CASH_COURIER = 3, IN_PICKUP_LOCATION = 4 };
 export type UserAuthResource = {

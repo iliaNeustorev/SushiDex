@@ -11,7 +11,10 @@ use Inertia\Inertia;
 
 class PostController extends Controller
 {
-    public function __construct(private readonly PostClientService $postClientService) {}
+    public function __construct(
+        private readonly PostClientService $postClientService
+    ) {
+    }
 
     public function index()
     {
@@ -32,6 +35,9 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        if ($post->status !== Status::PUBLISHED) {
+            return redirect()->route('posts.index', ['page' => 1]);
+        }
         $post->loadMissing('user', 'category', 'tags');
 
         return Inertia::render('Posts/Show', [

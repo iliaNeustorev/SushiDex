@@ -100,9 +100,9 @@
                                 <VCardText>
                                     Итого: {{ formatPrice(cartStore.totalAmount.toString()) }}
                                 </VCardText>
-
                                 <VCardActions>
                                     <VBtn
+                                        :disabled="!isOpen"
                                         v-if="user"
                                         color="success"
                                         variant="flat"
@@ -111,7 +111,6 @@
                                     >
                                         Оформить заказ
                                     </VBtn>
-
                                     <template v-else>
                                         <VBtn
                                             :href="SessionRoutes.create().url"
@@ -130,6 +129,18 @@
                                         </VBtn>
                                     </template>
                                 </VCardActions>
+                                <VContainer>
+                                    <VAlert
+                                        v-if="!timeWorked.isOpen"
+                                        density="compact"
+                                        title="Внимание"
+                                        type="warning"
+                                        variant="outlined"
+                                    >Заказ в данный момент недоступен, часы работы <span
+                                        class="text-green-darken-1"
+                                    >{{ hoursWorked }}</span>
+                                    </VAlert>
+                                </VContainer>
                                 <VDialog
                                     :model-value="showConfirmOrder"
                                     max-width="420"
@@ -230,7 +241,7 @@ import MainLayout from "~vue/Layouts/MainLayout.vue";
 import {formatPrice} from "~vue/shared/formatters.ts";
 import {useCartStore} from "~vue/stores/cart.ts";
 import type {
-    CartPublicDetailsResource,
+    CartPublicDetailsResource, TimeWorked,
     UserAuthResource
 } from "~types/generated.ts";
 import type {CartDisplayItem} from '~vue/types/cart';
@@ -238,15 +249,16 @@ import ProfileRoutes from "~routes/Client/ProfileController.ts";
 import type {CreateOrderForm} from "~vue/shared/forms.ts";
 import OrderRoutes from "~routes/Client/OrderController.ts";
 
-const {cartDetails, user, typePaid} = defineProps<{
+const {cartDetails, user, typePaid, timeWorked} = defineProps<{
     cartDetails: CartPublicDetailsResource[],
     user: UserAuthResource | null,
     typePaid: Record<number, string>,
+    timeWorked: TimeWorked
 }>();
-
+const hoursWorked = computed(() => timeWorked.startWork + '-' + timeWorked.endWork)
 const cartStore = useCartStore();
 const isClearingCart = ref(false);
-
+const isOpen = computed(() => timeWorked.isOpen)
 const visibleCartDetails = computed<CartDisplayItem[]>(() => {
     if (user) {
         return cartDetails.filter(item =>

@@ -59,9 +59,9 @@ class Post extends Model
     public function scopeFilter($query, array $filters = [])
     {
         return $query
-            ->when(isset($filters['status']), fn ($query) => $query->where('status', $filters['status']))
-            ->when(isset($filters['date']), fn ($query) => $query->whereDate('created_at', '>=', $filters['date']))
-            ->when(isset($filters['category']), fn ($query) => $query->where('category_id', $filters['category']));
+            ->when(isset($filters['status']), fn($query) => $query->where('status', $filters['status']))
+            ->when(isset($filters['date']), fn($query) => $query->whereDate('created_at', '>=', $filters['date']))
+            ->when(isset($filters['category']), fn($query) => $query->where('category_id', $filters['category']));
     }
 
     public function tags(): BelongsToMany
@@ -71,7 +71,7 @@ class Post extends Model
 
     public function scopeByUserId($query, ?int $userId)
     {
-        return $query->when(isset($userId), fn ($query) => $query->where('user_id', $userId));
+        return $query->when(isset($userId), fn($query) => $query->where('user_id', $userId));
     }
 
     public function scopeIsPublished($query)

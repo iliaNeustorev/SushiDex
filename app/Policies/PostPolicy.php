@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Posts\Status;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -13,7 +14,15 @@ class PostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return Gate::check('author', $user);
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAnyAdmin(User $user): bool
+    {
+        return Gate::check('moderator', $user);
     }
 
     /**
@@ -37,7 +46,10 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id || Gate::check('moderator', $user);
+        if ($user->id === $post->user_id && !Gate::check('moderator', $user)) {
+            return !($post->status === Status::PUBLISHED);
+        }
+        return Gate::check('moderator', $user);
     }
 
     /**

@@ -3,6 +3,7 @@ import CartController from './CartController'
 import NotificationController from './NotificationController'
 import ProfileController from './ProfileController'
 import PhoneController from './PhoneController'
+import PostController from './PostController'
 import OrderController from './OrderController'
 
 const Client = {
@@ -11,6 +12,7 @@ const Client = {
     NotificationController: Object.assign(NotificationController, NotificationController),
     ProfileController: Object.assign(ProfileController, ProfileController),
     PhoneController: Object.assign(PhoneController, PhoneController),
+    PostController: Object.assign(PostController, PostController),
     OrderController: Object.assign(OrderController, OrderController),
 }
 

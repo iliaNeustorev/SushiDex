@@ -32,7 +32,8 @@ import {
     mdiBellOutline,
     mdiBellRing,
     mdiRead,
-    mdiFormatAlignJustify
+    mdiFormatAlignJustify,
+    mdiPost,
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -63,6 +64,7 @@ aliases['bellOutline'] = mdiBellOutline
 aliases['bellRing'] = mdiBellRing
 aliases['read'] = mdiRead
 aliases['mdiFormatAlignJustify'] = mdiFormatAlignJustify
+aliases['mdiPost'] = mdiPost
 
 
 export default function initVuetifyPlugin() {

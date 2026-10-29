@@ -10,6 +10,7 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\RemittanceController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\Client\PostController as ClientPostController;
 use App\Http\Middleware\EnsurePaymentWebhookIp;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,9 @@ Route::middleware(['auth', 'can:is-blocked'])->group(function () {
         Route::put('/changePassword', [ProfileController::class, 'changePassword'])->name('profile.change-password');
         Route::delete('/delete-profile', [ProfileController::class, 'destroyProfile'])->name('profile.delete-profile');
     });
+
+    Route::patch('my-posts/{post}/moderating', [ClientPostController::class, 'onModerating'])->name('my-posts.moderating')->middleware(['can:author']);
+    Route::resource('my-posts', ClientPostController::class)->except(['show'])->parameter('my-posts', 'post')->middleware(['can:author']);
 
     Route::prefix('cart')->group(function () {
         Route::put('/update', [CartController::class, 'update'])->name('cart.update');

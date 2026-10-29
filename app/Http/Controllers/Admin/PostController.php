@@ -15,8 +15,8 @@ use App\Http\Resources\Tags\TagCrudResource;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
-use App\Services\Image\Service as ImageService;
 use App\Services\Post\PostAdminService;
+use App\Services\Post\PostClientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -24,16 +24,17 @@ use Inertia\Inertia;
 class PostController extends Controller
 {
     public function __construct(
-        private readonly ImageService $imageService,
-        private readonly PostAdminService $postAdminService
-    ) {}
+        private readonly PostAdminService $postAdminService,
+        private readonly PostClientService $postClientService
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Post::class);
+        Gate::authorize('viewAnyAdmin', Post::class);
         $filters = PostsQuery::validateAndCreate($request->query())->toArray();
 
         $postsPaginator = $this->postAdminService->getPostsWithPaginate($filters);
@@ -46,32 +47,16 @@ class PostController extends Controller
 
         $posts = GeneralPagination::fromPaginator($postsPaginator, PostCrudResource::class);
 
-        $tags = function () use ($filters) {
-            $tagsBuilder = Tag::orderBy('url', 'ASC')->limit(5);
-
-            if (isset($filters['tagSearch'])) {
-                $tagsBuilder->where('url', 'LIKE', '%'.$filters['tagSearch'].'%');
-            }
-
-            $tagsBySearch = $tagsBuilder->get();
-
-            if (isset($filters['filter']['tags'])) {
-                $tagsBySearch = $tagsBySearch->merge(
-                    Tag::whereIn('id', explode(',', $filters['filter']['tags']))->get()
-                );
-            }
-
-            return TagCrudResource::collect($tagsBySearch);
-        };
+        $tags = $this->postClientService->getTagsForFilter($filters);
         $statuses = collect(Status::TEXTS);
 
         return Inertia::render('Admin/Posts/Index', [
             'posts' => $posts,
-            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
             'statuses' => $statuses,
             'query' => $filters,
-            'tags' => fn () => $tags,
-            'countDeletedPost' => fn () => Post::onlyTrashed()->count(),
+            'tags' => fn() => $tags,
+            'countDeletedPost' => fn() => Post::onlyTrashed()->count(),
         ]);
     }
 
@@ -94,11 +79,9 @@ class PostController extends Controller
     {
         Gate::authorize('create', Post::class);
         $user = $request->user();
-        $data = $request->getData()->toArray() + ['user_id' => $user->id, 'status' => Status::DRAFT];
-        $newPost = Post::create($data);
-        if (! empty($data['tags'])) {
-            $newPost->tags()->attach($data['tags']);
-        }
+        $data = $request->getData()->toArray();
+
+        $newPost = $this->postClientService->createPost($data, $user);
 
         Inertia::flash(config('app-notifications.posts.store'));
 
@@ -114,10 +97,10 @@ class PostController extends Controller
         $post->load('category:id,title', 'user', 'tags');
 
         return Inertia::render('Admin/Posts/Edit', [
-            'categories' => fn () => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
-            'post' => fn () => $post,
-            'tags' => fn () => TagCrudResource::collect(Tag::get()),
-            'images' => fn () => ImageCrudResource::collect($post->images),
+            'categories' => fn() => CategoryCrudResource::collect(Category::byType(Type::BLOG)->get()),
+            'post' => fn() => $post,
+            'tags' => fn() => TagCrudResource::collect(Tag::get()),
+            'images' => fn() => ImageCrudResource::collect($post->images),
         ]);
     }
 
@@ -128,10 +111,8 @@ class PostController extends Controller
     {
         Gate::authorize('update', $post);
         $data = $request->getData()->toArray();
-        $post->update($data);
-        if (! empty($data['tags'])) {
-            $post->tags()->sync($data['tags']);
-        }
+
+        $this->postClientService->updatePost($post, $data);
 
         return Inertia::flash(config('app-notifications.posts.update'))->back();
     }
@@ -142,8 +123,8 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('delete', $post);
-        $post->delete();
-        $this->imageService->deleteAllImagesModel($post, ['catalogPath' => 'posts']);
+
+        $this->postClientService->deletePost($post);
 
         Inertia::flash(config('app-notifications.posts.destroy'));
 
@@ -152,11 +133,7 @@ class PostController extends Controller
 
     public function publish(Post $post)
     {
-        if ($post->status !== Status::MODERATING) {
-            abort(400);
-        }
-        $post->status = Status::PUBLISHED;
-        $post->save();
+        $this->postAdminService->onPublish($post);
 
         Inertia::flash(config('app-notifications.posts.publish'));
 

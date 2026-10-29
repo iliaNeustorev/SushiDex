@@ -9,11 +9,24 @@
                     @click="drawer = !drawer"
                 />
             </template>
-            <Link :href="GeneralRoutes.index().url" class="brand light" title="SushiDex — на главную">
-                <span class="brand-mark">よ</span><span>SushiDex </span>
+            <Link
+                :href="GeneralRoutes.index().url"
+                class="brand light"
+                title="SushiDex — на главную"
+            >
+                <span class="brand-mark">よ</span>
+                <span>SushiDex </span>
             </Link>
             <a class="ml-2 phone" href="tel:+74951234567">
-                <span>Ежедневно 11:00–23:00</span>+7 495 123-45-67
+                <span>
+                    Ежедневно {{ hoursWorked }}
+                    <span
+                        :class="!isOpen ? 'text-orange-accent-1' : 'text-green-darken-1'"
+                    >
+                        {{ !isOpen ? '(Закрыто)' : '(Открыто)' }}
+                    </span>
+                </span>
+                +7 495 123-45-67
             </a>
             <template v-if="$vuetify.display.mdAndUp">
                 <VBtn
@@ -115,6 +128,11 @@
                                 title="Уведомления"
                             />
                             <VListItem
+                                :href="PostRoutes.index().url"
+                                prepend-icon="$mdiPost"
+                                title="Мои посты"
+                            />
+                            <VListItem
                                 :href="ProfileRoutes.index().url"
                                 prepend-icon="$accountOutline"
                                 title="Личный кабинет"
@@ -172,9 +190,9 @@
 
 <script setup lang="ts">
 import {Link, router, useForm, usePage} from '@inertiajs/vue3';
-import {computed, onMounted, shallowRef} from 'vue';
+import {computed, onBeforeUnmount, onMounted, shallowRef} from 'vue';
 import SessionRoutes from '~routes/Auth/SessionController.ts';
-import type {UserAuthResource} from "~types/generated";
+import type {TimeWorked, UserAuthResource} from "~types/generated";
 import Posts from "~routes/PostController.ts";
 import AdminDashboard from "~routes/Admin/DashboardController.ts";
 import GeneralRoutes from '~routes/GeneralController';
@@ -188,17 +206,22 @@ import storageHelper from "~vue/utils/storage";
 import OrderController from "~routes/Client/OrderController.ts";
 import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
 import NotificationRoutes from "~routes/Client/NotificationController.ts";
+import PostRoutes from "~routes/Client/PostController.ts";
 
 const page = usePage<{
     user: UserAuthResource | null,
     cart: CartPayload;
     checkActualOrder: boolean,
-    checkUnreadNotify: boolean
+    checkUnreadNotify: boolean,
+    timeWorked: TimeWorked
 }>();
 const user = computed(() => page.props.user)
-const checkUnreadNotify = computed(() => page.props.checkUnreadNotify);
+const checkUnreadNotify = computed(() => page.props.checkUnreadNotify)
 const checkActualOrder = computed(() => page.props.checkActualOrder)
+const isOpen = computed(() => page.props.timeWorked.isOpen)
 const cart = useCartStore();
+const hoursWorked = computed(() => page.props.timeWorked.startWork + '-' + page.props.timeWorked.endWork)
+
 cart.setAuthenticated(user.value !== null);
 
 if (user.value) {
@@ -244,6 +267,31 @@ function logout() {
 function moveToCart() {
     router.visit(CartRoutes.index())
 }
+
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+function scheduleRefresh(): void {
+    clearTimeout(timer);
+
+    const {serverNow, nextChangeAt} = page.props.timeWorked;
+    const delay = Math.max(
+        Date.parse(nextChangeAt) - Date.parse(serverNow),
+        0,
+    ) + 1000;
+
+    timer = setTimeout(() => {
+        router.reload({
+            only: ['timeWorked'],
+            onSuccess: () => scheduleRefresh(),
+        });
+    }, delay);
+}
+
+onMounted(scheduleRefresh);
+
+onBeforeUnmount(() => {
+    clearTimeout(timer);
+});
 </script>
 
 <style src="~css/layouts/main-layout.css"></style>

@@ -2,6 +2,7 @@
 
 namespace App\Services\Post;
 
+use App\Enums\Posts\Status;
 use App\Helpers\Spattie\CustomSort\SortByFieldRelation;
 use App\Models\Post;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,10 +21,10 @@ class PostAdminService
                 AllowedFilter::exact('status'),
                 AllowedFilter::callback(
                     'tags',
-                    fn ($query, $values) => $query->whereHas('tags', fn ($q) => $q->whereIn('tag_id', (array) $values))
+                    fn($query, $values) => $query->whereHas('tags', fn($q) => $q->whereIn('tag_id', (array)$values))
                 ),
-                AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+                AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
             ])
             ->defaultSort('-id')
             ->allowedSorts([
@@ -41,10 +42,19 @@ class PostAdminService
             ->with('category')
             ->allowedFilters([
                 'title',
-                AllowedFilter::callback('date_from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('date_to', fn ($q, $v) => $q->where('created_at', '<=', $v.' 23:59:59')),
+                AllowedFilter::callback('date_from', fn($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('date_to', fn($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59')),
             ])
             ->allowedSorts('id', 'title', 'created_at')
             ->paginate($query['batch'] ?? 10);
+    }
+
+    public function onPublish(Post $post): void
+    {
+        if ($post->status !== Status::MODERATING) {
+            abort(400);
+        }
+        $post->status = Status::PUBLISHED;
+        $post->save();
     }
 }

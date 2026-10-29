@@ -16,6 +16,7 @@ class AdminPaginationTest extends TestCase
         parent::setUp();
 
         Gate::define('author', fn (User $user): bool => true);
+        Gate::define('moderator', fn (User $user): bool => true);
         Gate::define('dev', fn (User $user): bool => true);
     }
 

@@ -244,7 +244,7 @@ const tagsValue = computed(() => queryLocal.filter.tags?.split(',').map(v => +v)
 const tagSearch = ref('');
 const onTagSerach = debounce((v: string) => {
     router.visit(
-        PostsRoutes.index({query: {...queryLocal, tagsearch: v ? v : undefined}}),
+        PostsRoutes.index({query: {...queryLocal, tagSearch: v ? v : undefined}}),
         {preserveState: true, only: ['tags']}
     );
 }, 300);
