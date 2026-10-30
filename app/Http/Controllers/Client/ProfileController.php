@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Profile\AutocompleteAddressRequest;
 use App\Http\Requests\User\Profile\ChangeAvatarRequest;
 use App\Http\Requests\User\Profile\ChangePasswordRequest;
 use App\Http\Requests\User\Profile\SaveRequest;
 use App\Http\Resources\Orders\Client\OrderPublicResource;
 use App\Http\Resources\Users\UserProfileResource;
+use App\Interfaces\DataParserInterface;
 use App\Services\Image\Service;
 use App\Services\Order\OrderService;
 use App\Services\User\UserService;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use RuntimeException;
 use Spatie\LaravelData\Exceptions\InvalidDataClass;
 
 class ProfileController extends Controller
@@ -22,6 +25,7 @@ class ProfileController extends Controller
         private readonly Service $imageService,
         private readonly OrderService $orderService,
         private readonly UserService $userService,
+        private readonly DataParserInterface $dataParser
     ) {}
 
     /**
@@ -128,5 +132,20 @@ class ProfileController extends Controller
         return $result
             ? redirect()->route('login')
             : redirect()->back();
+    }
+
+    public function getAutoCompleteAddress(AutocompleteAddressRequest $request)
+    {
+        $partAddress = $request->getData()->partAddress;
+
+        try {
+            $result = $this->dataParser->autoCompleteAddress($partAddress);
+
+            return response()->json(['data' => $result]);
+        } catch (RuntimeException) {
+            return response()->json([
+                'message' => 'Не удалось получить подсказки адреса.',
+            ], 503);
+        }
     }
 }

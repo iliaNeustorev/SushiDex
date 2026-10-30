@@ -99,6 +99,9 @@ lastPage: number;
 perPage: number;
 data: Array<any>;
 };
+export type GetAutocompleteAddressReqDTO = {
+partAddress: string;
+};
 export type ImageCrudResource = {
 id: number;
 path: string;

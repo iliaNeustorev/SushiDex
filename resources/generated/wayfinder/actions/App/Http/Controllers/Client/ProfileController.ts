@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::index
-* @see app/Http/Controllers/Client/ProfileController.php:30
+* @see app/Http/Controllers/Client/ProfileController.php:34
 * @route '/profile'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:58
+* @see app/Http/Controllers/Client/ProfileController.php:62
 * @route '/profile'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:58
+* @see app/Http/Controllers/Client/ProfileController.php:62
 * @route '/profile'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::update
-* @see app/Http/Controllers/Client/ProfileController.php:58
+* @see app/Http/Controllers/Client/ProfileController.php:62
 * @route '/profile'
 */
 update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -78,8 +78,42 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Client\ProfileController::getAutoCompleteAddress
+* @see app/Http/Controllers/Client/ProfileController.php:137
+* @route '/profile/auto-complete-address'
+*/
+export const getAutoCompleteAddress = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: getAutoCompleteAddress.url(options),
+    method: 'post',
+})
+
+getAutoCompleteAddress.definition = {
+    methods: ["post"],
+    url: '/profile/auto-complete-address',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Client\ProfileController::getAutoCompleteAddress
+* @see app/Http/Controllers/Client/ProfileController.php:137
+* @route '/profile/auto-complete-address'
+*/
+getAutoCompleteAddress.url = (options?: RouteQueryOptions) => {
+    return getAutoCompleteAddress.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Client\ProfileController::getAutoCompleteAddress
+* @see app/Http/Controllers/Client/ProfileController.php:137
+* @route '/profile/auto-complete-address'
+*/
+getAutoCompleteAddress.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: getAutoCompleteAddress.url(options),
+    method: 'post',
+})
+
+/**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:73
+* @see app/Http/Controllers/Client/ProfileController.php:77
 * @route '/profile/change-avatar'
 */
 export const changeAvatar = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +128,7 @@ changeAvatar.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:73
+* @see app/Http/Controllers/Client/ProfileController.php:77
 * @route '/profile/change-avatar'
 */
 changeAvatar.url = (options?: RouteQueryOptions) => {
@@ -103,7 +137,7 @@ changeAvatar.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changeAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:73
+* @see app/Http/Controllers/Client/ProfileController.php:77
 * @route '/profile/change-avatar'
 */
 changeAvatar.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +147,7 @@ changeAvatar.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:98
+* @see app/Http/Controllers/Client/ProfileController.php:102
 * @route '/profile/delete-avatar'
 */
 export const destroyAvatar = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -128,7 +162,7 @@ destroyAvatar.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:98
+* @see app/Http/Controllers/Client/ProfileController.php:102
 * @route '/profile/delete-avatar'
 */
 destroyAvatar.url = (options?: RouteQueryOptions) => {
@@ -137,7 +171,7 @@ destroyAvatar.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyAvatar
-* @see app/Http/Controllers/Client/ProfileController.php:98
+* @see app/Http/Controllers/Client/ProfileController.php:102
 * @route '/profile/delete-avatar'
 */
 destroyAvatar.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -147,7 +181,7 @@ destroyAvatar.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> 
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:112
+* @see app/Http/Controllers/Client/ProfileController.php:116
 * @route '/profile/changePassword'
 */
 export const changePassword = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -162,7 +196,7 @@ changePassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:112
+* @see app/Http/Controllers/Client/ProfileController.php:116
 * @route '/profile/changePassword'
 */
 changePassword.url = (options?: RouteQueryOptions) => {
@@ -171,7 +205,7 @@ changePassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::changePassword
-* @see app/Http/Controllers/Client/ProfileController.php:112
+* @see app/Http/Controllers/Client/ProfileController.php:116
 * @route '/profile/changePassword'
 */
 changePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -181,7 +215,7 @@ changePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyProfile
-* @see app/Http/Controllers/Client/ProfileController.php:123
+* @see app/Http/Controllers/Client/ProfileController.php:127
 * @route '/profile/delete-profile'
 */
 export const destroyProfile = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -196,7 +230,7 @@ destroyProfile.definition = {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyProfile
-* @see app/Http/Controllers/Client/ProfileController.php:123
+* @see app/Http/Controllers/Client/ProfileController.php:127
 * @route '/profile/delete-profile'
 */
 destroyProfile.url = (options?: RouteQueryOptions) => {
@@ -205,7 +239,7 @@ destroyProfile.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Client\ProfileController::destroyProfile
-* @see app/Http/Controllers/Client/ProfileController.php:123
+* @see app/Http/Controllers/Client/ProfileController.php:127
 * @route '/profile/delete-profile'
 */
 destroyProfile.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -213,6 +247,6 @@ destroyProfile.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'>
     method: 'delete',
 })
 
-const ProfileController = { index, update, changeAvatar, destroyAvatar, changePassword, destroyProfile }
+const ProfileController = { index, update, getAutoCompleteAddress, changeAvatar, destroyAvatar, changePassword, destroyProfile }
 
 export default ProfileController

@@ -45,19 +45,13 @@
                     variant="outlined"
                     class="mb-1"
                 />
-                <VTextarea
+                <AddressAutocomplete
                     v-model="form.address"
                     :error-messages="form.errors.address"
                     class="address-field mb-1"
-                    autocomplete="street-address"
-                    auto-grow
                     bg-color="#fff"
                     color="#df5f45"
-                    label="Адрес доставки"
-                    max-rows="4"
                     rounded="0"
-                    rows="2"
-                    variant="outlined"
                 />
             </div>
 
@@ -221,8 +215,9 @@ import {router, useForm} from '@inertiajs/vue3';
 import type {ChangeAvatarReqDTO, ProfileSaveReqDTO, UserProfileResource} from '~types/generated';
 import ProfileRoutes from '~routes/Client/ProfileController';
 import PhoneSettings from "~vue/Pages/Profile/Components/PhoneSettings.vue";
-import {ref, shallowRef} from "vue";
+import {ref, shallowRef} from 'vue';
 import Avatar from "~vue/components/widgets/Avatar.vue";
+import AddressAutocomplete from '~vue/components/widgets/AddressAutocomplete.vue';
 import ChangePassword from "~vue/Pages/Profile/Components/ChangePassword.vue";
 
 const {client} = defineProps<{

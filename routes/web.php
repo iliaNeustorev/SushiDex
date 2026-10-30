@@ -32,6 +32,7 @@ Route::middleware(['auth', 'can:is-blocked'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/auto-complete-address', [ProfileController::class, 'getAutoCompleteAddress'])->name('profile.auto-complete-address');
 
         Route::prefix('phone')->group(function () {
             Route::post('/', [PhoneController::class, 'store'])->name('profile.phone-store');

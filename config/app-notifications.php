@@ -77,6 +77,10 @@ return [
                 'text' => 'Номер удален',
             ],
         ],
+        'autocomplete-address-fail' => [
+            'type' => 'error',
+            'text' => 'Ошибка получения адреса',
+        ],
     ],
 
     'images' => [

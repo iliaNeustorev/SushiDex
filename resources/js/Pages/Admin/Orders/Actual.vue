@@ -145,14 +145,17 @@
                             Изменить адрес
                         </VBtn>
 
-                        <VTextField
-                            v-model="formChangeAddress.address"
-                            v-show="showFieldChangeAddress"
+                        <AddressAutocomplete
+                            v-if="showFieldChangeAddress"
+                            :model-value="formChangeAddress.address"
+                            :error-messages="formChangeAddress.errors.address"
+                            :readonly="formChangeAddress.processing"
+                            class="mb-1"
                             density="comfortable"
                             label="Добавить адрес"
-                            :error-messages="formChangeAddress.errors.address"
                             variant="solo-filled"
-                            @blur="sendChangeAddress"
+                            @update:model-value="formChangeAddress.address = $event ?? ''"
+                            @update:focused="onAddressFocusChanged"
                         />
 
                         <VCheckbox
@@ -201,7 +204,7 @@
 <script setup lang="ts">
 import {Link, router, useForm} from '@inertiajs/vue3';
 import {debounce, merge} from 'lodash-es';
-import {computed, reactive, ref, shallowRef, watch} from 'vue';
+import {computed, reactive, ref, shallowRef, watch, nextTick} from 'vue';
 import {
     type ChangeAddressReqDTO,
     type OrderAdminPublicResource,
@@ -218,6 +221,7 @@ import AdminLayout from "~vue/Layouts/AdminLayout.vue";
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import type {UpdateAdminOrderForm} from "~vue/shared/forms.ts";
 import UserController from "~routes/Admin/UserController.ts";
+import AddressAutocomplete from "~vue/components/widgets/AddressAutocomplete.vue";
 
 const {actualOrders, processingOrders, query = {}, typePaid} = defineProps<{
     actualOrders: TypedPagination<OrderAdminPublicResource>;
@@ -367,10 +371,19 @@ function confirmChangeSettingOrder(): void {
     });
 }
 
+async function onAddressFocusChanged(focused: boolean): Promise<void> {
+    if (focused) {
+        return;
+    }
+
+    await nextTick();
+    sendChangeAddress();
+}
+
 function sendChangeAddress(): void {
     const order = orderForSetting.value;
 
-    if (!order || !formChangeAddress.isDirty) {
+    if (!order || !formChangeAddress.isDirty || formChangeAddress.processing) {
         return;
     }
 

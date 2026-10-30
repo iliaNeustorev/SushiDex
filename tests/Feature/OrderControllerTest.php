@@ -59,6 +59,8 @@ class OrderControllerTest extends TestCase
 
     public function test_user_can_create_an_order_from_their_cart(): void
     {
+        $this->travelTo(now()->setTime(12, 0));
+
         $user = User::factory()->create();
         app(CartService::class)->put($user, $this->product(), 2);
 

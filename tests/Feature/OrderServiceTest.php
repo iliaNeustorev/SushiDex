@@ -35,6 +35,8 @@ class OrderServiceTest extends TestCase
     {
         parent::setUp();
 
+        $this->travelTo(now()->setTime(12, 0));
+
         $this->app->instance(
             PaymentProviderInterface::class,
             Mockery::mock(PaymentProviderInterface::class),
