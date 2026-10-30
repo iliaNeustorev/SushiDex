@@ -2,27 +2,33 @@
 
 namespace Tests\Feature;
 
+use App\Enums\System\Roles;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ProductAdminTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    public static function staffRoles(): array
     {
-        parent::setUp();
-        Gate::define('dev', fn (User $user) => true);
+        return [
+            'administrator' => [Roles::ADMIN],
+            'developer' => [Roles::DEVELOPER],
+        ];
     }
 
-    public function test_developer_can_create_update_and_delete_a_product(): void
+    #[DataProvider('staffRoles')]
+    public function test_staff_can_create_update_and_delete_a_product(Roles $highestRole): void
     {
-        $user = User::factory()->create();
+        $user = $this->userWithRoles($highestRole);
         $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
 
         $response = $this->actingAs($user)->post(route('admin.products.store'), [
@@ -32,11 +38,11 @@ class ProductAdminTest extends TestCase
             'price' => '12.50',
             'old_price' => '15.00',
             'category_id' => $category->id,
-            'active' => true,
         ]);
 
         $product = Product::sole();
         $response->assertRedirect(route('admin.products.edit', $product));
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'active' => false]);
 
         $this->actingAs($user)->patch(route('admin.products.update', $product), [
             'title' => 'California premium',
@@ -45,7 +51,6 @@ class ProductAdminTest extends TestCase
             'price' => '13.50',
             'old_price' => null,
             'category_id' => $category->id,
-            'active' => true,
         ])->assertRedirect();
 
         $this->assertDatabaseHas('products', ['id' => $product->id, 'title' => 'California premium']);
@@ -66,7 +71,7 @@ class ProductAdminTest extends TestCase
 
     public function test_product_price_and_category_are_validated(): void
     {
-        $user = User::factory()->create();
+        $user = $this->userWithRoles(Roles::DEVELOPER);
 
         $this->actingAs($user)->post(route('admin.products.store'), [
             'title' => 'Valid title',
@@ -80,7 +85,7 @@ class ProductAdminTest extends TestCase
 
     public function test_developer_can_change_product_activity(): void
     {
-        $user = User::factory()->create();
+        $user = $this->userWithRoles(Roles::DEVELOPER);
         $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
         $product = Product::create([
             'title' => 'California roll',
@@ -115,7 +120,7 @@ class ProductAdminTest extends TestCase
 
     public function test_product_activity_must_be_boolean(): void
     {
-        $user = User::factory()->create();
+        $user = $this->userWithRoles(Roles::DEVELOPER);
         $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
         $product = Product::create([
             'title' => 'California roll',
@@ -134,5 +139,152 @@ class ProductAdminTest extends TestCase
             'id' => $product->id,
             'active' => false,
         ]);
+    }
+
+    public function test_administrator_cannot_use_the_activity_endpoint_or_product_trash(): void
+    {
+        $user = $this->userWithRoles(Roles::ADMIN);
+        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+        $product = Product::create([
+            'title' => 'California roll',
+            'price' => '12.50',
+            'category_id' => $category->id,
+            'active' => false,
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('admin.products.change-active', $product), ['active' => true])
+            ->assertForbidden();
+
+        $this->actingAs($user)->get(route('admin.product-trash.index'))->assertForbidden();
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'active' => false]);
+    }
+
+    public static function staffActivityChanges(): array
+    {
+        return [
+            'administrator cannot enable' => [Roles::ADMIN, false],
+            'administrator cannot disable' => [Roles::ADMIN, true],
+            'developer cannot enable through the form' => [Roles::DEVELOPER, false],
+            'developer cannot disable through the form' => [Roles::DEVELOPER, true],
+        ];
+    }
+
+    #[DataProvider('staffActivityChanges')]
+    public function test_regular_update_ignores_activity_changes(Roles $highestRole, bool $active): void
+    {
+        $user = $this->userWithRoles($highestRole);
+        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+        $product = Product::create([
+            'title' => 'California roll',
+            'price' => '12.50',
+            'category_id' => $category->id,
+            'active' => $active,
+        ]);
+
+        $this->actingAs($user)->patch(route('admin.products.update', $product), [
+            'title' => 'California premium',
+            'description' => null,
+            'content' => null,
+            'price' => '13.50',
+            'old_price' => null,
+            'category_id' => $category->id,
+            'active' => ! $active,
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'title' => 'California premium',
+            'active' => $active,
+        ]);
+    }
+
+    #[DataProvider('staffRoles')]
+    public function test_product_creation_ignores_activity_from_the_request(Roles $highestRole): void
+    {
+        $user = $this->userWithRoles($highestRole);
+        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+
+        $this->actingAs($user)->post(route('admin.products.store'), [
+            'title' => 'California roll',
+            'description' => null,
+            'content' => null,
+            'price' => '12.50',
+            'old_price' => null,
+            'category_id' => $category->id,
+            'active' => true,
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('products', ['title' => 'California roll', 'active' => false]);
+    }
+
+    public function test_administrator_with_author_role_can_delete_a_product_image(): void
+    {
+        Storage::fake('public');
+        $user = $this->userWithRoles(Roles::ADMIN);
+        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+        $product = Product::create([
+            'title' => 'California roll',
+            'price' => '12.50',
+            'category_id' => $category->id,
+            'active' => false,
+        ]);
+        $image = $product->images()->create(['path' => 'images/products/test.jpg', 'name' => 'test']);
+        Storage::disk('public')->put($image->path, 'image contents');
+
+        $this->actingAs($user)->delete(route('admin.images.destroy', $image))->assertRedirect();
+
+        $this->assertDatabaseMissing('images', ['id' => $image->id]);
+        Storage::disk('public')->assertMissing($image->path);
+    }
+
+    #[DataProvider('nonStaffRoles')]
+    public function test_user_and_author_cannot_manage_products(Roles $highestRole): void
+    {
+        $user = $this->userWithRoles($highestRole);
+        $category = Category::create(['url' => 'sushi-rolls', 'title' => 'Sushi rolls']);
+        $product = Product::create([
+            'title' => 'California roll',
+            'price' => '12.50',
+            'category_id' => $category->id,
+            'active' => false,
+        ]);
+
+        $this->actingAs($user)->get(route('admin.products.index'))->assertForbidden();
+        $this->get(route('admin.products.create'))->assertForbidden();
+        $this->get(route('admin.products.edit', $product))->assertForbidden();
+        $this->post(route('admin.products.store'), [])->assertForbidden();
+        $this->patch(route('admin.products.update', $product), [])->assertForbidden();
+        $this->delete(route('admin.products.destroy', $product))->assertForbidden();
+        $this->assertNotSoftDeleted($product);
+    }
+
+    public static function nonStaffRoles(): array
+    {
+        return [
+            'user' => [Roles::USER],
+            'author' => [Roles::AUTHOR],
+        ];
+    }
+
+    private function userWithRoles(Roles $highestRole): User
+    {
+        $user = User::factory()->create();
+        $roles = match ($highestRole) {
+            Roles::USER => [Roles::USER],
+            Roles::AUTHOR => [Roles::USER, Roles::AUTHOR],
+            Roles::ADMIN => [Roles::USER, Roles::AUTHOR, Roles::ADMIN],
+            Roles::DEVELOPER => [Roles::USER, Roles::AUTHOR, Roles::ADMIN, Roles::DEVELOPER],
+        };
+
+        foreach ($roles as $roleName) {
+            $role = Role::firstOrCreate(
+                ['name' => $roleName->value],
+                ['description' => $roleName->text()],
+            );
+            $user->roles()->attach($role);
+        }
+
+        return $user;
     }
 }

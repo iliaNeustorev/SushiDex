@@ -73,6 +73,5 @@ const form = useForm<ProductForm>({
     price: '',
     old_price: null,
     category_id: null,
-    active: false
 });
 </script>

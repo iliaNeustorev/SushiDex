@@ -35,6 +35,7 @@
                     :href="item.to.url"
                     class="ms-4 text-none"
                     variant="text"
+                    :prepend-icon="item.icon"
                 >
                     {{ item.title }}
                 </VBtn>
@@ -46,6 +47,7 @@
                 >
                     <VBtn
                         :href="OrderController.index().url"
+                        prepend-icon="$silverwareVariant"
                         class="ms-4 text-none"
                         variant="text"
                     >
@@ -128,6 +130,7 @@
                                 title="Уведомления"
                             />
                             <VListItem
+                                v-if="isAuthor"
                                 :href="PostRoutes.index().url"
                                 prepend-icon="$mdiPost"
                                 title="Мои посты"
@@ -207,6 +210,7 @@ import OrderController from "~routes/Client/OrderController.ts";
 import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
 import NotificationRoutes from "~routes/Client/NotificationController.ts";
 import PostRoutes from "~routes/Client/PostController.ts";
+import {useRoles} from "~vue/composables/useRoles.ts";
 
 const page = usePage<{
     user: UserAuthResource | null,
@@ -215,6 +219,9 @@ const page = usePage<{
     checkUnreadNotify: boolean,
     timeWorked: TimeWorked
 }>();
+
+const {isAuthor, isModerator} = useRoles()
+
 const user = computed(() => page.props.user)
 const checkUnreadNotify = computed(() => page.props.checkUnreadNotify)
 const checkActualOrder = computed(() => page.props.checkActualOrder)
@@ -248,14 +255,14 @@ const cartTitle = computed(() => cart.empty
 const drawer = shallowRef(false);
 const logoutForm = useForm({});
 const mainMenuBase = [
-    {to: GeneralRoutes.menu(), title: 'Меню', icon: '$food', guard: null},
+    {to: GeneralRoutes.menu(), title: 'Меню', icon: '$foodOutline', guard: null},
     {to: Posts.index(), title: 'Посты', icon: '$newspaper', guard: null},
-    {to: AdminDashboard.index(), title: 'Администрирование', icon: '', guard: 'admin'}
+    {to: AdminDashboard.index(), title: 'Администрирование', icon: '$accountWrenchOutline', guard: 'admin'}
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
     item.guard === null ||
-    (item.guard === 'admin' && user.value)
+    (item.guard === 'admin' && isModerator.value)
 ))
 
 const isCartPage = computed(() => page.component === 'Cart/Index');

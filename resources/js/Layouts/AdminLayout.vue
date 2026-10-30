@@ -4,7 +4,7 @@
         <VAppBar app height="54">
             <VContainer fluid>
                 <VToolbarTitle>
-                    <VIcon icon="$castEducation" class="me-2"></VIcon>
+                    <VIcon icon="$shieldCrownOutline" class="me-2"></VIcon>
                     SushiDex
                 </VToolbarTitle>
             </VContainer>
@@ -53,7 +53,6 @@
 <script setup lang="ts">
 import {Link, usePage} from '@inertiajs/vue3';
 import {computed} from 'vue';
-import type {UserAuthResource} from "~types/generated";
 import PostsRoutes from "~routes/Admin/PostController.ts";
 import GeneralController from "~routes/GeneralController.ts";
 import ProductRoutes from "~routes/Admin/ProductController.ts";
@@ -62,21 +61,23 @@ import TagsRoutes from "~routes/Admin/TagController.ts";
 import UsersRoutes from "~routes/Admin/UserController.ts";
 import OrderRoutes from "~routes/Admin/OrderController.ts";
 import SystemNotify from "~vue/components/widgets/SystemNotify.vue";
+import {useRoles} from "~vue/composables/useRoles.ts";
 
-const {props} = usePage<{ user: UserAuthResource | null }>();
 const page = usePage();
+const {isModerator, isDev} = useRoles();
+
 const mainMenuBase = [
-    {to: GeneralController.index(), title: 'Главная', icon: '', guard: 'admin'},
-    {to: PostsRoutes.index(), title: 'Посты', icon: '', guard: 'admin'},
-    {to: ProductRoutes.index(), title: 'Продукты', icon: '', guard: 'admin'},
-    {to: CategoryRoutes.index(), title: 'Категории', icon: '', guard: 'admin'},
-    {to: TagsRoutes.index(), title: 'Тэги', icon: '', guard: 'admin'},
-    {to: UsersRoutes.index(), title: 'Пользователи', icon: '', guard: 'admin'},
-    {to: OrderRoutes.actual(), title: 'Монитор заказов', icon: '', guard: 'admin'},
+    {to: GeneralController.index(), title: 'Главная', icon: '$domain', guard: 'admin'},
+    {to: PostsRoutes.index(), title: 'Посты', icon: '$noteMultipleOutline', guard: 'admin'},
+    {to: ProductRoutes.index(), title: 'Продукты', icon: '$foodTurkey', guard: 'admin'},
+    {to: CategoryRoutes.index(), title: 'Категории', icon: '$arrangeSendBackward', guard: 'dev'},
+    {to: TagsRoutes.index(), title: 'Тэги', icon: '$tagPlus', guard: 'dev'},
+    {to: UsersRoutes.index(), title: 'Пользователи', icon: '$accountDetailsOutline', guard: 'dev'},
+    {to: OrderRoutes.actual(), title: 'Монитор заказов', icon: '$monitorMultiple', guard: 'admin'},
 ] as const;
 
 const mainMenu = computed(() => mainMenuBase.filter(item =>
-    (item.guard === 'admin' && props.user)
+    (item.guard === 'admin' && isModerator.value) || (item.guard === 'dev' && isDev.value)
 ));
 
 function isMenuItemActive(url: string): boolean {

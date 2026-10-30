@@ -124,7 +124,7 @@ class ProductController extends Controller
 
     public function changeActive(ChangeActiveRequest $request, Product $product)
     {
-        Gate::authorize('update', $product);
+        Gate::authorize('active', $product);
         $this->productAdminService->changeActive($product, $request->getData()->active);
 
         return Inertia::flash(config('app-notifications.products.admin.active'))->back();

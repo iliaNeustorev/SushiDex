@@ -8,6 +8,7 @@
                     </Link>
                     <VSpacer />
                     <VBadge
+                        v-if="isDev"
                         :content="countDeletedPost"
                         :model-value="countDeletedPost > 0"
                         color="error"
@@ -181,6 +182,7 @@ import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
 import AdminWrapper from "~vue/Layouts/AdminWrapper.vue";
 import PostTrashRoutes from "~routes/Admin/Trash/PostTrashController.ts";
 import {PostStatus} from '~types/generated';
+import {useRoles} from "~vue/composables/useRoles.ts";
 
 const {query = {}} = defineProps<{
     posts: TypedPagination<PostCrudResource>,
@@ -194,7 +196,7 @@ const queryDefaults: RequiredKeys<PostsQuery, 'filter'> = {
 }
 const queryLocal = reactive(merge({}, queryDefaults, query));
 const onTitleUpd = debounce((v: string | null) => queryLocal.filter.title = v ? v : undefined, 900);
-
+const {isDev} = useRoles()
 watch(queryLocal, applyReload);
 
 function applyReload() {
@@ -242,14 +244,14 @@ function onTagsChange(value: number[]) {
 const tagsValue = computed(() => queryLocal.filter.tags?.split(',').map(v => +v) ?? []);
 
 const tagSearch = ref('');
-const onTagSerach = debounce((v: string) => {
+const onTagSearch = debounce((v: string) => {
     router.visit(
         PostsRoutes.index({query: {...queryLocal, tagSearch: v ? v : undefined}}),
         {preserveState: true, only: ['tags']}
     );
 }, 300);
 
-watch(tagSearch, onTagSerach);
+watch(tagSearch, onTagSearch);
 
 function moveToTrashPage() {
     router.visit(PostTrashRoutes.index().url)

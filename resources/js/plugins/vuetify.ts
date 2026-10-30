@@ -34,6 +34,17 @@ import {
     mdiRead,
     mdiFormatAlignJustify,
     mdiPost,
+    mdiFoodOutline,
+    mdiAccountWrenchOutline,
+    mdiSilverwareVariant,
+    mdiShieldCrownOutline,
+    mdiDomain,
+    mdiNoteMultipleOutline,
+    mdiFoodTurkey,
+    mdiArrangeSendBackward,
+    mdiTagPlus,
+    mdiAccountDetailsOutline,
+    mdiMonitorMultiple
 } from '@mdi/js'
 
 aliases['castEducation'] = mdiCastEducation
@@ -65,7 +76,17 @@ aliases['bellRing'] = mdiBellRing
 aliases['read'] = mdiRead
 aliases['mdiFormatAlignJustify'] = mdiFormatAlignJustify
 aliases['mdiPost'] = mdiPost
-
+aliases['foodOutline'] = mdiFoodOutline
+aliases['accountWrenchOutline'] = mdiAccountWrenchOutline
+aliases['silverwareVariant'] = mdiSilverwareVariant
+aliases['shieldCrownOutline'] = mdiShieldCrownOutline
+aliases['domain'] = mdiDomain
+aliases['noteMultipleOutline'] = mdiNoteMultipleOutline
+aliases['foodTurkey'] = mdiFoodTurkey
+aliases['arrangeSendBackward'] = mdiArrangeSendBackward
+aliases['tagPlus'] = mdiTagPlus
+aliases['accountDetailsOutline'] = mdiAccountDetailsOutline
+aliases['monitorMultiple'] = mdiMonitorMultiple
 
 export default function initVuetifyPlugin() {
     const vuetify = createVuetify({

@@ -359,7 +359,6 @@ content: string | null;
 price: string;
 old_price: string | null;
 category_id: number;
-active: boolean;
 };
 export type ProductsTrashFiltersQuery = {
 title?: string;

@@ -8,6 +8,7 @@
                     </Link>
                     <VSpacer />
                     <VBadge
+                        v-if="isDev"
                         :content="countDeletedProduct"
                         :model-value="countDeletedProduct > 0"
                         color="error"
@@ -91,6 +92,7 @@
                         <template #item.active="{ item }">
                             <div class="d-flex justify-center">
                                 <VCheckbox
+                                    :disabled="!isDev"
                                     v-model="item.active"
                                     class="flex-grow-0"
                                     color="red-darken-3"
@@ -164,6 +166,7 @@ import type {RequiredKeys} from '~vue/shared/objects';
 import useSpatieDateRangeAdapter from '~vue/composables/useSpatieDateRangeAdapter';
 import useSpatieSortAdapter from '~vue/composables/useSpatieSortAdapter';
 import ProductTrashRoutes from '~routes/Admin/Trash/ProductTrashController.ts';
+import {useRoles} from "~vue/composables/useRoles.ts";
 
 const {query = {}} = defineProps<{
     products: TypedPagination<ProductCrudResource>,
@@ -171,6 +174,8 @@ const {query = {}} = defineProps<{
     query: ProductsQuery,
     countDeletedProduct: number
 }>();
+
+const {isDev} = useRoles()
 
 const queryDefaults: RequiredKeys<ProductsQuery, 'filter'> = {
     filter: {}

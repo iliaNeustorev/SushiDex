@@ -54,14 +54,6 @@
                         label="Старая цена"
                         class="mb-1"
                     />
-                    <VCheckbox
-                        v-model="form.active"
-                        :error-messages="form.errors.active"
-                        color="#df5f45"
-                        density="compact"
-                        hide-details
-                        label="Активен"
-                    />
                 </VCardText>
                 <VCardActions>
                     <VBtn @click="sendEdit" :disabled="form.processing" color="primary">Сохранить</VBtn>
@@ -87,6 +79,7 @@ const props = defineProps<{
     categories: CategoryCrudResource[],
     images: ImageCrudResource[]
 }>();
+
 const form = useForm<ProductsSaveReqDTO>({
     title: props.product.title,
     description: props.product.description,
@@ -94,7 +87,6 @@ const form = useForm<ProductsSaveReqDTO>({
     price: props.product.price,
     old_price: props.product.old_price,
     category_id: props.product.category.id,
-    active: props.product.active
 });
 
 function sendEdit() {
